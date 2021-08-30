@@ -1,0 +1,196 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Sets up lambda, api and base path mapping to fetch most recent publication for an author
+Parameters:
+  CustomDomain:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: '/api/domainName'
+    Description: (Optional) Custom domain name for the API endpoint
+  CustomDomainBasePath:
+    Type: String
+    Default: 'interLibraryLoanMetadata'
+    Description: (Optional) Base path mapping in CustomDomain
+    AllowedPattern: "^[a-zA-Z0-9$\\-_.+!*'(),]*$"
+    ConstraintDescription: "May contain only letters, numbers and one of $-_.+!*'(),"
+  SruEndpoint:
+    Type: String
+    Description: Url Endpoint to the SRU server
+    Default: 'bibsys.ill.metadata.com'
+  MaxConcurrency:
+    Type: Number
+    Default: 20
+    Description: Max number of provisioned hot instances for a lambda function
+  MinConcurrency:
+    Type: Number
+    Default: 1
+    MaxValue: 1
+    MinValue: 1
+    Description: Min number of provisioned hot instances for a lambda function
+
+Conditions:
+  HasDomainName: !Not [!Equals [!Ref CustomDomain, '']]
+  HasCustomDomainBasePath: !Not [!Equals [!Ref CustomDomainBasePath, '']]
+
+Globals:
+  Function:
+    Timeout: 20
+  Api:
+    Cors:
+      AllowHeaders: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
+      AllowMethods: '''OPTIONS, GET'''
+      AllowOrigin: '''*'''
+    EndpointConfiguration: REGIONAL
+
+Resources:
+
+  InterLibraryLoanMetadataApi:
+    Type: AWS::Serverless::Api
+    Metadata:
+      cfn_nag:
+        rules_to_suppress:
+          - id: W64
+            reason: "Skip access logging for artifacts bucket"
+          - id: W68
+            reason: "Skip encryption for artifacts bucket"
+          - id: W69
+            reason: "Skip bucket policy for artifacts bucket"
+          - id: W89
+            reason: "Lambda functions should be deployed inside a VPC"
+          - id: W92
+            reason: "Lambda functions should define ReservedConcurrentExecutions to reserve simultaneous executions"
+    Properties:
+      Name: !Sub "${AWS::StackName}"
+      StageName: v1
+      EndpointConfiguration:
+        Type: REGIONAL
+      DefinitionBody:
+        openapi: 3.0.3
+        info:
+          title: Inter Library Loan Metadata API
+          version: '1.0'
+        paths:
+          /:
+            get:
+              summary:  Get bibliographic metadata by document id
+              description:  gets bibliographic metadata by document_id
+              consumes:
+                - application/json
+              produces:
+                - application/json
+              parameters:
+                - in: query
+                  name: document_id
+                  required: false
+                  type: string
+                  description: document_id
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetInterLibraryLoanMetadataRecordFunction.Arn}:live/invocations
+                responses: {}
+                httpMethod: POST
+                type: AWS_PROXY
+              responses:
+                '200':
+                  description: inter library loan metadata
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/getInterLibraryLoanRecordResponseBody'
+                '400':
+                  description: Bad request.
+                  content:
+                    application/json:
+                      schema:
+                        title: 400 Bad request
+                        type: object
+                        properties:
+                          error:
+                            type: string
+                            description: error message
+                '500':
+                  description: Internal server error.
+                  content:
+                    application/json:
+                      schema:
+                        title: 500 internal server error
+                        type: object
+                        properties:
+                          error:
+                            type: string
+                            description: error message
+
+        components:
+          schemas:
+            getInterLibraryLoanRecordResponseBody:
+              title: inter library loan metadata record
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: bibliographic record containing metadata
+
+  GetInterLibraryLoanMetadataRecordFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN:  '*'
+          ILL_METADATA_HOST: !Ref SruEndpoint
+      Handler: no.unit.xservice.GetXServiceHandler::handleRequest
+      Runtime: java11
+      MemorySize: 2048
+      AutoPublishAlias: live
+      DeploymentPreference:
+        Type: AllAtOnce # Or Canary10Percent5Minutes, Linear10PercentEvery1Minute, ...
+      ProvisionedConcurrencyConfig:
+        ProvisionedConcurrentExecutions: 1
+      Events:
+        GetInterLibraryLoanMetadataRecordEvent:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: "InterLibraryLoanMetadataApi"
+            Method: get
+            Path: /
+
+  GetInterLibraryLoanMetadataRecordFunctionScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Properties:
+      MaxCapacity: !Ref MaxConcurrency
+      MinCapacity: !Ref MinConcurrency
+      ResourceId: !Sub function:${GetInterLibraryLoanMetadataRecordFunction}:live # You need to specify an alis or version here
+      RoleARN: !Sub arn:aws:iam::${AWS::AccountId}:role/aws-service-role/lambda.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_LambdaConcurrency
+      ScalableDimension: lambda:function:ProvisionedConcurrency
+      ServiceNamespace: lambda
+    DependsOn: GetInterLibraryLoanMetadataRecordFunctionAliaslive # This is your function logical ID + "Alias" + what you use for AutoPublishAlias
+
+  GetInterLibraryLoanMetadataRecordFunctionScalingPolicy:
+    Type: AWS::ApplicationAutoScaling::ScalingPolicy
+    Properties:
+      PolicyName: GetInterLibraryLoanMetadataRecordFunctionScalingPolicy
+      PolicyType: TargetTrackingScaling
+      ScalingTargetId: !Ref GetInterLibraryLoanMetadataRecordFunctionScalableTarget
+      TargetTrackingScalingPolicyConfiguration:
+        TargetValue: 0.70 # Any value between 0.1 and 0.9 can be used here
+        PredefinedMetricSpecification:
+          PredefinedMetricType: LambdaProvisionedConcurrencyUtilization
+
+  InterLibraryLoanMetadataBasePathMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Condition: HasDomainName
+    Properties:
+      BasePath: !If
+        - HasCustomDomainBasePath
+        - !Ref CustomDomainBasePath
+        - !Ref 'AWS::NoValue'
+      DomainName: !Ref CustomDomain
+      RestApiId: !Ref InterLibraryLoanMetadataApi
+      Stage: !Ref InterLibraryLoanMetadataApi.Stage
+
+Outputs:
+  ApiEndpoint:
+    Description: "Endpoint base URL for the API"
+    Value: !If
+      - HasDomainName
+      - !Sub "https://${CustomDomain}/${CustomDomainBasePath}"
+      - !Sub "https://${InterLibraryLoanMetadataApi}.execute-api.${AWS::Region}.amazonaws.com/${InterLibraryLoanMetadataApi.Stage}/"
