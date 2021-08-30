@@ -1,12 +1,13 @@
-package no.unit.xservice;
+package no.unit;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 
 
+
 import java.util.Map;
 
-public class GetXServiceHandler implements RequestHandler<Map<String, Object>, GatewayResponse> {
+public class MetadataHandler implements RequestHandler<Map<String, Object>, GatewayResponse> {
 
     @Override
     public GatewayResponse handleRequest(Map<String, Object> input, Context context) {

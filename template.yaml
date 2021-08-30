@@ -137,7 +137,7 @@ Resources:
         Variables:
           ALLOWED_ORIGIN:  '*'
           ILL_METADATA_HOST: !Ref SruEndpoint
-      Handler: no.unit.xservice.GetXServiceHandler::handleRequest
+      Handler: no.unit.MetadataHandler::handleRequest
       Runtime: java11
       MemorySize: 2048
       AutoPublishAlias: live
