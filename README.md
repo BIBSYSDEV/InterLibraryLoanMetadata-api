@@ -46,8 +46,8 @@ Bootstrap:
 
 Either the isbn or the issn will contain a number but not both
   
-     Response:
-     ```json
+Response:
+```json
           {
             "title": "Norges eldste medalje tildeles May-Britt Moser og Edvard Moser",
             "creator": "Ibsen, Henrik",
@@ -57,7 +57,7 @@ Either the isbn or the issn will contain a number but not both
             "year": "2006",
             "source": "BIBSYS_ILS - oria.no"
           }
-     ```
+   ```
   
 
 
