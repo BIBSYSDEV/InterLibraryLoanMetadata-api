@@ -9,11 +9,11 @@ public class GatewayResponse {
         this.responseBody = responseBody;
     }
 
-    public void setResponseBody(String responseBody){
+    public void setResponseBody(String responseBody) {
         this.responseBody = responseBody;
     }
 
-    public String getResponseBody(){
+    public String getResponseBody() {
         return responseBody;
     }
 
