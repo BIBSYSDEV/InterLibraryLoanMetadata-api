@@ -1,0 +1,57 @@
+<BaseBibliotek>
+    <record rid="658" tstamp="2019-04-11 12:25:21">
+        <bibnr>2061700</bibnr>
+        <bibkode>GOL</bibkode>
+        <bibltype>FBI+VGS</bibltype>
+        <aut encrypted="true">7f05415699cf3c92efbbb55c91afc217</aut>
+        <brukertall>4500</brukertall>
+        <katsyst>Mikromarc 3</katsyst>
+        <startaar>1987</startaar>
+        <kommnr>0617</kommnr>
+        <overordn>643</overordn>
+        <inst>Gol bibliotek</inst>
+        <inst_eng>Gol Public Library</inst_eng>
+        <vadr>Svøovegen 5</vadr>
+        <vpostnr>3550</vpostnr>
+        <vpoststed>GOL</vpoststed>
+        <landkode>no</landkode>
+        <tlf>32 02 92 80 ; 902 87 526</tlf>
+        <tlf_ref>32 02 92 80 ; 902 87 526</tlf_ref>
+        <tlf_fj>32 02 92 80</tlf_fj>
+        <epost_adr>gol.bibliotek@gol.kommune.no</epost_adr>
+        <epost_best>gol-fb@fjernlaan.no</epost_best>
+        <epost_nill>gol-fb.nill@fjernlaan.no</epost_nill>
+        <epost_nillkvitt>gol-fb.nill@fjernlaan.no</epost_nillkvitt>
+        <url_hjem>https://hallingdalsbiblioteka.no/golbibliotek/</url_hjem>
+        <url_kat>http://websok.mikromarc.no/gol-fb</url_kat>
+        <bibleder>Karin Bjørge</bibleder>
+        <andre_koder>
+            <bibkode_alt>GOLVG</bibkode_alt>
+            <bibkode_alt>GOLGS</bibkode_alt>
+        </andre_koder>
+        <andre_navn>
+            <li>Hallingdalsbiblioteka; Hallingdal gymnas</li>
+            <li>Gol vidaregåande skule og Gol ungdomsskule</li>
+        </andre_navn>
+        <bidrag>
+            <li>BSØK</li>
+        </bidrag>
+        <eressurser>
+            <z_target>sok.bibits.no:210/gol-fb</z_target>
+            <io_ws>http://fjerninnlev.mikromarc.no/remotereturn/remotereturn.asmx?db=hallingdal-felles</io_ws>
+            <z_info>http://www.bibits.no/produkter/mikromarc/NorZIG2-Conformance.html</z_info>
+            <OAI>http://oai.mikromarc.no/OAI/gol-fb</OAI>
+            <nncip_uri>https://ncip.mikromarc.no/ncipservice/ncipresponder/parser?db=hallingdal-felles</nncip_uri>
+        </eressurser>
+        <bestmedier>
+            <li>Brev</li>
+            <li>E-post</li>
+            <li>Telefon</li>
+        </bestmedier>
+        <betalmidler>
+            <li>Regning sendes</li>
+            <li>VISA</li>
+            <li>Giro</li>
+        </betalmidler>
+    </record>
+</BaseBibliotek>
