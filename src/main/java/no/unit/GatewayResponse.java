@@ -1,4 +1,4 @@
-package no.unit.xservice;
+package no.unit;
 
 public class GatewayResponse {
     private int statusCode;
