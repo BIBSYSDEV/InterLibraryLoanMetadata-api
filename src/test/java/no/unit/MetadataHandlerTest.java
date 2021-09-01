@@ -1,6 +1,8 @@
 package no.unit;
 
 
+import no.unit.ill.GatewayResponse;
+import no.unit.ill.MetadataHandler;
 import org.junit.jupiter.api.Test;
 
 

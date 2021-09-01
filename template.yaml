@@ -71,7 +71,7 @@ Resources:
               parameters:
                 - in: query
                   name: document_id
-                  required: false
+                  required: true
                   type: string
                   description: document_id
               x-amazon-apigateway-integration:
@@ -127,7 +127,7 @@ Resources:
         Variables:
           ALLOWED_ORIGIN:  '*'
           ILL_METADATA_HOST: !Ref SruEndpoint
-      Handler: no.unit.MetadataHandler::handleRequest
+      Handler: no.unit.ill.MetadataHandler::handleRequest
       Runtime: java11
       MemorySize: 1024
       Events:

@@ -1,4 +1,4 @@
-package no.unit;
+package no.unit.ill;
 
 import com.google.gson.JsonObject;
 import no.unit.utils.StringUtils;
