@@ -16,7 +16,7 @@ public class InstitutionService {
     private static final transient Logger log = LoggerFactory.getLogger(InstitutionService.class);
     public static final String ATTRIBUTES = "attributes";
 
-    private final InstitutionServiceConnection connection;
+    private final transient InstitutionServiceConnection connection;
 
     public InstitutionService() {
         this.connection = new InstitutionServiceConnection();
@@ -26,6 +26,15 @@ public class InstitutionService {
         this.connection = connection;
     }
 
+    /**
+     * Get targetValue (e.g. oriaDefaultNCIPserver) from InstitutionService by given identifier (e.g. NTNU_UB) and
+     * context (e.g. oriaCode).
+     *
+     * @param context context (e.g. oriaCode)
+     * @param identifier identifier (e.g. NTNU_UB)
+     * @param targetValue targetValue (e.g. oriaDefaultNCIPserver)
+     * @return result value (e.g. libraryCode of the NCIPserver)
+     */
     public String get(String context, String identifier, String targetValue) {
         String resultStr = "";
         try (InputStreamReader streamReader = connection.connect(context, identifier)) {
@@ -39,8 +48,6 @@ public class InstitutionService {
             log.error("Wrong Url for get in institutionService for {}/{}", context, identifier, e);
         } catch (IOException e) {
             log.error("error while getting at institutionService for {}/{}", context, identifier, e);
-        } catch (NullPointerException e) {
-            log.error("did not get nice data from institutionService for {}/{}", context, identifier, e);
         }
         return resultStr;
     }
