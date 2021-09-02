@@ -15,6 +15,10 @@ public class InstitutionService {
 
     private static final transient Logger log = LoggerFactory.getLogger(InstitutionService.class);
     public static final String ATTRIBUTES = "attributes";
+    public static final String WRONG_URL_FOR_GET_IN_INSTITUTION_SERVICE_FOR = "Wrong Url for get in "
+        + "institutionService for {}/{}";
+    public static final String ERROR_WHILE_GETTING_AT_INSTITUTION_SERVICE_FOR = "error while getting at "
+        + "institutionService for {}/{}";
 
     private final transient InstitutionServiceConnection connection;
 
@@ -45,9 +49,9 @@ public class InstitutionService {
             JsonArray jsonArray = jsonObject.getAsJsonObject(ATTRIBUTES).getAsJsonArray(targetValue);
             resultStr = jsonArray.get(0).getAsString();
         } catch (URISyntaxException e) {
-            log.error("Wrong Url for get in institutionService for {}/{}", context, identifier, e);
+            log.error(WRONG_URL_FOR_GET_IN_INSTITUTION_SERVICE_FOR, context, identifier, e);
         } catch (IOException e) {
-            log.error("error while getting at institutionService for {}/{}", context, identifier, e);
+            log.error(ERROR_WHILE_GETTING_AT_INSTITUTION_SERVICE_FOR, context, identifier, e);
         }
         return resultStr;
     }

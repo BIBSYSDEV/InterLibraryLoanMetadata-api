@@ -22,12 +22,16 @@ public class InstitutionServiceConnection {
      * @throws URISyntaxException something wrong with uri syntax
      */
     public InputStreamReader connect(String context, String identifier) throws IOException, URISyntaxException {
+        final URI uri = getUri(context, identifier);
+        return new InputStreamReader(uri.toURL().openStream());
+    }
+
+    protected URI getUri(String context, String identifier) throws URISyntaxException {
         final URI uri = new URIBuilder()
             .setScheme(HTTPS)
             .setHost(Config.getInstance().getInstitutionServiceHost())
             .setPath(INSTITUTION_MAPPING_PATH + context + SLASH + identifier)
             .build();
-        return new InputStreamReader(uri.toURL().openStream());
+        return uri;
     }
-
 }

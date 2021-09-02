@@ -4,7 +4,7 @@ import no.unit.utils.StringUtils;
 
 public class Config {
 
-    public static final String MISSING_ENVIRONMENT_VARIABLES = "Missing environment variables SRU_ENDPOINT";
+    public static final String MISSING_ENVIRONMENT_VARIABLES = "Missing environment variables";
     public static final String CORS_ALLOW_ORIGIN_HEADER_ENVIRONMENT_NAME = "ALLOWED_ORIGIN";
     public static final String INSTITUTIONSERVICE_ENDPOINT_KEY = "INSTITUTIONSERVICE_ENDPOINT";
 
@@ -40,7 +40,7 @@ public class Config {
         return true;
     }
 
-    private void setInstitutionServiceHost(String institutionServiceHost) {
+    protected void setInstitutionServiceHost(String institutionServiceHost) {
         this.institutionServiceHost = institutionServiceHost;
     }
 
