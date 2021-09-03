@@ -10,6 +10,6 @@ public class MetadataHandler implements RequestHandler<Map<String, Object>, Gate
 
     @Override
     public GatewayResponse handleRequest(Map<String, Object> input, Context context) {
-        return new GatewayResponse(200, "Test");
+        return new GatewayResponse("test", 200);
     }
 }
