@@ -2,6 +2,8 @@ package no.unit.ill;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import no.unit.xservice.XServices;
+import org.json.JSONObject;
 
 import javax.ws.rs.core.Response;
 import java.util.Objects;
@@ -22,7 +24,6 @@ public class MetadataHandler implements RequestHandler<Map<String, Object>, Gate
         GatewayResponse gatewayResponse = new GatewayResponse();
 
 
-
         if (Objects.isNull(input) || !input.containsKey(QUERY_STRING_PARAMETERS_KEY)) {
             gatewayResponse.setErrorBody(MANDATORY_PARAMETERS_MISSING);
             gatewayResponse.setStatusCode(Response.Status.BAD_REQUEST.getStatusCode());
@@ -31,11 +32,19 @@ public class MetadataHandler implements RequestHandler<Map<String, Object>, Gate
         Map<String, String> queryStringParameters = (Map<String, String>) input.get(QUERY_STRING_PARAMETERS_KEY);
         String documentId = queryStringParameters.get(DOCUMENT_ID_KEY);
 
-        if(isEmpty(documentId)) {
+        if (isEmpty(documentId)) {
             gatewayResponse.setErrorBody(MANDATORY_PARAMETERS_MISSING);
             gatewayResponse.setStatusCode(Response.Status.BAD_REQUEST.getStatusCode());
             return gatewayResponse;
         }
-        return new GatewayResponse("test", 200);
+        JSONObject xserviceObject = getXServiceData(context, documentId);
+
+        return new GatewayResponse(xserviceObject.toString(), 200);
     }
+
+    private JSONObject getXServiceData(Context context, String documentId) {
+        XServices xServices = new XServices(context);
+        return xServices.doStuff(documentId);
+    }
+
 }
