@@ -11,12 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class LibraryBeanTest {
 
     public Clock initClock(LocalDate date) {
-        return Clock.fixed(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()
-                , ZoneId.systemDefault());
+        return Clock.fixed(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
     }
 
     @Test
-    public void IsOpenShoudBeFalseWhenInTheMiddleOfClosedDates() {
+    public void isOpenShoudBeFalseWhenInTheMiddleOfClosedDates() {
         Clock clock = initClock(LocalDate.of(2016, 5, 15));
         LibraryBean bean = new LibraryBean();
         bean.setStengt_fra("2016-05-10");
@@ -26,7 +25,7 @@ public class LibraryBeanTest {
     }
 
     @Test
-    public void IsOpenShoudBeFalseWhenInTheBeginningOfClosedDates() {
+    public void isOpenShoudBeFalseWhenInTheBeginningOfClosedDates() {
         Clock clock = initClock(LocalDate.of(2016, 5, 10));
         LibraryBean bean = new LibraryBean();
         bean.setStengt_fra("2016-05-10");
@@ -36,7 +35,7 @@ public class LibraryBeanTest {
     }
 
     @Test
-    public void IsOpenShoudBeFalseWhenAtTheEndOfClosedDates() {
+    public void isOpenShoudBeFalseWhenAtTheEndOfClosedDates() {
         Clock clock = initClock(LocalDate.of(2016, 5, 20));
         LibraryBean bean = new LibraryBean();
         bean.setStengt_fra("2016-05-10");
@@ -46,7 +45,7 @@ public class LibraryBeanTest {
     }
 
     @Test
-    public void IsOpenShoudBeTrueWhenAfterTheEndOfClosedDates() {
+    public void isOpenShoudBeTrueWhenAfterTheEndOfClosedDates() {
         Clock clock = initClock(LocalDate.of(2016, 5, 25));
         LibraryBean bean = new LibraryBean();
         bean.setStengt_fra("2016-05-10");
@@ -56,7 +55,7 @@ public class LibraryBeanTest {
     }
 
     @Test
-    public void IsOpenShoudBeTrueWhenBeforeTheBeginningOfClosedDates() {
+    public void isOpenShoudBeTrueWhenBeforeTheBeginningOfClosedDates() {
         Clock clock = initClock(LocalDate.of(2016, 5, 5));
         LibraryBean bean = new LibraryBean();
         bean.setStengt_fra("2016-05-10");
@@ -66,7 +65,7 @@ public class LibraryBeanTest {
     }
 
     @Test
-    public void IsOpenShoudBeTrueWhenNoDatesAreAvailable() {
+    public void isOpenShoudBeTrueWhenNoDatesAreAvailable() {
         Clock clock = initClock(LocalDate.of(2016, 5, 5));
         LibraryBean bean = new LibraryBean();
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
@@ -74,7 +73,7 @@ public class LibraryBeanTest {
     }
 
     @Test
-    public void IsOpenShoudBWorkWhenOnlyBeginningDateIsAvailable() {
+    public void isOpenShoudBWorkWhenOnlyBeginningDateIsAvailable() {
         Clock clock = initClock(LocalDate.of(2016, 5, 5));
         LibraryBean bean = new LibraryBean();
         bean.setStengt_fra("2016-05-05");
@@ -83,7 +82,7 @@ public class LibraryBeanTest {
     }
 
     @Test
-    public void IsOpenShoudBWorkWhenOnlyEndDateIsAvailable2() {
+    public void isOpenShoudBWorkWhenOnlyEndDateIsAvailable2() {
         Clock clock = initClock(LocalDate.of(2016, 5, 5));
         LibraryBean bean = new LibraryBean();
         bean.setStengt_til("2016-05-06");
@@ -92,7 +91,7 @@ public class LibraryBeanTest {
     }
 
     @Test
-    public void IsOpenShoudBeFalseIfClosedTagHasValue() {
+    public void isOpenShoudBeFalseIfClosedTagHasValue() {
 
         Clock clock = initClock(LocalDate.of(2016, 5, 15)); //any date
         LibraryBean bean = new LibraryBean();

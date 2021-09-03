@@ -21,27 +21,24 @@ import java.util.List;
 public class BaseBibliotekClient {
 
 
-    private static final String BASEBIBLIOTEK_BIBNR_URL = "BASEBIBLIOTEK_BIBNR_URL";
+    private static final String BASEBIBLIOTEK_BIBNR_URL_KEY = "BASEBIBLIOTEK_BIBNR_URL";
 
-    private static String basebibliotekBibnrUrl;
+    protected transient String basebibliotekBibnrUrl;
 
-    private static JAXBContext jaxbContext;
-    Unmarshaller jaxbUnmarshaller;
+    private final Unmarshaller jaxbUnmarshaller;
 
-    private HTTPConnectionWrapper httpConnectionWrapper;
+    private final HTTPConnectionWrapper httpConnectionWrapper;
 
     public BaseBibliotekClient(Environment environment) throws JAXBException {
-        this.basebibliotekBibnrUrl = environment.readEnv(BASEBIBLIOTEK_BIBNR_URL);
+        this.basebibliotekBibnrUrl = environment.readEnv(BASEBIBLIOTEK_BIBNR_URL_KEY);
         this.httpConnectionWrapper = new HTTPConnectionWrapper();
-        this.jaxbContext = JAXBContext.newInstance(BaseBibliotek.class);
-        this.jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+        this.jaxbUnmarshaller = JAXBContext.newInstance(BaseBibliotek.class).createUnmarshaller();
     }
 
     public BaseBibliotekClient(String basebibliotekBibnrUrl, HTTPConnectionWrapper httpConnectionWrapper) throws JAXBException {
         this.basebibliotekBibnrUrl = basebibliotekBibnrUrl;
         this.httpConnectionWrapper = httpConnectionWrapper;
-        this.jaxbContext = JAXBContext.newInstance(BaseBibliotek.class);
-        this.jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+        this.jaxbUnmarshaller = JAXBContext.newInstance(BaseBibliotek.class).createUnmarshaller();
     }
 
     public LibraryBean libraryLookupByBibnr(String bibnrInput) {
@@ -60,7 +57,6 @@ public class BaseBibliotekClient {
 
     private LibraryBean createLibraryBean(BaseBibliotek baseBibliotek) {
         Record record = baseBibliotek.getRecord().get(0);
-
 
         LibraryBean libraryBean;
         String bibnr = record.getBibnr();

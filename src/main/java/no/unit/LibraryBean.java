@@ -227,9 +227,17 @@ public class LibraryBean {
         this.bibsysBibcode = bibsysBibcode;
     }
 
+    public String getStengt() {
+        return stengt;
+    }
+
+    public void setStengt(String stengt) {
+        this.stengt = stengt;
+    }
+
     @Override
     public String toString() {
-        return "LibraryDBLookupBean{" +
+        return "LibraryBean{" +
                 "bibnr='" + bibnr + '\'' +
                 ", bibkode='" + bibkode + '\'' +
                 ", inst='" + inst + '\'' +
@@ -249,16 +257,9 @@ public class LibraryBean {
                 ", nncipp_server='" + nncipp_server + '\'' +
                 ", stengt_fra=" + stengt_fra +
                 ", stengt_til=" + stengt_til +
+                ", stengt='" + stengt + '\'' +
                 ", bibsysBibcode='" + bibsysBibcode + '\'' +
                 '}';
     }
 
-
-    public String getStengt() {
-        return stengt;
-    }
-
-    public void setStengt(String stengt) {
-        this.stengt = stengt;
-    }
 }

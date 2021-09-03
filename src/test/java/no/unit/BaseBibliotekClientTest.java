@@ -49,7 +49,8 @@ public class BaseBibliotekClientTest {
 
     @Test
     public void libraryLookupByBibnrThatReturnsWithoutBibcode() throws IOException {
-        InputStream inputstreamFromFile = getClass().getResourceAsStream("/sampleLibraryFromBaseBibliotekUtenBibkode.xml");
+        InputStream inputstreamFromFile =
+                getClass().getResourceAsStream("/sampleLibraryFromBaseBibliotekUtenBibkode.xml");
         when(httpConnectionWrapper.getResourceAsInputStreamUsingByteArray(anyString())).thenReturn(inputstreamFromFile);
         LibraryBean libraryBean = baseBibliotekClient.libraryLookupByBibnr("xxxxx");
         assertNull(libraryBean);
@@ -57,7 +58,8 @@ public class BaseBibliotekClientTest {
 
     @Test
     public void libraryLookupByBibnrThatReturnsWithoutLangCode() throws IOException {
-        InputStream inputstreamFromFile = getClass().getResourceAsStream("/sampleLibraryFromBaseBibliotekUtenLandkode.xml");
+        InputStream inputstreamFromFile =
+                getClass().getResourceAsStream("/sampleLibraryFromBaseBibliotekUtenLandkode.xml");
         when(httpConnectionWrapper.getResourceAsInputStreamUsingByteArray(anyString())).thenReturn(inputstreamFromFile);
         LibraryBean libraryBean = baseBibliotekClient.libraryLookupByBibnr("xxxxx");
         assertNull(libraryBean);
