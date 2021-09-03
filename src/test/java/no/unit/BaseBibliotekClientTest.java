@@ -3,8 +3,11 @@ package no.unit;
 import java.io.IOException;
 import java.io.InputStream;
 
+import no.nb.basebibliotek.generated.BaseBibliotek;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import javax.xml.bind.JAXBException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -20,7 +23,7 @@ public class BaseBibliotekClientTest {
     BaseBibliotekClient baseBibliotekClient;
 
     @BeforeEach
-    public void init() {
+    public void init() throws JAXBException {
         this.httpConnectionWrapper = mock(HTTPConnectionWrapper.class);
         this.baseBibliotekClient = new BaseBibliotekClient(SAMPLE_BASEBIBLIOTEK_URL, httpConnectionWrapper);
     }

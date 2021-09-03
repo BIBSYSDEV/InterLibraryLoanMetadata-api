@@ -1,35 +1,16 @@
 package no.unit;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
 public class HTTPConnectionWrapper {
 
     public static final int READ_TIMEOUT = 4_000;
     public static final int CONNECT_TIMEOUT = 8_000;
-
-    public String getResourceAsString(String urlString) throws IOException {
-        HttpURLConnection connection = getHttpURLConnection(urlString);
-        StringBuilder stringBuilder = new StringBuilder();
-        try (BufferedReader bufferedReader =
-                     new BufferedReader(
-                             new InputStreamReader(
-                                     connection.getInputStream(), StandardCharsets.UTF_8
-                             )
-                     )
-        ) {
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-        } catch (Exception e) {
-            throw new IOException("Connection failed. Could not read from connection", e);
-
-        }
-        return stringBuilder.toString();
-    }
 
     //Must read connection to BaseBibliotek with byteArray because newlines in values (inst)
     public InputStream getResourceAsInputStreamUsingByteArray(String urlString) throws IOException {

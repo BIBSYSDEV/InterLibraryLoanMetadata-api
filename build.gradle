@@ -13,35 +13,18 @@ version '1.0-SNAPSHOT'
 sourceCompatibility = JavaVersion.VERSION_11  // source-code version and must be <= targetCompatibility
 targetCompatibility = JavaVersion.VERSION_11 // bytecode target version
 
-configurations {
-    jaxb
-}
-
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
 }
 
-task genJaxb {
-    ext.sourcesDir = "${buildDir}/generated/jaxb"
-    outputs.dir sourcesDir
-
-    doLast() {
-        project.ant {
-            // Create output directories
-            mkdir(dir: sourcesDir)
-
-            taskdef name: 'xjc', classname: 'com.sun.tools.xjc.XJCTask', classpath: configurations.jaxb.asPath
-
-            xjc(destdir: sourcesDir) {
-                schema(dir: "${projectDir}/src/main/xsd", includes: '**/*.xsd')
-                produces(dir: sourcesDir, includes: '**/*.java')
-            }
-        }
-    }
+project.ext {
+    jaxbTargetDir = file("src/main/java")
 }
 
-build.dependsOn genJaxb
+configurations {
+    xsd2java
+}
 
 dependencies {
     implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
@@ -51,17 +34,20 @@ dependencies {
     implementation group: 'com.amazonaws', name: 'aws-lambda-java-events', version: '3.10.0'
     implementation group: 'com.amazonaws', name: 'aws-lambda-java-core', version: '1.2.1'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.8'
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.12.4'
-    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.7.2'
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-core', version: '1.11.946'
     implementation group: 'com.amazonaws', name: 'aws-lambda-java-core', version: '1.2.1'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
     implementation group: 'com.github.BIBSYSDEV', name: 'nva-commons', version: '0.7.4'
-    compile 'net.java.dev.rome:rome:1.0.0'
-    compile 'jaxen:jaxen:1.2.0'
-    compile(files(genJaxb.sourcesDir).builtBy(genJaxb))
-    jaxb 'com.sun.xml.bind:jaxb-xjc:2.1.7'
-    compile 'javax.xml.bind:jaxb-api:2.2.3'
+//    implementation group: 'net.java.dev.rome', name:'rome', version:'1.0.0'
+//    implementation group: 'jaxen', name:'jaxen', version:'1.2.0'
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.7'
+    compile group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '2.3.1'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.12.4'
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.7.2'
+    xsd2java group: 'com.sun.xml.bind', name: 'jaxb-xjc', version: '2.2.6'
+    xsd2java group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '2.2.6'
+    xsd2java group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.7'
+    xsd2java group: 'javax.activation', name:'javax.activation-api', version: '1.2.0'
 
     shadowJar {
         archiveClassifier.set('')
@@ -69,8 +55,19 @@ dependencies {
     }
 }
 
-
-
+task xsd2java() {
+    doLast {
+        jaxbTargetDir.mkdirs()
+        ant.taskdef(name: 'xjc', classname: 'com.sun.tools.xjc.XJCTask', classpath: configurations.xsd2java.asPath)
+        ant.jaxbTargetDir = jaxbTargetDir
+        ant.xjc(
+                destdir: '${jaxbTargetDir}',
+                package: 'no.nb.basebibliotek.generated',
+                schema: 'src/main/xsd/basebibliotek.xsd'
+        )
+    }
+}
+compileJava.dependsOn xsd2java
 
 test {
     useJUnitPlatform()

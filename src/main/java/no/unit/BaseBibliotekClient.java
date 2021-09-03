@@ -1,15 +1,20 @@
 package no.unit;
 
-import com.sun.syndication.io.SAXBuilder;
+import no.nb.basebibliotek.generated.BaseBibliotek;
+import no.nb.basebibliotek.generated.Eressurser;
+import no.nb.basebibliotek.generated.Record;
 import nva.commons.utils.Environment;
 import org.apache.commons.lang3.StringUtils;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.xpath.XPath;
 
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 
@@ -20,89 +25,107 @@ public class BaseBibliotekClient {
 
     private static String basebibliotekBibnrUrl;
 
+    private static JAXBContext jaxbContext;
+    Unmarshaller jaxbUnmarshaller;
+
     private HTTPConnectionWrapper httpConnectionWrapper;
 
-    public BaseBibliotekClient(Environment environment) {
+    public BaseBibliotekClient(Environment environment) throws JAXBException {
         this.basebibliotekBibnrUrl = environment.readEnv(BASEBIBLIOTEK_BIBNR_URL);
         this.httpConnectionWrapper = new HTTPConnectionWrapper();
+        this.jaxbContext = JAXBContext.newInstance(BaseBibliotek.class);
+        this.jaxbUnmarshaller = jaxbContext.createUnmarshaller();
     }
 
-    public BaseBibliotekClient(String basebibliotekBibnrUrl, HTTPConnectionWrapper httpConnectionWrapper) {
+    public BaseBibliotekClient(String basebibliotekBibnrUrl, HTTPConnectionWrapper httpConnectionWrapper) throws JAXBException {
         this.basebibliotekBibnrUrl = basebibliotekBibnrUrl;
         this.httpConnectionWrapper = httpConnectionWrapper;
+        this.jaxbContext = JAXBContext.newInstance(BaseBibliotek.class);
+        this.jaxbUnmarshaller = jaxbContext.createUnmarshaller();
     }
 
     public LibraryBean libraryLookupByBibnr(String bibnrInput) {
         LibraryBean libraryBean = null;
         try {
             String url = basebibliotekBibnrUrl + bibnrInput;
-            SAXBuilder builder = new SAXBuilder(false);
             InputStream document = httpConnectionWrapper.getResourceAsInputStreamUsingByteArray(url);
-            libraryBean = parseResultFromService(builder.build(document));
-        } catch (IOException | JDOMException ex) {
-//            log.error("Could not retrieve library. Bibnr=" + bibnrInput, ex);
+            BaseBibliotek baseBibliotek = (BaseBibliotek) jaxbUnmarshaller.unmarshal(document);
+            libraryBean = createLibraryBean(baseBibliotek);
+        } catch (IOException | JAXBException e) {
+            e.printStackTrace();
         }
         return libraryBean;
     }
 
 
-    private LibraryBean parseResultFromService(Document xmlDoc) throws JDOMException {
-        LibraryBean libbean;
-        String bibnr = extractNodeTextFromDocument("bibnr", xmlDoc);
-        String landkode = extractNodeTextFromDocument("landkode", xmlDoc);
+    private LibraryBean createLibraryBean(BaseBibliotek baseBibliotek) {
+        Record record = baseBibliotek.getRecord().get(0);
+
+
+        LibraryBean libraryBean;
+        String bibnr = record.getBibnr();
+        String landkode = record.getLandkode();
         if (StringUtils.isEmpty(bibnr) || StringUtils.isEmpty(landkode)) {
-//            log.warn("Bibnr and/or landkode was empty: [bibnr={}]; [landkode={}]", bibnr, landkode);
             return null;
         } else {
-            libbean = new LibraryBean();
-            libbean.setLandkode(landkode);
-            String isilID = landkode.toUpperCase() + "-" + bibnr;   // Prefix to get  ISIL-number for shared partners
-            libbean.setBibnr(isilID);
-            libbean.setBibkode(extractNodeTextFromDocument("bibkode", xmlDoc));
-            libbean.setBibsysBibcode(extractNodeTextFromDocument("bibsys_bib", xmlDoc));
-            libbean.setStengt(extractNodeTextFromDocument("stengt", xmlDoc));
-            libbean.setInst(extractNodeTextFromDocument("inst", xmlDoc));
-            libbean.setPadr(extractNodeTextFromDocument("padr", xmlDoc));
-            libbean.setPpostnr(extractNodeTextFromDocument("ppostnr", xmlDoc));
-            libbean.setPpoststed(extractNodeTextFromDocument("ppoststed", xmlDoc));
-            libbean.setVadr(extractNodeTextFromDocument("vadr", xmlDoc));
-            libbean.setVpostnr(extractNodeTextFromDocument("vpostnr", xmlDoc));
-            libbean.setVpoststed(extractNodeTextFromDocument("vpoststed", xmlDoc));
-            libbean.setTlf(extractNodeTextFromDocument("tlf", xmlDoc));
-            libbean.setEpost_adr(extractNodeTextFromDocument("epost_adr", xmlDoc));
-            libbean.setEpost_best(extractNodeTextFromDocument("epost_best", xmlDoc));
-            libbean.setKatsyst(extractNodeTextFromDocument("katsyst", xmlDoc));
-            libbean.setEpost_nill(extractNodeTextFromDocument("epost_nill", xmlDoc));
-            libbean.setEpost_nillkvitt(extractNodeTextFromDocument("epost_nillkvitt", xmlDoc));
-            libbean.setNncipp_server(StringUtils.trimToEmpty(extractNodeTextFromDocument("nncip_uri", xmlDoc)));
-            libbean.setStengt_til(extractNodeTextFromDocument("stengt_til", xmlDoc));
-            libbean.setStengt_fra(extractNodeTextFromDocument("stengt_fra", xmlDoc));
+            libraryBean = new LibraryBean();
+            libraryBean.setLandkode(landkode);
+            libraryBean.setBibnr(record.getIsil());
+            libraryBean.setBibkode(record.getBibkode());
+//            libraryBean.setBibsysBibcode(extractNodeTextFromDocument("bibsys_bib", xmlDoc));
+            libraryBean.setStengt(record.getStengt());
+            libraryBean.setInst(record.getInst());
+            libraryBean.setPadr(record.getPadr());
+            libraryBean.setPpostnr(record.getPpostnr());
+            libraryBean.setPpoststed(record.getPpoststed());
+            libraryBean.setVadr(record.getVadr());
+            libraryBean.setVpostnr(record.getVpostnr());
+            libraryBean.setVpoststed(record.getVpoststed());
+            libraryBean.setTlf(record.getTlf());
+            libraryBean.setEpost_adr(record.getEpostAdr());
+            libraryBean.setEpost_best(record.getEpostBest());
+            libraryBean.setKatsyst(record.getKatsyst());
+//            libraryBean.setEpost_nill(extractNodeTextFromDocument("epost_nill", xmlDoc));
+//            libraryBean.setEpost_nillkvitt(extractNodeTextFromDocument("epost_nillkvitt", xmlDoc));
+            libraryBean.setNncipp_server(getNncipUri(record));
+
+            libraryBean.setStengt_til(createDateString(record.getStengtTil()));
+            libraryBean.setStengt_fra(createDateString(record.getStengtFra()));
+
             // Hack : If padr is empty set content of ppoststed
-
-            if (libbean.getPadr().isEmpty()) {
-                if (!libbean.getPpoststed().isEmpty()) {
-                    libbean.setPadr(libbean.getPpoststed());
+            if (libraryBean.getPadr() == null) {
+                if (libraryBean.getPpoststed() != null) {
+                    libraryBean.setPadr(libraryBean.getPpoststed());
                 }
             }
+
             // Hack: If vadr is empty set content of vpoststed
-            if (libbean.getVadr().isEmpty()) {
-                if (!libbean.getVpoststed().isEmpty()) {
-                    libbean.setVadr(libbean.getVpoststed());
+            if (libraryBean.getVadr() == null) {
+                if (libraryBean.getVpoststed() != null) {
+                    libraryBean.setVadr(libraryBean.getVpoststed());
                 }
             }
         }
-//        log.debug(libbean.toString());
-        return libbean;
+        return libraryBean;
     }
 
-    private String extractNodeTextFromDocument(String nodename, Document xmlDoc) throws JDOMException {
-        XPath xpath = XPath.newInstance("//*[local-name() = '" + nodename + "']");
-        List<Element> nodes = xpath.selectNodes(xmlDoc);
-        String nodeText = "";
-        if (nodes.size() > 0) {
-            Element e = nodes.get(0);
-            nodeText = e.getValue();
+    private String createDateString(XMLGregorianCalendar xmlGregorianCalendar) {
+        if (xmlGregorianCalendar == null) {
+            return null;
         }
-        return nodeText;
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        return df.format(xmlGregorianCalendar.toGregorianCalendar().getTime());
     }
+
+    private String getNncipUri(Record record) {
+        Eressurser eressurser = record.getEressurser();
+        List<JAXBElement<String>> elementList = eressurser.getOAIOrSRUOrArielIp();
+        for (JAXBElement<String> element : elementList) {
+            if("nncip_uri".equals(element.getName().getLocalPart())) {
+                return element.getValue().trim();
+            }
+        }
+        return null;
+    }
+
 }
