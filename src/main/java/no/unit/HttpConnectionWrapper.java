@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class HTTPConnectionWrapper {
+public class HttpConnectionWrapper {
 
     public static final int READ_TIMEOUT = 4_000;
     public static final int CONNECT_TIMEOUT = 8_000;

@@ -3,7 +3,6 @@ package no.unit;
 import java.io.IOException;
 import java.io.InputStream;
 
-import no.nb.basebibliotek.generated.BaseBibliotek;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,12 +18,12 @@ public class BaseBibliotekClientTest {
 
     private static final String SAMPLE_BASEBIBLIOTEK_URL = "https://unit.no/test";
 
-    HTTPConnectionWrapper httpConnectionWrapper;
+    HttpConnectionWrapper httpConnectionWrapper;
     BaseBibliotekClient baseBibliotekClient;
 
     @BeforeEach
     public void init() throws JAXBException {
-        this.httpConnectionWrapper = mock(HTTPConnectionWrapper.class);
+        this.httpConnectionWrapper = mock(HttpConnectionWrapper.class);
         this.baseBibliotekClient = new BaseBibliotekClient(SAMPLE_BASEBIBLIOTEK_URL, httpConnectionWrapper);
     }
 

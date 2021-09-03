@@ -27,15 +27,15 @@ public class BaseBibliotekClient {
 
     private final Unmarshaller jaxbUnmarshaller;
 
-    private final HTTPConnectionWrapper httpConnectionWrapper;
+    private final HttpConnectionWrapper httpConnectionWrapper;
 
     public BaseBibliotekClient(Environment environment) throws JAXBException {
         this.basebibliotekBibnrUrl = environment.readEnv(BASEBIBLIOTEK_BIBNR_URL_KEY);
-        this.httpConnectionWrapper = new HTTPConnectionWrapper();
+        this.httpConnectionWrapper = new HttpConnectionWrapper();
         this.jaxbUnmarshaller = JAXBContext.newInstance(BaseBibliotek.class).createUnmarshaller();
     }
 
-    public BaseBibliotekClient(String basebibliotekBibnrUrl, HTTPConnectionWrapper httpConnectionWrapper) throws JAXBException {
+    public BaseBibliotekClient(String basebibliotekBibnrUrl, HttpConnectionWrapper httpConnectionWrapper) throws JAXBException {
         this.basebibliotekBibnrUrl = basebibliotekBibnrUrl;
         this.httpConnectionWrapper = httpConnectionWrapper;
         this.jaxbUnmarshaller = JAXBContext.newInstance(BaseBibliotek.class).createUnmarshaller();
