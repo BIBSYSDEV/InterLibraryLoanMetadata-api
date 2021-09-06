@@ -9,6 +9,7 @@ public class Config {
     public static final String INSTITUTIONSERVICE_ENDPOINT_KEY = "INSTITUTIONSERVICE_ENDPOINT";
 
     private String corsHeader;
+
     private String institutionServiceHost;
 
     private Config() {
