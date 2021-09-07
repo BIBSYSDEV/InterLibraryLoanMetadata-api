@@ -27,7 +27,7 @@ public class MetadataHandlerTest {
         Map<String, String> queryParameters = new HashMap<>();
         String fysiologibok = "BIBSYS_ILS71560264980002201";
         String leksikon = "BIBSYS_ILS71463631120002201";
-        queryParameters.put(MetadataHandler.DOCUMENT_ID_KEY, leksikon);
+        queryParameters.put(MetadataHandler.DOCUMENT_ID_KEY, fysiologibok);
         event.put(MetadataHandler.QUERY_STRING_PARAMETERS_KEY, queryParameters);
         MetadataHandler app = new MetadataHandler();
         when(awsContext.getLogger()).thenReturn(logger);

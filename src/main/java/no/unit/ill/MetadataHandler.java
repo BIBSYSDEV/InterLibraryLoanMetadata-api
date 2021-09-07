@@ -2,7 +2,8 @@ package no.unit.ill;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import no.unit.xservice.XServices;
+import no.unit.pnxservice.HTTPConnectionWrapper;
+import no.unit.pnxservice.PNXServices;
 import org.json.JSONObject;
 
 import javax.ws.rs.core.Response;
@@ -29,6 +30,7 @@ public class MetadataHandler implements RequestHandler<Map<String, Object>, Gate
             gatewayResponse.setStatusCode(Response.Status.BAD_REQUEST.getStatusCode());
             return gatewayResponse;
         }
+        @SuppressWarnings("unchecked")
         Map<String, String> queryStringParameters = (Map<String, String>) input.get(QUERY_STRING_PARAMETERS_KEY);
         String documentId = queryStringParameters.get(DOCUMENT_ID_KEY);
 
@@ -43,7 +45,7 @@ public class MetadataHandler implements RequestHandler<Map<String, Object>, Gate
     }
 
     private JSONObject getXServiceData(Context context, String documentId) {
-        XServices xServices = new XServices(context);
+        PNXServices xServices = new PNXServices(context, new HTTPConnectionWrapper(), "", "");
         return xServices.doStuff(documentId);
     }
 

@@ -1,11 +1,9 @@
-package no.unit.xservice;
+package no.unit.pnxservice;
 
 import java.net.HttpURLConnection;
 import java.io.*;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 
 
 public class HTTPConnectionWrapper {
@@ -28,6 +26,7 @@ public class HTTPConnectionWrapper {
                 stringBuilder.append(line);
             }
         } catch (Exception e) {
+            System.out.println("INSIDE GET RESOURCE AS STRING" + e);
             throw new IOException("Connection failed. Could not read from connection", e);
 
         }
