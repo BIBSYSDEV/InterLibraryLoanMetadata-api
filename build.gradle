@@ -4,7 +4,7 @@ plugins {
     id 'pmd'
     id 'jacoco'
     id 'com.github.johnrengelman.shadow' version '5.2.0'
-    id "org.owasp.dependencycheck" version "6.2.2"
+    id "org.owasp.dependencycheck" version "6.3.0"
 }
 
 group 'no.unit'
@@ -15,7 +15,6 @@ targetCompatibility = JavaVersion.VERSION_11 // bytecode target version
 
 repositories {
     mavenCentral()
-    maven { url 'https://jitpack.io' }
 }
 
 project.ext {
@@ -27,6 +26,7 @@ configurations {
 }
 
 dependencies {
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.32'
     implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
     implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
@@ -120,7 +120,7 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'METHOD'
                 value = 'COVEREDRATIO'
-                minimum = 0.40
+                minimum = 0.9
             }
         }
 
@@ -128,7 +128,7 @@ jacocoTestCoverageVerification {
             limit {
                 counter = 'CLASS'
                 value = 'COVEREDRATIO'
-                minimum = 0.6
+                minimum = 1.0
             }
         }
     }
