@@ -1,39 +1,38 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
   Sets up lambda, api and base path mapping to fetch most recent publication for an author
 Parameters:
   CustomDomain:
     Type: AWS::SSM::Parameter::Value<String>
-    Default: '/api/domainName'
+    Default: "/api/domainName"
     Description: (Optional) Custom domain name for the API endpoint
   CustomDomainBasePath:
     Type: String
-    Default: 'interLibraryLoanMetadata'
+    Default: "interLibraryLoanMetadata"
     Description: (Optional) Base path mapping in CustomDomain
     AllowedPattern: "^[a-zA-Z0-9$\\-_.+!*'(),]*$"
     ConstraintDescription: "May contain only letters, numbers and one of $-_.+!*'(),"
-  SruEndpoint:
+  InstitutionServiceEndpoint:
     Type: String
     Description: Url Endpoint to the SRU server
-    Default: 'bibsys.ill.metadata.com'
+    Default: "instservice-test.bibsys.no"
 
 Conditions:
-  HasDomainName: !Not [!Equals [!Ref CustomDomain, '']]
-  HasCustomDomainBasePath: !Not [!Equals [!Ref CustomDomainBasePath, '']]
+  HasDomainName: !Not [!Equals [!Ref CustomDomain, ""]]
+  HasCustomDomainBasePath: !Not [!Equals [!Ref CustomDomainBasePath, ""]]
 
 Globals:
   Function:
     Timeout: 20
   Api:
     Cors:
-      AllowHeaders: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'''
-      AllowMethods: '''OPTIONS, GET'''
-      AllowOrigin: '''*'''
+      AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+      AllowMethods: "'OPTIONS, GET'"
+      AllowOrigin: "'*'"
     EndpointConfiguration: REGIONAL
 
 Resources:
-
   InterLibraryLoanMetadataApi:
     Type: AWS::Serverless::Api
     Metadata:
@@ -58,12 +57,12 @@ Resources:
         openapi: 3.0.3
         info:
           title: Inter Library Loan Metadata API
-          version: '1.0'
+          version: "1.0"
         paths:
           /:
             get:
-              summary:  Get bibliographic metadata by document id
-              description:  gets bibliographic metadata by document_id
+              summary: Get bibliographic metadata by document id
+              description: gets bibliographic metadata by document_id
               consumes:
                 - application/json
               produces:
@@ -81,13 +80,13 @@ Resources:
                 httpMethod: POST
                 type: AWS_PROXY
               responses:
-                '200':
+                "200":
                   description: inter library loan metadata
                   content:
                     application/json:
                       schema:
-                        $ref: '#/components/schemas/getInterLibraryLoanRecordResponseBody'
-                '400':
+                        $ref: "#/components/schemas/getInterLibraryLoanRecordResponseBody"
+                "400":
                   description: Bad request.
                   content:
                     application/json:
@@ -98,7 +97,7 @@ Resources:
                           error:
                             type: string
                             description: error message
-                '500':
+                "500":
                   description: Internal server error.
                   content:
                     application/json:
@@ -125,9 +124,9 @@ Resources:
     Properties:
       Environment:
         Variables:
-          ALLOWED_ORIGIN:  '*'
-          ILL_METADATA_HOST: !Ref SruEndpoint
-      Handler: no.unit.ill.MetadataHandler::handleRequest
+          ALLOWED_ORIGIN: "*"
+          INSTITUTIONSERVICE_ENDPOINT: !Ref InstitutionServiceEndpoint
+      Handler: no.unit.MetadataHandler::handleRequest
       Runtime: java11
       MemorySize: 1024
       Events:
@@ -145,7 +144,7 @@ Resources:
       BasePath: !If
         - HasCustomDomainBasePath
         - !Ref CustomDomainBasePath
-        - !Ref 'AWS::NoValue'
+        - !Ref "AWS::NoValue"
       DomainName: !Ref CustomDomain
       RestApiId: !Ref InterLibraryLoanMetadataApi
       Stage: !Ref InterLibraryLoanMetadataApi.Stage
