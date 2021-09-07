@@ -44,7 +44,7 @@ public class PNXServicesTest {
         String apiKey = "megaSecret";
         String docId = "BIBSYS_ILS71463631120002201";
         String expected = "https://thesourceoftruth.com/primo/v1/search?vid=NB&tab=default_tab&scope=default_scope&q=any,contains,BIBSYS_ILS71463631120002201&lang=eng&apikey=megaSecret";
-        PNXServices pnxServices = new PNXServices(awsContext, connectionWrapper, apiKey, host);
+        Pnxervices pnxServices = new Pnxervices(awsContext, connectionWrapper, apiKey, host);
         assertEquals(expected, pnxServices.generateUrl(docId, host, apiKey));
     }
 
@@ -56,9 +56,9 @@ public class PNXServicesTest {
         JSONObject fullPNXExample2 = createJSON(FULL_PNX_EXAMPLE_2);
         JSONObject condensedPNXFromFile1 = createJSON(CONDENSED_PNX_EXAMPLE_1);
         JSONObject condensedPNXFromFile2 = createJSON(CONDENSED_PNX_EXAMPLE_2);
-        PNXServices pnxServices = new PNXServices(awsContext, connectionWrapper, "", "");
-        JSONObject pnxServicesCondensedExample1 = pnxServices.extractUsefulDataFromXservice(fullPNXExample1);
-        JSONObject pnxServicesCondensedExample2 = pnxServices.extractUsefulDataFromXservice(fullPNXExample2);
+        Pnxervices pnxervices = new Pnxervices(awsContext, connectionWrapper, "", "");
+        JSONObject pnxServicesCondensedExample1 = pnxervices.extractUsefulDataFromXservice(fullPNXExample1);
+        JSONObject pnxServicesCondensedExample2 = pnxervices.extractUsefulDataFromXservice(fullPNXExample2);
         assertTrue(condensedPNXFromFile1.similar(pnxServicesCondensedExample1));
         assertTrue(condensedPNXFromFile2.similar(pnxServicesCondensedExample2));
     }
@@ -70,8 +70,8 @@ public class PNXServicesTest {
         JSONObject fullPNXExample1 = createJSON(FULL_PNX_EXAMPLE_1);
         JSONObject fullPNXExample2 = createJSON(FULL_PNX_EXAMPLE_2);
 
-        PNXServices pnxServices = new PNXServices(awsContext, connectionWrapper, "", "");
-        JSONArray combined = pnxServices.combineMMSIdANDLibraries(fullPNXExample1);
+        Pnxervices pnxervices = new Pnxervices(awsContext, connectionWrapper, "", "");
+        JSONArray combined = pnxervices.combineMMSidAndLibraries(fullPNXExample1);
 
 
     }

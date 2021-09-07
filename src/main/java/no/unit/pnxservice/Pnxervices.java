@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class PNXServices {
+public class Pnxervices {
 
     private static final String PRIMO_RECORD_PREFIX = "TN_";
     private final LambdaLogger logger;
@@ -21,7 +21,14 @@ public class PNXServices {
     private final String host;
 
 
-    public PNXServices(Context awsContext, HTTPConnectionWrapper connection, String apiKey, String host) {
+    /**
+     *contructor.
+     * @param awsContext the handler functions receives this from AWS
+     * @param connection used for fetching the PNX data
+     * @param apiKey for contacting Primo Rest service
+     * @param host example: https://www.example.com
+     */
+    public Pnxervices(Context awsContext, HTTPConnectionWrapper connection, String apiKey, String host) {
         logger = awsContext.getLogger();
         this.connection = connection;
         this.apiKey = apiKey;
@@ -29,24 +36,42 @@ public class PNXServices {
 
     }
 
+    /**
+     * generates url.
+     * @param docID identifier used for retrieving the pnx
+     * @param host   with prefix https://
+     * @param apiKey for contacting the api
+     * @return url string
+     */
     protected String generateUrl(String docID, String host, String apiKey) {
         return host + "/primo/v1/search?vid=NB&tab=default_tab&scope=default_scope&q=any,contains,"
                 + docID + "&lang=eng&apikey=" + apiKey;
     }
 
+    /**
+     * copied from old version.
+     * @param docID used for retrieving the PNX record
+     * @return docID without primoRecordPrefix
+     */
     private String removePrimoRecordPrefix(String docID) {
         return docID.replaceFirst(PRIMO_RECORD_PREFIX, "");
     }
 
-    public JSONObject doStuff(String document_id) {
-        String docID = removePrimoRecordPrefix(document_id);
+
+    /**
+     * Preprosess document_id and generates URL before fetching the full PNX record.
+     * @param documentId for retrieving the pnx record
+     * @return JSONObject fullPNX
+     */
+    public JSONObject doStuff(String documentId) {
+        String docID = removePrimoRecordPrefix(documentId);
         String url = generateUrl(docID, host, apiKey);
         System.out.println("URL:" + url);
         return getFullPNX(url);
     }
 
     /**
-     *
+     * fetches the pnx record from the api and converts it to a JSONObject.
      * @param url to the api-endpint
      * @return JSONObject fullPNXrecord
      */
@@ -73,7 +98,7 @@ public class PNXServices {
     }
 
     /**
-     *
+     * Function for extracting data needed for the frontend.
      * @param response from REST api
      * @return JSONOBject with only relevant attributes
      * @throws JSONException if the response from REST api is not a PNX json
@@ -81,14 +106,8 @@ public class PNXServices {
     protected JSONObject extractUsefulDataFromXservice(JSONObject response) throws JSONException {
         JSONObject pnx = response.getJSONArray("docs").getJSONObject(0).getJSONObject("pnx");
         JSONObject extractedData = new JSONObject();
-
-        JSONObject addata = pnx.getJSONObject("addata");
-        JSONObject display = pnx.getJSONObject("display");
-        JSONObject facets = pnx.getJSONObject("facets");
-        JSONObject search = pnx.getJSONObject("search");
         JSONObject control = pnx.getJSONObject("control");
-
-
+        JSONObject search = pnx.getJSONObject("search");
         if (search.has("sourceid")) {
             extractedData.put("source", search.get("sourceid"));
         } else if (control.has("sourceid")) {
@@ -97,6 +116,7 @@ public class PNXServices {
         if (control.has("recordid")) {
             extractedData.put("record_id", control.get("recordid"));
         }
+        JSONObject addata = pnx.getJSONObject("addata");
         if (addata.has("isbn")) {
             extractedData.put("isbn", search.get("isbn"));
         }
@@ -114,9 +134,10 @@ public class PNXServices {
         } else {
             extractedData.put("mms_id", new JSONArray());
         }
-        if(addata.has("pages")){
-          extractedData.put("pages", addata.get("pages"));
+        if (addata.has("pages")) {
+            extractedData.put("pages", addata.get("pages"));
         }
+        JSONObject display = pnx.getJSONObject("display");
         if (display.has("creationdate")) {
             extractedData.put("creation_year", display.get("creationdate"));
         }
@@ -126,9 +147,10 @@ public class PNXServices {
         if (display.has("title")) {
             extractedData.put("display_title", display.get("title"));
         }
-        if(display.has("publisher")){
+        if (display.has("publisher")) {
             extractedData.put("publisher", display.get("publisher"));
         }
+        JSONObject facets = pnx.getJSONObject("facets");
         if (facets.has("library")) {
             extractedData.put("libraries", facets.get("library"));
         } else {
@@ -138,12 +160,12 @@ public class PNXServices {
     }
 
     /**
-     *
-     * @param fullPNXResponse, will not be mutated
+     * not finished.
+     * @param fullPnxResponse from the api
      * @return JSONArray of combinedMMSidsAndLibraries
      */
-    protected JSONArray combineMMSIdANDLibraries(JSONObject fullPNXResponse) {
-        JSONObject pnx = fullPNXResponse.getJSONArray("docs").getJSONObject(0).getJSONObject("pnx");
+    protected JSONArray combineMMSidAndLibraries(JSONObject fullPnxResponse) {
+        JSONObject pnx = fullPnxResponse.getJSONArray("docs").getJSONObject(0).getJSONObject("pnx");
         JSONObject addata = pnx.getJSONObject("addata");
         JSONObject facets = pnx.getJSONObject("facets");
 
@@ -175,14 +197,14 @@ public class PNXServices {
         mmsIdsJson.forEach(mmsIdWithLibrary -> {
             String mmsIdWithLibraryString = mmsIdWithLibrary.toString();
             String[] mmsIdsWithLIbraryStringSplitted = mmsIdWithLibraryString.split("_");
-            if(mmsIdsWithLIbraryStringSplitted.length == 3){
+            if (mmsIdsWithLIbraryStringSplitted.length == 3) {
                 String libraryCode = mmsIdsWithLIbraryStringSplitted[1];
                 String mmsId = mmsIdsWithLIbraryStringSplitted[2];
                 LibrariesWithMMsIds newLibrary = new LibrariesWithMMsIds(libraryCode);
                 int index = librariesWithMMsIds.indexOf(newLibrary);
                 if (index != -1) {
                     librariesWithMMsIds.get(index).addMMId(mmsId);
-                }else {
+                } else {
                     newLibrary.addLibraryNumber(mmsId);
                     librariesWithMMsIds.add(newLibrary);
                 }

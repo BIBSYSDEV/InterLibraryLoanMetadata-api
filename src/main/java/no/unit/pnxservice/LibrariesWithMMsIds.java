@@ -9,29 +9,33 @@ import java.util.List;
 public class LibrariesWithMMsIds {
     private final String institutionId;
     private List<String> libraryNumbers;
-    private List<String> mms_ids;
+    private List<String> mmsIds;
 
+    /**
+     * Constructor.
+     * @param institutionId received from the lad11 record
+     */
     public LibrariesWithMMsIds(String institutionId) {
         this.institutionId = institutionId;
         libraryNumbers = new ArrayList<>();
-        mms_ids = new ArrayList<>();
+        mmsIds = new ArrayList<>();
     }
 
     public void setLibrary_number(List<String> libraryNumbers) {
         this.libraryNumbers = libraryNumbers;
     }
 
-    public void addLibraryNumber(String libraryNumber){
+    public void addLibraryNumber(String libraryNumber) {
         libraryNumbers.add(libraryNumber);
 
     }
 
-    public void setMms_ids(List<String> mms_ids) {
-        this.mms_ids = mms_ids;
+    public void setMms_ids(List<String> mmsIds) {
+        this.mmsIds = mmsIds;
     }
 
-    public void addMMId(String mmsId){
-        mms_ids.add(mmsId);
+    public void addMMId(String mmsId) {
+        mmsIds.add(mmsId);
     }
 
     public String getInstitutionId() {
@@ -43,7 +47,7 @@ public class LibrariesWithMMsIds {
     }
 
     public List<String> getMms_ids() {
-        return mms_ids;
+        return mmsIds;
     }
 
     @Override
@@ -51,15 +55,19 @@ public class LibrariesWithMMsIds {
         if (!(obj instanceof LibrariesWithMMsIds)) {
             return false;
         } else {
-           return this.institutionId.equals(((LibrariesWithMMsIds) obj).institutionId);
+            return this.institutionId.equals(((LibrariesWithMMsIds) obj).institutionId);
         }
     }
 
-    public JSONObject toJSON() {
+    /**
+     * converts LibrariesWithMMSids to a json object.
+     * @return json representation of the object
+     */
+    public JSONObject toJson() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("institusion_id", institutionId);
         jsonObject.put("library_numbers", new JSONArray(libraryNumbers));
-        jsonObject.put("mms_ids", new JSONArray(mms_ids));
+        jsonObject.put("mms_ids", new JSONArray(mmsIds));
         return jsonObject;
     }
 }

@@ -3,7 +3,7 @@ package no.unit.ill;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import no.unit.pnxservice.HTTPConnectionWrapper;
-import no.unit.pnxservice.PNXServices;
+import no.unit.pnxservice.Pnxervices;
 import org.json.JSONObject;
 
 import javax.ws.rs.core.Response;
@@ -39,14 +39,14 @@ public class MetadataHandler implements RequestHandler<Map<String, Object>, Gate
             gatewayResponse.setStatusCode(Response.Status.BAD_REQUEST.getStatusCode());
             return gatewayResponse;
         }
-       // JSONObject xserviceObject = getXServiceData(context, documentId);
-        JSONObject xserviceObject = new JSONObject();
-        return new GatewayResponse(xserviceObject.toString(), 200);
+        // JSONObject pnxServiceObject = getXServiceData(context, documentId);
+        JSONObject pnxServiceObject = new JSONObject();
+        return new GatewayResponse(pnxServiceObject.toString(), 200);
     }
 
     private JSONObject getXServiceData(Context context, String documentId) {
-        PNXServices xServices = new PNXServices(context, new HTTPConnectionWrapper(), "", "");
-        return xServices.doStuff(documentId);
+        Pnxervices pnxServices = new Pnxervices(context, new HTTPConnectionWrapper(), "", "");
+        return pnxServices.doStuff(documentId);
     }
 
 }
