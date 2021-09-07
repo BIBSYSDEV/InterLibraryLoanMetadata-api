@@ -14,6 +14,7 @@ import java.util.Map;
 
 import static no.unit.utils.StringUtils.isEmpty;
 
+@SuppressWarnings({"PMD.UnusedPrivateMethod"})
 public class MetadataHandler implements RequestHandler<Map<String, Object>, GatewayResponse> {
     public static final String QUERY_STRING_PARAMETERS_KEY = "queryStringParameters";
     public static final String MANDATORY_PARAMETERS_MISSING = "Mandatory parameters 'document_id' is missing.";

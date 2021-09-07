@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class LibrariesWithMMsIds {
     private final String institutionId;
@@ -21,21 +22,10 @@ public class LibrariesWithMMsIds {
         mmsIds = new ArrayList<>();
     }
 
-    public void setLibrary_number(List<String> libraryNumbers) {
-        this.libraryNumbers = libraryNumbers;
-    }
+
 
     public void addLibraryNumber(String libraryNumber) {
         libraryNumbers.add(libraryNumber);
-
-    }
-
-    public void setMms_ids(List<String> mmsIds) {
-        this.mmsIds = mmsIds;
-    }
-
-    public void addMMId(String mmsId) {
-        mmsIds.add(mmsId);
     }
 
     public String getInstitutionId() {
@@ -46,8 +36,20 @@ public class LibrariesWithMMsIds {
         return libraryNumbers;
     }
 
-    public List<String> getMms_ids() {
+    public List<String> getMmsIds() {
         return mmsIds;
+    }
+
+    public void addMMId(String mmsId) {
+        mmsIds.add(mmsId);
+    }
+
+    public void setLibraryNumbers(List<String> libraryNumbers) {
+        this.libraryNumbers = libraryNumbers;
+    }
+
+    public void setMmsIds(List<String> mmsIds) {
+        this.mmsIds = mmsIds;
     }
 
     @Override
@@ -69,5 +71,10 @@ public class LibrariesWithMMsIds {
         jsonObject.put("library_numbers", new JSONArray(libraryNumbers));
         jsonObject.put("mms_ids", new JSONArray(mmsIds));
         return jsonObject;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(institutionId);
     }
 }

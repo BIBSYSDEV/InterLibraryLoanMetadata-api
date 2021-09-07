@@ -11,7 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
-
+@SuppressWarnings("PMD")
 public class HTTPConnectionWrapper {
 
     public static final int READ_TIMEOUT = 4_000;

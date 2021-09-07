@@ -10,15 +10,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-
+@SuppressWarnings("PMD")
 public class Pnxervices {
 
     private static final String PRIMO_RECORD_PREFIX = "TN_";
-    private final LambdaLogger logger;
+    private final transient LambdaLogger logger;
 
-    private final HTTPConnectionWrapper connection;
-    private final String apiKey;
-    private final String host;
+    private final transient HTTPConnectionWrapper connection;
+    private final transient String apiKey;
+    private final transient String host;
 
 
     /**
@@ -103,7 +103,7 @@ public class Pnxervices {
      * @return JSONOBject with only relevant attributes
      * @throws JSONException if the response from REST api is not a PNX json
      */
-    protected JSONObject extractUsefulDataFromXservice(JSONObject response) throws JSONException {
+    protected JSONObject extractUsefulDataFromXservice(JSONObject response)  {
         JSONObject pnx = response.getJSONArray("docs").getJSONObject(0).getJSONObject("pnx");
         JSONObject extractedData = new JSONObject();
         JSONObject control = pnx.getJSONObject("control");
@@ -197,7 +197,8 @@ public class Pnxervices {
         mmsIdsJson.forEach(mmsIdWithLibrary -> {
             String mmsIdWithLibraryString = mmsIdWithLibrary.toString();
             String[] mmsIdsWithLIbraryStringSplitted = mmsIdWithLibraryString.split("_");
-            if (mmsIdsWithLIbraryStringSplitted.length == 3) {
+            int standarNumberOfLibrarySplitSections = 3;
+            if (mmsIdsWithLIbraryStringSplitted.length == standarNumberOfLibrarySplitSections) {
                 String libraryCode = mmsIdsWithLIbraryStringSplitted[1];
                 String mmsId = mmsIdsWithLIbraryStringSplitted[2];
                 LibrariesWithMMsIds newLibrary = new LibrariesWithMMsIds(libraryCode);
