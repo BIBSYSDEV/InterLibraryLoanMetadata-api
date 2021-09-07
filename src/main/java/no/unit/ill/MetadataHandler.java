@@ -39,8 +39,8 @@ public class MetadataHandler implements RequestHandler<Map<String, Object>, Gate
             gatewayResponse.setStatusCode(Response.Status.BAD_REQUEST.getStatusCode());
             return gatewayResponse;
         }
-        JSONObject xserviceObject = getXServiceData(context, documentId);
-
+       // JSONObject xserviceObject = getXServiceData(context, documentId);
+        JSONObject xserviceObject = new JSONObject();
         return new GatewayResponse(xserviceObject.toString(), 200);
     }
 
