@@ -3,8 +3,6 @@ package no.unit;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
-import no.unit.ill.GatewayResponse;
-import no.unit.ill.MetadataHandler;
 import org.junit.jupiter.api.Test;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.doNothing;

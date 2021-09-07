@@ -1,4 +1,4 @@
-package no.unit.ill;
+package no.unit;
 
 import no.unit.utils.StringUtils;
 
