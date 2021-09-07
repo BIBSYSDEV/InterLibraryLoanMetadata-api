@@ -1,4 +1,4 @@
-package no.unit;
+package no.unit.ill.services;
 
 import org.junit.jupiter.api.Test;
 
@@ -8,7 +8,7 @@ import java.time.ZoneId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class LibraryBeanTest {
+public class BaseBibliotekBeanTest {
 
     public Clock initClock(LocalDate date) {
         return Clock.fixed(date.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant(), ZoneId.systemDefault());
@@ -17,7 +17,7 @@ public class LibraryBeanTest {
     @Test
     public void isOpenShoudBeFalseWhenInTheMiddleOfClosedDates() {
         Clock clock = initClock(LocalDate.of(2016, 5, 15));
-        LibraryBean bean = new LibraryBean();
+        BaseBibliotekBean bean = new BaseBibliotekBean();
         bean.setStengt_fra("2016-05-10");
         bean.setStengt_til("2016-05-20");
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
@@ -27,7 +27,7 @@ public class LibraryBeanTest {
     @Test
     public void isOpenShoudBeFalseWhenInTheBeginningOfClosedDates() {
         Clock clock = initClock(LocalDate.of(2016, 5, 10));
-        LibraryBean bean = new LibraryBean();
+        BaseBibliotekBean bean = new BaseBibliotekBean();
         bean.setStengt_fra("2016-05-10");
         bean.setStengt_til("2016-05-20");
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
@@ -37,7 +37,7 @@ public class LibraryBeanTest {
     @Test
     public void isOpenShoudBeFalseWhenAtTheEndOfClosedDates() {
         Clock clock = initClock(LocalDate.of(2016, 5, 20));
-        LibraryBean bean = new LibraryBean();
+        BaseBibliotekBean bean = new BaseBibliotekBean();
         bean.setStengt_fra("2016-05-10");
         bean.setStengt_til("2016-05-20");
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
@@ -47,7 +47,7 @@ public class LibraryBeanTest {
     @Test
     public void isOpenShoudBeTrueWhenAfterTheEndOfClosedDates() {
         Clock clock = initClock(LocalDate.of(2016, 5, 25));
-        LibraryBean bean = new LibraryBean();
+        BaseBibliotekBean bean = new BaseBibliotekBean();
         bean.setStengt_fra("2016-05-10");
         bean.setStengt_til("2016-05-20");
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
@@ -57,7 +57,7 @@ public class LibraryBeanTest {
     @Test
     public void isOpenShoudBeTrueWhenBeforeTheBeginningOfClosedDates() {
         Clock clock = initClock(LocalDate.of(2016, 5, 5));
-        LibraryBean bean = new LibraryBean();
+        BaseBibliotekBean bean = new BaseBibliotekBean();
         bean.setStengt_fra("2016-05-10");
         bean.setStengt_til("2016-05-20");
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
@@ -67,7 +67,7 @@ public class LibraryBeanTest {
     @Test
     public void isOpenShoudBeTrueWhenNoDatesAreAvailable() {
         Clock clock = initClock(LocalDate.of(2016, 5, 5));
-        LibraryBean bean = new LibraryBean();
+        BaseBibliotekBean bean = new BaseBibliotekBean();
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
         assertEquals(true, open);
     }
@@ -75,7 +75,7 @@ public class LibraryBeanTest {
     @Test
     public void isOpenShoudBWorkWhenOnlyBeginningDateIsAvailable() {
         Clock clock = initClock(LocalDate.of(2016, 5, 5));
-        LibraryBean bean = new LibraryBean();
+        BaseBibliotekBean bean = new BaseBibliotekBean();
         bean.setStengt_fra("2016-05-05");
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
         assertEquals(false, open);
@@ -84,7 +84,7 @@ public class LibraryBeanTest {
     @Test
     public void isOpenShoudBWorkWhenOnlyEndDateIsAvailable2() {
         Clock clock = initClock(LocalDate.of(2016, 5, 5));
-        LibraryBean bean = new LibraryBean();
+        BaseBibliotekBean bean = new BaseBibliotekBean();
         bean.setStengt_til("2016-05-06");
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
         assertEquals(false, open);
@@ -94,7 +94,7 @@ public class LibraryBeanTest {
     public void isOpenShoudBeFalseIfClosedTagHasValue() {
 
         Clock clock = initClock(LocalDate.of(2016, 5, 15)); //any date
-        LibraryBean bean = new LibraryBean();
+        BaseBibliotekBean bean = new BaseBibliotekBean();
         bean.setStengt("X");
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
 

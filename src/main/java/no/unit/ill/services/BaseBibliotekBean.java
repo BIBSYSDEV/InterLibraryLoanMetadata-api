@@ -1,10 +1,10 @@
-package no.unit;
+package no.unit.ill.services;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-public class LibraryBean {
+public class BaseBibliotekBean {
 
     public static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter
             .ofPattern("yyyy-MM-dd");
@@ -237,7 +237,7 @@ public class LibraryBean {
 
     @Override
     public String toString() {
-        return "LibraryBean{" +
+        return "BaseBibliotekBean{" +
                 "bibnr='" + bibnr + '\'' +
                 ", bibkode='" + bibkode + '\'' +
                 ", inst='" + inst + '\'' +
