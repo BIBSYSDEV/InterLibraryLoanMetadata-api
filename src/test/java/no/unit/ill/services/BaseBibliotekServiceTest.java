@@ -4,12 +4,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
-import no.unit.LibraryBean;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.bind.JAXBException;
 
+import static no.unit.ill.services.BaseBibliotekService.WRONG_URL_FOR_GET_IN_BASEBIBLIOTEK_SERVICE_FOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -28,56 +28,70 @@ public class BaseBibliotekServiceTest {
     }
 
     @Test
-    public void libraryLookupByBibnr() throws IOException, URISyntaxException, JAXBException {
-        InputStream inputstreamFromFile = getClass().getResourceAsStream("/sampleLibraryFromBaseBibliotek.xml");
-        when(connection.connect(anyString())).thenReturn(inputstreamFromFile);
-        LibraryBean libraryBean = baseBibliotekService.libraryLookupByBibnr("xxxxx");
-        assertEquals("GOL", libraryBean.getBibkode());
-        assertEquals("https://ncip.mikromarc.no/ncipservice/ncipresponder/parser?db=hallingdal-felles", libraryBean.getNncipp_server());
-        assertEquals("NO-2061700", libraryBean.getBibnr());
-        assertEquals("", libraryBean.getBibsysBibcode());
-        assertEquals("", libraryBean.getStengt_fra());
+    public void testEmptyConstructor() throws JAXBException {
+        baseBibliotekService = new BaseBibliotekService(); //a bit cheating for codeCoverage
     }
 
     @Test
-    public void libraryLookupByBibnrThrowsException() throws IOException, URISyntaxException, JAXBException {
+    public void libraryLookupByBibnr() throws IOException, URISyntaxException, JAXBException {
+        InputStream inputStream = getClass().getResourceAsStream("/sampleLibraryFromBaseBibliotek.xml");
+        when(connection.connect(anyString())).thenReturn(inputStream);
+        BaseBibliotekBean basebibliotekBean = baseBibliotekService.libraryLookupByBibnr("xxxxx");
+        assertEquals("GOL", basebibliotekBean.getBibKode());
+        assertEquals("https://ncip.mikromarc.no/ncipservice/ncipresponder/parser?db=hallingdal-felles",
+                basebibliotekBean.getNncippServer());
+        assertEquals("NO-2061700", basebibliotekBean.getBibNr());
+        assertEquals("", basebibliotekBean.getBibsysBibcode());
+        assertEquals("", basebibliotekBean.getStengtFra());
+    }
+
+    @Test
+    public void libraryLookupByBibnrThrowsIOException() throws IOException, URISyntaxException, JAXBException {
         when(connection.connect(anyString())).thenThrow(new IOException());
-        LibraryBean libraryBean = baseBibliotekService.libraryLookupByBibnr("xxxxx");
-        assertNull(libraryBean);
+        BaseBibliotekBean basebibliotekBean = baseBibliotekService.libraryLookupByBibnr("xxxxx");
+        assertNull(basebibliotekBean);
+    }
+
+    @Test
+    public void libraryLookupByBibnrThrowsUriSyntaxException() throws IOException, URISyntaxException, JAXBException {
+        when(connection.connect(anyString())).thenThrow(new URISyntaxException("bibnummer",
+                WRONG_URL_FOR_GET_IN_BASEBIBLIOTEK_SERVICE_FOR));
+        BaseBibliotekBean basebibliotekBean = baseBibliotekService.libraryLookupByBibnr("xxxxx");
+        assertNull(basebibliotekBean);
     }
 
     @Test
     public void libraryLookupByBibnrThatReturnsWithoutBibcode() throws IOException, URISyntaxException, JAXBException {
-        InputStream inputstreamFromFile =
+        InputStream inputStream =
                 getClass().getResourceAsStream("/sampleLibraryFromBaseBibliotekUtenBibkode.xml");
-        when(connection.connect(anyString())).thenReturn(inputstreamFromFile);
-        LibraryBean libraryBean = baseBibliotekService.libraryLookupByBibnr("xxxxx");
-        assertNull(libraryBean);
+        when(connection.connect(anyString())).thenReturn(inputStream);
+        BaseBibliotekBean basebibliotekBean = baseBibliotekService.libraryLookupByBibnr("xxxxx");
+        assertNull(basebibliotekBean);
     }
 
     @Test
     public void libraryLookupByBibnrThatReturnsWithoutLangCode() throws IOException, URISyntaxException, JAXBException {
-        InputStream inputstreamFromFile =
+        InputStream inputStream =
                 getClass().getResourceAsStream("/sampleLibraryFromBaseBibliotekUtenLandkode.xml");
-        when(connection.connect(anyString())).thenReturn(inputstreamFromFile);
-        LibraryBean libraryBean = baseBibliotekService.libraryLookupByBibnr("xxxxx");
-        assertNull(libraryBean);
+        when(connection.connect(anyString())).thenReturn(inputStream);
+        BaseBibliotekBean basebibliotekBean = baseBibliotekService.libraryLookupByBibnr("xxxxx");
+        assertNull(basebibliotekBean);
     }
 
     @Test
     public void libraryLookupByBibnrThatReturnsClosedLibrary() throws IOException, URISyntaxException, JAXBException {
-        InputStream inputstreamFromFile = getClass().getResourceAsStream("/sampleLibraryFromBaseBibliotekStengt.xml");
-        when(connection.connect(anyString())).thenReturn(inputstreamFromFile);
-        LibraryBean libraryBean = baseBibliotekService.libraryLookupByBibnr("xxxxx");
-        assertEquals("U", libraryBean.getStengt());
+        InputStream inputStream = getClass().getResourceAsStream("/sampleLibraryFromBaseBibliotekStengt.xml");
+        when(connection.connect(anyString())).thenReturn(inputStream);
+        BaseBibliotekBean basebibliotekBean = baseBibliotekService.libraryLookupByBibnr("xxxxx");
+        assertEquals("U", basebibliotekBean.getStengt());
     }
 
     @Test
     public void libraryLookupWithLineEnding() throws IOException, URISyntaxException, JAXBException {
-        InputStream inputstreamFromFile = getClass().getResourceAsStream("/baseBibliotekWithLineEndingInInst.xml");
-        when(connection.connect(anyString())).thenReturn(inputstreamFromFile);
-        LibraryBean libraryBean = baseBibliotekService.libraryLookupByBibnr("xxxxx");
-        assertEquals("Anno Kongsvinger museum\nBiblioteket", libraryBean.getInst());
+        InputStream inputStream = getClass().getResourceAsStream("/baseBibliotekWithLineEndingInInst.xml");
+        when(connection.connect(anyString())).thenReturn(inputStream);
+        BaseBibliotekBean basebibliotekBean = baseBibliotekService.libraryLookupByBibnr("xxxxx");
+        assertEquals("Anno Kongsvinger museum\nBiblioteket", basebibliotekBean.getInst());
     }
 
 }

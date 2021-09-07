@@ -4,50 +4,50 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
+@SuppressWarnings({"PMD.GodClass", "PMD.TooManyFields"})
 public class BaseBibliotekBean {
 
     public static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter
             .ofPattern("yyyy-MM-dd");
 
-    private String bibnr = ""; //1160101
-    private String bibkode = ""; //NTNU/TEK
+    private String bibNr = ""; //1160101
+    private String bibKode = ""; //NTNU/TEK
     private String inst = ""; //navn
     private String landkode = "";
-    // Post address   -   P.O.Box / mail address
+    // Post address - P.O.Box / mail address
     private String padr = "";
     private String ppostnr = "";
     private String ppoststed = "";
-    // Visit address  -   Street address for on-the-door packet delivery
+    // Visit address - Street address for on-the-door packet delivery
     private String vadr = "";
     private String vpostnr = "";
     private String vpoststed = "";
     private String tlf = "";
-    private String epost_adr = "";
+    private String epostAdr = "";
     private String katsyst = "";
-    private String epost_nill = "";
-    private String epost_nillkvitt = "";
-    private String epost_best = "";
-    private String nncipp_server = "";
-    private Optional<LocalDate> stengt_fra = Optional.empty();
-    private Optional<LocalDate> stengt_til = Optional.empty();
+    private String epostNill = "";
+    private String epostNillkvitt = "";
+    private String epostBest = "";
+    private String nncippServer = "";
+    private Optional<LocalDate> stengtFra = Optional.empty();
+    private Optional<LocalDate> stengtTil = Optional.empty();
     private String stengt = "";
     private String bibsysBibcode = "";
 
-
-    public String getBibnr() {
-        return bibnr;
+    public String getBibNr() {
+        return bibNr;
     }
 
-    public void setBibnr(String bibnr) {
-        this.bibnr = bibnr;
+    public void setBibNr(String bibNr) {
+        this.bibNr = bibNr;
     }
 
-    public String getBibkode() {
-        return bibkode;
+    public String getBibKode() {
+        return bibKode;
     }
 
-    public void setBibkode(String bibkode) {
-        this.bibkode = bibkode;
+    public void setBibKode(String bibKode) {
+        this.bibKode = bibKode;
     }
 
     public String getInst() {
@@ -56,6 +56,14 @@ public class BaseBibliotekBean {
 
     public void setInst(String inst) {
         this.inst = inst;
+    }
+
+    public String getLandkode() {
+        return landkode;
+    }
+
+    public void setLandkode(String landkode) {
+        this.landkode = landkode;
     }
 
     public String getPadr() {
@@ -80,14 +88,6 @@ public class BaseBibliotekBean {
 
     public void setPpoststed(String ppoststed) {
         this.ppoststed = ppoststed;
-    }
-
-    public String getLandkode() {
-        return landkode;
-    }
-
-    public void setLandkode(String landkode) {
-        this.landkode = landkode;
     }
 
     public String getVadr() {
@@ -122,12 +122,12 @@ public class BaseBibliotekBean {
         this.tlf = tlf;
     }
 
-    public String getEpost_adr() {
-        return epost_adr;
+    public String getEpostAdr() {
+        return epostAdr;
     }
 
-    public void setEpost_adr(String epost_adr) {
-        this.epost_adr = epost_adr;
+    public void setEpostAdr(String epostAdr) {
+        this.epostAdr = epostAdr;
     }
 
     public String getKatsyst() {
@@ -136,86 +136,63 @@ public class BaseBibliotekBean {
 
     public void setKatsyst(String katsyst) {
         this.katsyst = katsyst;
-
     }
 
-    public String getEpost_nill() {
-        return epost_nill;
+    public String getEpostNill() {
+        return epostNill;
     }
 
-    public void setEpost_nill(String epost_nill) {
-        this.epost_nill = epost_nill;
-
+    public void setEpostNill(String epostNill) {
+        this.epostNill = epostNill;
     }
 
-    public String getEpost_nillkvitt() {
-        return epost_nillkvitt;
+    public String getEpostNillkvitt() {
+        return epostNillkvitt;
     }
 
-    public void setEpost_nillkvitt(String epost_nillkvitt) {
-        this.epost_nillkvitt = epost_nillkvitt;
-
+    public void setEpostNillkvitt(String epostNillkvitt) {
+        this.epostNillkvitt = epostNillkvitt;
     }
 
-    public String getEpost_best() {
-        return epost_best;
+    public String getEpostBest() {
+        return epostBest;
     }
 
-    public void setEpost_best(String epost_best) {
-        this.epost_best = epost_best;
-
+    public void setEpostBest(String epostBest) {
+        this.epostBest = epostBest;
     }
 
-    public String getNncipp_server() {
-        return nncipp_server;
+    public String getNncippServer() {
+        return nncippServer;
     }
 
-    public void setNncipp_server(String nncipp_server) {
-        this.nncipp_server = nncipp_server;
+    public void setNncippServer(String nncippServer) {
+        this.nncippServer = nncippServer;
     }
 
 
-    public boolean isOpenAtDate(LocalDate date) {
-        if (stengt.length() > 0) return false;
-
-        boolean startDatePresent = stengt_fra.isPresent();
-        boolean enDatePresent = stengt_til.isPresent();
-        boolean isAfterBeginning = stengt_fra.map(from -> !from.isAfter(date)).orElse(false);
-        boolean isBeforeEnd = stengt_til.map(until -> !until.isBefore(date)).orElse(false);
-        boolean twoDatesAvailable =
-                startDatePresent && enDatePresent && isAfterBeginning && isBeforeEnd;
-        boolean beginningAvailable = startDatePresent && !enDatePresent && isAfterBeginning;
-        boolean endAvailable = !startDatePresent && enDatePresent && isBeforeEnd;
-
-        return !(twoDatesAvailable || beginningAvailable || endAvailable);
+    public String getStengtTil() {
+        return stengtTil.map(date -> date.format(dateTimeFormatter)).orElse("");
     }
 
-
-    public String getStengt_til() {
-        return stengt_til.map(date -> date.format(dateTimeFormatter)).orElse("");
-    }
-
-    public void setStengt_til(String stengt_til) {
+    public void setStengtTil(String stengtTil) {
         try {
-            this.stengt_til = Optional.of(LocalDate.parse(stengt_til, dateTimeFormatter));
+            this.stengtTil = Optional.of(LocalDate.parse(stengtTil, dateTimeFormatter));
         } catch (Exception e) {
-            this.stengt_til = Optional.empty();
+            this.stengtTil = Optional.empty();
         }
     }
 
-    public boolean dateIsDefined() {
-        return this.stengt_til.isPresent() || this.stengt_fra.isPresent();
+
+    public String getStengtFra() {
+        return stengtFra.map(date -> date.format(dateTimeFormatter)).orElse("");
     }
 
-    public String getStengt_fra() {
-        return stengt_fra.map(date -> date.format(dateTimeFormatter)).orElse("");
-    }
-
-    public void setStengt_fra(String stengt_fra) {
+    public void setStengtFra(String stengtFra) {
         try {
-            this.stengt_fra = Optional.of(LocalDate.parse(stengt_fra, dateTimeFormatter));
+            this.stengtFra = Optional.of(LocalDate.parse(stengtFra, dateTimeFormatter));
         } catch (Exception e) {
-            this.stengt_fra = Optional.empty();
+            this.stengtFra = Optional.empty();
         }
     }
 
@@ -235,31 +212,24 @@ public class BaseBibliotekBean {
         this.stengt = stengt;
     }
 
-    @Override
-    public String toString() {
-        return "BaseBibliotekBean{" +
-                "bibnr='" + bibnr + '\'' +
-                ", bibkode='" + bibkode + '\'' +
-                ", inst='" + inst + '\'' +
-                ", landkode='" + landkode + '\'' +
-                ", padr='" + padr + '\'' +
-                ", ppostnr='" + ppostnr + '\'' +
-                ", ppoststed='" + ppoststed + '\'' +
-                ", vadr='" + vadr + '\'' +
-                ", vpostnr='" + vpostnr + '\'' +
-                ", vpoststed='" + vpoststed + '\'' +
-                ", tlf='" + tlf + '\'' +
-                ", epost_adr='" + epost_adr + '\'' +
-                ", katsyst='" + katsyst + '\'' +
-                ", epost_nill='" + epost_nill + '\'' +
-                ", epost_nillkvitt='" + epost_nillkvitt + '\'' +
-                ", epost_best='" + epost_best + '\'' +
-                ", nncipp_server='" + nncipp_server + '\'' +
-                ", stengt_fra=" + stengt_fra +
-                ", stengt_til=" + stengt_til +
-                ", stengt='" + stengt + '\'' +
-                ", bibsysBibcode='" + bibsysBibcode + '\'' +
-                '}';
+    public boolean isOpenAtDate(LocalDate date) {
+        if (stengt.length() > 0) {
+            return false;
+        }
+        boolean startDatePresent = stengtFra.isPresent();
+        boolean enDatePresent = stengtTil.isPresent();
+        boolean isAfterBeginning = stengtFra.map(from -> !from.isAfter(date)).orElse(false);
+        boolean isBeforeEnd = stengtTil.map(until -> !until.isBefore(date)).orElse(false);
+        boolean twoDatesAvailable =
+                startDatePresent && enDatePresent && isAfterBeginning && isBeforeEnd;
+        boolean beginningAvailable = startDatePresent && !enDatePresent && isAfterBeginning;
+        boolean endAvailable = !startDatePresent && enDatePresent && isBeforeEnd;
+
+        return !(twoDatesAvailable || beginningAvailable || endAvailable);
+    }
+
+    public boolean dateIsDefined() {
+        return this.stengtTil.isPresent() || this.stengtFra.isPresent();
     }
 
 }

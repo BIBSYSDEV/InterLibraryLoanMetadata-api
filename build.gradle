@@ -37,7 +37,6 @@ dependencies {
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-core', version: '1.11.946'
     implementation group: 'com.amazonaws', name: 'aws-lambda-java-core', version: '1.2.1'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
-    implementation group: 'com.github.BIBSYSDEV', name: 'nva-commons', version: '0.7.4'
     implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.2.7'
     implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '2.3.1'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.12.4'
@@ -113,12 +112,19 @@ check.dependsOn jacocoTestCoverageVerification
 jacocoTestCoverageVerification.dependsOn(jacocoTestReport)
 
 jacocoTestCoverageVerification {
+    afterEvaluate {
+        getClassDirectories().setFrom(classDirectories.files.collect {
+            fileTree(dir: it, exclude:  [
+                    'no/nb/basebibliotek/generated/*'
+            ])
+        })
+    }
     violationRules {
         rule {
             limit {
                 counter = 'METHOD'
                 value = 'COVEREDRATIO'
-                minimum = 0.9
+                minimum = 0.75
             }
         }
 

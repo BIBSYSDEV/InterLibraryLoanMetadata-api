@@ -18,8 +18,8 @@ public class BaseBibliotekBeanTest {
     public void isOpenShoudBeFalseWhenInTheMiddleOfClosedDates() {
         Clock clock = initClock(LocalDate.of(2016, 5, 15));
         BaseBibliotekBean bean = new BaseBibliotekBean();
-        bean.setStengt_fra("2016-05-10");
-        bean.setStengt_til("2016-05-20");
+        bean.setStengtFra("2016-05-10");
+        bean.setStengtTil("2016-05-20");
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
         assertEquals(false, open);
     }
@@ -28,8 +28,8 @@ public class BaseBibliotekBeanTest {
     public void isOpenShoudBeFalseWhenInTheBeginningOfClosedDates() {
         Clock clock = initClock(LocalDate.of(2016, 5, 10));
         BaseBibliotekBean bean = new BaseBibliotekBean();
-        bean.setStengt_fra("2016-05-10");
-        bean.setStengt_til("2016-05-20");
+        bean.setStengtFra("2016-05-10");
+        bean.setStengtTil("2016-05-20");
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
         assertEquals(false, open);
     }
@@ -38,8 +38,8 @@ public class BaseBibliotekBeanTest {
     public void isOpenShoudBeFalseWhenAtTheEndOfClosedDates() {
         Clock clock = initClock(LocalDate.of(2016, 5, 20));
         BaseBibliotekBean bean = new BaseBibliotekBean();
-        bean.setStengt_fra("2016-05-10");
-        bean.setStengt_til("2016-05-20");
+        bean.setStengtFra("2016-05-10");
+        bean.setStengtTil("2016-05-20");
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
         assertEquals(false, open);
     }
@@ -48,8 +48,8 @@ public class BaseBibliotekBeanTest {
     public void isOpenShoudBeTrueWhenAfterTheEndOfClosedDates() {
         Clock clock = initClock(LocalDate.of(2016, 5, 25));
         BaseBibliotekBean bean = new BaseBibliotekBean();
-        bean.setStengt_fra("2016-05-10");
-        bean.setStengt_til("2016-05-20");
+        bean.setStengtFra("2016-05-10");
+        bean.setStengtTil("2016-05-20");
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
         assertEquals(true, open);
     }
@@ -58,8 +58,8 @@ public class BaseBibliotekBeanTest {
     public void isOpenShoudBeTrueWhenBeforeTheBeginningOfClosedDates() {
         Clock clock = initClock(LocalDate.of(2016, 5, 5));
         BaseBibliotekBean bean = new BaseBibliotekBean();
-        bean.setStengt_fra("2016-05-10");
-        bean.setStengt_til("2016-05-20");
+        bean.setStengtFra("2016-05-10");
+        bean.setStengtTil("2016-05-20");
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
         assertEquals(true, open);
     }
@@ -76,7 +76,7 @@ public class BaseBibliotekBeanTest {
     public void isOpenShoudBWorkWhenOnlyBeginningDateIsAvailable() {
         Clock clock = initClock(LocalDate.of(2016, 5, 5));
         BaseBibliotekBean bean = new BaseBibliotekBean();
-        bean.setStengt_fra("2016-05-05");
+        bean.setStengtFra("2016-05-05");
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
         assertEquals(false, open);
     }
@@ -85,7 +85,7 @@ public class BaseBibliotekBeanTest {
     public void isOpenShoudBWorkWhenOnlyEndDateIsAvailable2() {
         Clock clock = initClock(LocalDate.of(2016, 5, 5));
         BaseBibliotekBean bean = new BaseBibliotekBean();
-        bean.setStengt_til("2016-05-06");
+        bean.setStengtTil("2016-05-06");
         boolean open = bean.isOpenAtDate(LocalDate.now(clock));
         assertEquals(false, open);
     }

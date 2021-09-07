@@ -17,6 +17,10 @@ Parameters:
     Type: String
     Description: Url Endpoint to the SRU server
     Default: 'instservice-test.bibsys.no'
+  BaseBibliotekServiceEndpoint:
+    Type: String
+    Description: Url Endpoint to the BaseBibliotek server
+    Default: 'nb.no'
 
 Conditions:
   HasDomainName: !Not [!Equals [!Ref CustomDomain, '']]

@@ -12,7 +12,7 @@ public class Config {
     private String corsHeader;
 
     private String institutionServiceHost;
-    private String baseBibliotekServiceHost;
+    private String basebibliotekServiceHost;
 
     private Config() {
     }
@@ -23,7 +23,7 @@ public class Config {
 
         static {
             INSTANCE.setInstitutionServiceHost(System.getenv(INSTITUTIONSERVICE_ENDPOINT_KEY));
-            INSTANCE.setBasebibliotekServiceHost(System.getenv(INSTITUTIONSERVICE_ENDPOINT_KEY));
+            INSTANCE.setBasebibliotekServiceHost(System.getenv(BASEBIBLIOTEKSERVICE_ENDPOINT_KEY));
             INSTANCE.setCorsHeader(System.getenv(CORS_ALLOW_ORIGIN_HEADER_ENVIRONMENT_NAME));
         }
     }
@@ -38,27 +38,26 @@ public class Config {
      * @return <code>TRUE</code> if property is present.
      */
     public boolean checkProperties() {
-        if (StringUtils.isEmpty(institutionServiceHost) ||
-                StringUtils.isEmpty(baseBibliotekServiceHost)) {
+        if (StringUtils.isEmpty(institutionServiceHost) || StringUtils.isEmpty(basebibliotekServiceHost)) {
             throw new RuntimeException(MISSING_ENVIRONMENT_VARIABLES);
         }
         return true;
-    }
-
-    protected void setInstitutionServiceHost(String institutionServiceHost) {
-        this.institutionServiceHost = institutionServiceHost;
     }
 
     public String getInstitutionServiceHost() {
         return institutionServiceHost;
     }
 
-    public String getBasebibliotekServiceHost() {
-        return baseBibliotekServiceHost;
+    protected void setInstitutionServiceHost(String institutionServiceHost) {
+        this.institutionServiceHost = institutionServiceHost;
     }
 
-    protected void setBasebibliotekServiceHost(String institutionServiceHost) {
-        this.institutionServiceHost = institutionServiceHost;
+    public String getBasebibliotekServiceHost() {
+        return basebibliotekServiceHost;
+    }
+
+    protected void setBasebibliotekServiceHost(String basebibliotekServiceHost) {
+        this.basebibliotekServiceHost = basebibliotekServiceHost;
     }
 
     public String getCorsHeader() {
