@@ -1,0 +1,567 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+  targetNamespace="http://nb.no/BaseBibliotek" xmlns="http://nb.no/BaseBibliotek">
+  <xs:element name="BaseBibliotek">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="record"/>
+      </xs:sequence>
+      <xs:attribute name="export"/>
+      <xs:attribute name="from"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="record">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="bibnr"/>
+        <xs:element minOccurs="0" ref="isil"/>
+        <xs:element minOccurs="0" ref="isil_agency"/>
+        <xs:element minOccurs="0" ref="bibkode"/>
+        <xs:element minOccurs="0" ref="bibltype"/>
+        <xs:element minOccurs="0" ref="aut"/>
+        <xs:element minOccurs="0" ref="lat_lon"/>
+        <xs:element minOccurs="0" ref="katsyst"/>
+        <xs:element minOccurs="0" ref="samkat"/>
+        <xs:element minOccurs="0" ref="stengt_fra"/>
+        <xs:element minOccurs="0" ref="stengt_til"/>
+        <xs:element minOccurs="0" ref="stengt"/>
+        <xs:element minOccurs="0" ref="kommnr"/>
+        <xs:element minOccurs="0" ref="overordnet"/>
+        <xs:element minOccurs="0" ref="relatert"/>
+        <xs:element minOccurs="0" ref="inst"/>
+        <xs:element minOccurs="0" ref="inst_alt"/>
+        <xs:element minOccurs="0" ref="inst_eng"/>
+        <xs:element minOccurs="0" ref="inst_kort"/>
+        <xs:element minOccurs="0" ref="padr"/>
+        <xs:element minOccurs="0" ref="ppostnr"/>
+        <xs:element minOccurs="0" ref="ppoststed"/>
+        <xs:element minOccurs="0" ref="vadr"/>
+        <xs:element minOccurs="0" ref="vpostnr"/>
+        <xs:element minOccurs="0" ref="vpoststed"/>
+        <xs:element minOccurs="0" ref="besadr"/>
+        <xs:element minOccurs="0" ref="landkode"/>
+        <xs:element minOccurs="0" ref="tlf"/>
+        <xs:element minOccurs="0" ref="tlf_fj"/>
+        <xs:element minOccurs="0" ref="epost_adr"/>
+        <xs:element minOccurs="0" ref="epost_best"/>
+        <xs:element minOccurs="0" ref="url_hjem"/>
+        <xs:element minOccurs="0" ref="url_kat"/>
+        <xs:element minOccurs="0" ref="andre_navn"/>
+        <xs:element minOccurs="0" ref="avtaler"/>
+        <xs:element minOccurs="0" ref="orgnr"/>
+        <xs:element minOccurs="0" ref="fakt_orgnr"/>
+        <xs:element minOccurs="0" ref="fakt_ref"/>
+        <xs:element minOccurs="0" ref="fakt_inst"/>
+        <xs:element minOccurs="0" ref="fakt_adr"/>
+        <xs:element minOccurs="0" ref="fakt_postnr"/>
+        <xs:element minOccurs="0" ref="fakt_poststed"/>
+        <xs:element minOccurs="0" ref="bibleder"/>
+        <xs:element minOccurs="0" ref="fj_leder"/>
+        <xs:element minOccurs="0" ref="andre_koder"/>
+        <xs:element minOccurs="0" ref="eressurser"/>
+        <xs:element minOccurs="0" ref="wressurser"/>
+        <xs:element minOccurs="0" ref="uregistrerte_filialer"/>
+        <xs:element minOccurs="0" ref="merknader"/>
+      </xs:sequence>
+      <xs:attribute name="rid" use="required" type="xs:integer"/>
+      <xs:attribute name="tstamp" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="bibnr" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Nasjonalt norsk biblioteknummer</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="isil" type="xs:NCName">
+    <xs:annotation>
+      <xs:documentation>International Standard Identifier for Libraries and Related Organizations (ISO 15511)</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="isil_agency" type="xs:anyURI">
+    <xs:annotation>
+      <xs:documentation>ISIL-agency, URL til</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="bibkode" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Bibliotekkode (Samkatkode)</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="bibltype" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Bibliotektype</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="aut">
+    <xs:annotation>
+      <xs:documentation>Gjelder som passord for rettelser i BaseBibliotek, bestillingsfunksjonen for fjernlån i Nasjonalbiblioteket, Oria, Biblioteksøk, etc.</xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:attribute name="encrypted" type="xs:boolean"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="lat_lon" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Bredde- og lengdegrad, oppgis som desimalgrader</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="katsyst" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Katalogsystem</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="stengt_fra" type="xs:date">
+    <xs:annotation>
+      <xs:documentation>Fjernlån stengt fra dato</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="stengt_til" type="xs:date">
+    <xs:annotation>
+      <xs:documentation>Fjernlån stengt til dato</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="stengt" type="xs:NCName">
+    <xs:annotation>
+      <xs:documentation>U=midlertidig stengt, X=bibliotek nedlagt</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="kommnr" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Kommunenummer (Norge)</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="overordnet" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Overordnet bibliotek, biblioteknummer</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="relatert" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Relaterte bibliotek, biblioteknumre</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="inst" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Bibliotekets/institusjonenes offisielle navn</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="inst_alt" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Alternativt navn</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="inst_eng" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Offisielt engelsk navn</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="inst_kort" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Kort institusjonsnavn</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="padr" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Postboksadresse</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="ppostnr" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Postnummer for postboksadresse</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="ppoststed" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Poststed for postboksadresse</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="vadr" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Gateadresse</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="vpostnr" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Postnummer for gateadresse</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="vpoststed" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Poststed for gateadresse</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="besadr" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Besøksadresse</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="landkode" type="xs:NCName">
+    <xs:annotation>
+      <xs:documentation>ISO 3166-1 alpha-2 landkoder</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="tlf" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Telefon</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="tlf_fj" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Telefon til fjernlån</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="epost_adr" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>E-postadresse</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="epost_best" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>E-postadresse for fjernlån</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="url_hjem" type="xs:anyURI">
+    <xs:annotation>
+      <xs:documentation>URL til hjemmeside</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="url_kat" type="xs:anyURI">
+    <xs:annotation>
+      <xs:documentation>URL til katalog</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="andre_navn" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Tidligere navn og sammenslåinger</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="avtaler" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Fjernlånsavtaler</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="orgnr" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Organisasjonsnummer</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="fakt_orgnr" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Organisasjonsnummer som skal brukes for elektronisk fakturering</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="fakt_ref" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Fakturareferanse</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="fakt_inst" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Spesiell fakturamottaker</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="fakt_adr" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Spesiell fakturaadresse</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="fakt_postnr" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Postnummer for fakturaadresse</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="fakt_poststed" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Poststed for fakturaadresse</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="bibleder" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Bibliotekleder</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="fj_leder" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Fjernlånsansvarlig</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="andre_koder">
+    <xs:annotation>
+      <xs:documentation>Andre koder og numre</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element ref="bibkode_alt"/>
+        <xs:element ref="bibkode_gml"/>
+        <xs:element ref="bibnr_gml"/>
+        <xs:element ref="bibnr_midl"/>
+        <xs:element ref="bibsys_avd"/>
+        <xs:element ref="bibsys_bib"/>
+        <xs:element ref="bibsys_utl"/>
+        <xs:element ref="oclc_kode"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="bibkode_alt" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Midlertidig kode</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="bibkode_gml" type="xs:anyURI">
+    <xs:annotation>
+      <xs:documentation>Tidligere, inkl. o.a. forkortelser</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="bibnr_gml" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Tidligere biblioteknr</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="bibnr_midl" type="xs:NMTOKEN">
+    <xs:annotation>
+      <xs:documentation>Midlertidig biblioteknr</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="bibsys_avd" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>BIBSYS avd.kode</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="bibsys_bib" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>BIBSYS bib.kode</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="bibsys_utl" type="xs:NMTOKEN">
+    <xs:annotation>
+      <xs:documentation>BIBSYS utl.kode</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="oclc_kode" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>OCLC-kode</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="samkat" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Biblioteksøk|Samper</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="eressurser">
+    <xs:annotation>
+      <xs:documentation>Andre nettbaserte tjenester</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element ref="OAI"/>
+        <xs:element ref="SRU"/>
+        <xs:element ref="ariel_ip"/>
+        <xs:element ref="io_ws"/>
+        <xs:element ref="nncip_uri"/>
+        <xs:element ref="z_info"/>
+        <xs:element ref="z_target"/>
+        <xs:element ref="zeerex"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="OAI" type="xs:anyURI">
+    <xs:annotation>
+      <xs:documentation>OAI-PMH-tjener (URL)</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="SRU" type="xs:anyURI">
+    <xs:annotation>
+      <xs:documentation>SRU tjener (URL)
+</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="ariel_ip" type="xs:anyURI"/>
+  <xs:element name="io_ws" type="xs:anyURI">
+    <xs:annotation>
+      <xs:documentation>Webservice for innlevering</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="nncip_uri" type="xs:anyURI">
+    <xs:annotation>
+      <xs:documentation>NCIP URL</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="z_info" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Informasjon om Z39.50</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="z_target" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Z39.50 (serverport/base)</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="zeerex" type="xs:anyURI">
+    <xs:annotation>
+      <xs:documentation>ZeeRex (Z39.50/SRU)</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="wressurser">
+    <xs:annotation>
+      <xs:documentation>Samlinger, digitale og fysiske ressurser</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="link"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="link">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="url"/>
+        <xs:element minOccurs="0" ref="tekst"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="url" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>URL for ressurs</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="tekst" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Beskrivelse av ressurs</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="uregistrerte_filialer">
+    <xs:annotation>
+      <xs:documentation>Filialer uten egen innførsel</xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element ref="filial"/>
+        <xs:element ref="nedlagt"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="filial" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Filialens navn</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="nedlagt" type="xs:string">
+    <xs:annotation>
+      <xs:documentation>Filialens navn</xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:element name="merknader">
+    <xs:complexType>
+      <xs:choice maxOccurs="unbounded">
+        <xs:element ref="adgang"/>
+        <xs:element ref="betalMrk"/>
+        <xs:element ref="fjGen"/>
+        <xs:element ref="fjMrk"/>
+        <xs:element ref="fjSpes"/>
+        <xs:element ref="indSyst"/>
+        <xs:element ref="klass"/>
+        <xs:element ref="klassNoter"/>
+        <xs:element ref="kopGeb"/>
+        <xs:element ref="kopMrk"/>
+        <xs:element ref="omtale"/>
+        <xs:element ref="spesSaml"/>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="adgang">
+    <xs:annotation>
+      <xs:documentation>Adgang, drift og tjenester</xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:attribute name="lang" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="betalMrk">
+    <xs:annotation>
+      <xs:documentation>Betalingsmerknader</xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:attribute name="lang" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="fjGen">
+    <xs:annotation>
+      <xs:documentation>Fjernlåns-/kopieringsregler</xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:attribute name="lang" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="fjMrk">
+    <xs:annotation>
+      <xs:documentation>Betingelser for fjernlån</xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:attribute name="lang" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="fjSpes">
+    <xs:annotation>
+      <xs:documentation>Lånedager og gebyr for bøker, periodika og AV-medier</xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:attribute name="lang" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="indSyst">
+    <xs:annotation>
+      <xs:documentation>Emneordsystem</xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:attribute name="lang" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="klass">
+    <xs:annotation>
+      <xs:documentation>Klassifikasjonssystem</xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:attribute name="lang" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="klassNoter">
+    <xs:annotation>
+      <xs:documentation>Note om klassifikasjon</xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:attribute name="lang" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="kopGeb">
+    <xs:annotation>
+      <xs:documentation>Gebyrer for kopier</xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:attribute name="lang" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="kopMrk">
+    <xs:annotation>
+      <xs:documentation>Merknader om kopilevering</xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:attribute name="lang" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="omtale">
+    <xs:annotation>
+      <xs:documentation>Omtale av biblioteket</xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:attribute name="lang" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="spesSaml">
+    <xs:annotation>
+      <xs:documentation>Spesialsamlinger, -databaser</xs:documentation>
+    </xs:annotation>
+    <xs:complexType mixed="true">
+      <xs:attribute name="lang" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
