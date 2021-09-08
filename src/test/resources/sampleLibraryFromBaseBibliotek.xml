@@ -1,0 +1,39 @@
+<BaseBibliotek xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://nb.no/BaseBibliotek" xsi:schemaLocation="http://nb.no/BaseBibliotek https://www.nb.no/baser/bibliotek/eksport/basebibliotek.xsd">
+    <record rid="658" tstamp="2021-02-25 08:50:18">
+        <bibnr>2061700</bibnr>
+        <isil>NO-2061700</isil>
+        <bibkode>GOL</bibkode>
+        <bibltype>FBI+VGS</bibltype>
+        <aut encrypted="true">7f05415699cf3c92efbbb55c91afc217</aut>
+        <katsyst>Mikromarc 3</katsyst>
+        <samkat>Biblioteksøk</samkat>
+        <kommnr>3041</kommnr>
+        <overordnet>2060000</overordnet>
+        <inst>Gol bibliotek</inst>
+        <inst_eng>Gol Public Library</inst_eng>
+        <vadr>Svøovegen 5</vadr>
+        <vpostnr>3550</vpostnr>
+        <vpoststed>GOL</vpoststed>
+        <landkode>NO</landkode>
+        <tlf>32 02 92 80 ; 902 87 526</tlf>
+        <tlf_fj>32 02 92 80</tlf_fj>
+        <epost_adr>gol.bibliotek@gol.kommune.no</epost_adr>
+        <epost_best>gol-fb@fjernlaan.no</epost_best>
+        <url_hjem>https://hallingdalsbiblioteka.no/golbibliotek/</url_hjem>
+        <url_kat>http://websok.mikromarc.no/gol-fb</url_kat>
+        <andre_navn>Hallingdalsbiblioteka; Hallingdal gymnas Gol vidaregåande skule og Gol ungdomsskule</andre_navn>
+        <fakt_orgnr>964952612</fakt_orgnr>
+        <bibleder>Karin Bjørge</bibleder>
+        <andre_koder>
+            <bibkode_alt>GOLVG</bibkode_alt>
+            <bibkode_alt>GOLGS</bibkode_alt>
+        </andre_koder>
+        <eressurser>
+            <z_target>sok.bibits.no:210/gol-fb</z_target>
+            <io_ws>http://fjerninnlev.mikromarc.no/remotereturn/remotereturn.asmx?db=hallingdal-felles</io_ws>
+            <z_info>http://www.bibits.no/produkter/mikromarc/NorZIG2-Conformance.html</z_info>
+            <OAI>http://oai.mikromarc.no/OAI/gol-fb</OAI>
+            <nncip_uri>https://ncip.mikromarc.no/ncipservice/ncipresponder/parser?db=hallingdal-felles</nncip_uri>
+        </eressurser>
+    </record>
+</BaseBibliotek>

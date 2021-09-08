@@ -5,11 +5,12 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 
 
 import java.util.Map;
+import no.unit.GatewayResponse;
 
 public class GetXServiceHandler implements RequestHandler<Map<String, Object>, GatewayResponse> {
 
     @Override
     public GatewayResponse handleRequest(Map<String, Object> input, Context context) {
-        return new GatewayResponse(200, "");
+        return new GatewayResponse("Test", 200);
     }
 }
