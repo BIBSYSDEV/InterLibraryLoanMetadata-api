@@ -13,10 +13,10 @@ Parameters:
     Description: (Optional) Base path mapping in CustomDomain
     AllowedPattern: "^[a-zA-Z0-9$\\-_.+!*'(),]*$"
     ConstraintDescription: "May contain only letters, numbers and one of $-_.+!*'(),"
-  SruEndpoint:
+  InstitutionServiceEndpoint:
     Type: String
     Description: Url Endpoint to the SRU server
-    Default: 'bibsys.ill.metadata.com'
+    Default: 'instservice-test.bibsys.no'
 
 Conditions:
   HasDomainName: !Not [!Equals [!Ref CustomDomain, '']]
@@ -126,7 +126,7 @@ Resources:
       Environment:
         Variables:
           ALLOWED_ORIGIN:  '*'
-          ILL_METADATA_HOST: !Ref SruEndpoint
+          INSTITUTIONSERVICE_ENDPOINT: !Ref InstitutionServiceEndpoint
       Handler: no.unit.MetadataHandler::handleRequest
       Runtime: java11
       MemorySize: 1024
