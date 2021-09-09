@@ -19,7 +19,7 @@ public class MetadataHandler implements RequestHandler<Map<String, Object>, Gate
     public static final String MANDATORY_PARAMETERS_MISSING = "Mandatory parameters 'document_id' is missing.";
     public static final String INTERNAL_SERVER_ERROR_MESSAGE = "An error occurred, error has been logged";
     public static final String DOCUMENT_ID_KEY = "document_id";
-    private Pnxervices pnxServices;
+    private transient final Pnxervices pnxServices;
 
     public MetadataHandler(){
         this.pnxServices = new Pnxervices();

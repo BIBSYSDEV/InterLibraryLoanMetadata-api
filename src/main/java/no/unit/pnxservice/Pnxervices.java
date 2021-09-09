@@ -106,11 +106,9 @@ public class Pnxervices {
                     .collect(Collectors.joining(System.lineSeparator()));
             return JsonParser.parseString(json).getAsJsonObject();
         }catch ( URISyntaxException e) {
-            System.out.println("ERROR: URI ERROR" + e.getMessage());
-           // log.error(WRONG_URL_FOR_PRIMO_API, documentId, e);
+           log.error(WRONG_URL_FOR_PRIMO_API, documentId, e);
         }catch (IOException e) {
-            System.out.println("ERROR: IO ERROR" + e);
-           // log.error(ERROR_WHILE_GETTING_AT_PRIMO_API_FOR,  documentId, e);
+           log.error(ERROR_WHILE_GETTING_AT_PRIMO_API_FOR,  documentId, e);
         }
         return new JsonObject();
     }
@@ -152,68 +150,6 @@ public class Pnxervices {
         }
 
         return extractedData;
-    }
-
-
-
-
-
-
-
-    /**
-     * not finished.
-     * @param fullPnxResponse from the api
-     * @return JSONArray of combinedMMSidsAndLibraries
-     */
-    protected JSONArray combineMMSidAndLibraries(JSONObject fullPnxResponse) {
-        JSONObject pnx = fullPnxResponse.getJSONArray("docs").getJSONObject(0).getJSONObject("pnx");
-        JSONObject addata = pnx.getJSONObject("addata");
-        JSONObject facets = pnx.getJSONObject("facets");
-
-        JSONArray mmsIdsJson = new JSONArray();
-        JSONArray librariesJson = new JSONArray();
-
-        List<LibrariesWithMMsIds> librariesWithMMsIds = new ArrayList<>();
-        if (addata.has("lad11")) {
-            mmsIdsJson = addata.getJSONArray("lad11");
-        }
-        if (facets.has("library")) {
-            librariesJson = facets.getJSONArray("library");
-        }
-
-        librariesJson.forEach(library -> {
-            String libraryString = library.toString();
-            String libraryCode = libraryString.replaceAll("\\d+", "");
-            String libraryNumber = libraryString.replaceAll("\\D*", "");
-            LibrariesWithMMsIds newLibrary = new LibrariesWithMMsIds(libraryCode);
-
-            int index = librariesWithMMsIds.indexOf(newLibrary);
-            if (index != -1) {
-                librariesWithMMsIds.get(index).addLibraryNumber(libraryNumber);
-            } else {
-                newLibrary.addLibraryNumber(libraryNumber);
-                librariesWithMMsIds.add(newLibrary);
-            }
-        });
-        mmsIdsJson.forEach(mmsIdWithLibrary -> {
-            String mmsIdWithLibraryString = mmsIdWithLibrary.toString();
-            String[] mmsIdsWithLIbraryStringSplitted = mmsIdWithLibraryString.split("_");
-            int standarNumberOfLibrarySplitSections = 3;
-            if (mmsIdsWithLIbraryStringSplitted.length == standarNumberOfLibrarySplitSections) {
-                String libraryCode = mmsIdsWithLIbraryStringSplitted[1];
-                String mmsId = mmsIdsWithLIbraryStringSplitted[2];
-                LibrariesWithMMsIds newLibrary = new LibrariesWithMMsIds(libraryCode);
-                int index = librariesWithMMsIds.indexOf(newLibrary);
-                if (index != -1) {
-                    librariesWithMMsIds.get(index).addMMId(mmsId);
-                } else {
-                    newLibrary.addLibraryNumber(mmsId);
-                    librariesWithMMsIds.add(newLibrary);
-                }
-            }
-        });
-
-        return new JSONArray(librariesWithMMsIds);
     }
 
 }

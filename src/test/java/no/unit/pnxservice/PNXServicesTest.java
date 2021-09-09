@@ -116,15 +116,4 @@ public class PNXServicesTest {
         assertEquals(condensedPNXFromFile2, pnxServicesCondensedExample2);
         assertEquals(condensedPNXFromFile3, pnxServicesCondensedExample3);
     }
-
-    @Test
-    public void combinesMMsIdsAndLibrariesCorrectly(){
-        JSONObject fullPNXExample1 = new JSONObject( createJSON(FULL_PNX_EXAMPLE_1));
-        JSONObject fullPNXExample2 = new JSONObject( createJSON(FULL_PNX_EXAMPLE_2));
-
-        Pnxervices pnxervices = new Pnxervices();
-        JSONArray combined = pnxervices.combineMMSidAndLibraries(fullPNXExample1);
-
-
-    }
 }
