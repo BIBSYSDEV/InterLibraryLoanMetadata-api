@@ -34,7 +34,7 @@ public class PnxServiceConnection {
         return new InputStreamReader(uri.toURL().openStream());
     }
 
-    private URI generatePrimoUri(String docId) throws URISyntaxException{
+    protected URI generatePrimoUri(String docId) throws URISyntaxException{
         return new URIBuilder().setScheme(HTTPS)
                 .setHost(Config.getInstance().getPrimoRestApiHost())
                 .setPath(PRIMO_PATH)

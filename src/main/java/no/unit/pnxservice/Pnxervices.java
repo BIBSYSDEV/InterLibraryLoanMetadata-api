@@ -21,6 +21,8 @@ import java.util.stream.Collectors;
 
 public class Pnxervices {
 
+    private static final transient Logger log = LoggerFactory.getLogger(Pnxervices.class);
+
     private static final String PRIMO_RECORD_PREFIX = "TN_";
     public static final String WRONG_URL_FOR_PRIMO_API = "Wrong Url for primo api "
             + " {}";
