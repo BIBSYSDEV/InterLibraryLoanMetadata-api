@@ -20,6 +20,7 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, GatewayResponse>
     public static final String NO_PARAMETERS_GIVEN_TO_HANDLER = "No parameters given to Handler";
     private static final transient Logger log = LoggerFactory.getLogger(NcipHandler.class);
     public static final String NCIP_MESSAGE_IS_NOT_VALID = "Ncip message is not valid: ";
+    private NcipService ncipService;
 
     @JacocoGenerated
     public NcipHandler() {
@@ -32,7 +33,19 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, GatewayResponse>
      */
     public NcipHandler(Environment environment) {
         super(NcipRequest.class, environment);
+        this.ncipService = new NcipService();
     }
+
+    /**
+     * Constructor for injecting used in testing.
+     * @param environment environment
+     */
+    public NcipHandler(Environment environment, NcipService ncipService) {
+        super(NcipRequest.class, environment);
+        this.ncipService = ncipService;
+    }
+
+
 
     /**
      * Implements the main logic of the handler. Any exception thrown by this method will be handled by method.
@@ -50,15 +63,19 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, GatewayResponse>
         if (isNull(request)) {
             throw new ParameterException(NO_PARAMETERS_GIVEN_TO_HANDLER);
         }
-        final NcipMessage message = request.getMessage();
-        log.debug("json input looks like that :" + message.toString());
+        final NcipTransferMessage transferMessage = request.getTransferMessage();
+        log.debug("json input looks like that :" + transferMessage.toString());
         GatewayResponse gatewayResponse = new GatewayResponse(environment);
-        if (message.isValid()) {
-            log.debug("lets do it");
-            //TODO: the real action comes here
+        if (transferMessage.isValid()) {
+            String xmlMessage = transferMessage.toXml();
+            String ncipServerUrl = transferMessage.getNcipServerUrl();
+            ncipService = new NcipService();
+            final NcipResponse ncipResponse = ncipService.send(xmlMessage, ncipServerUrl);
+            gatewayResponse.setStatusCode(ncipResponse.status);
+            gatewayResponse.setBody(ncipResponse.message);
         } else {
-            log.error(NCIP_MESSAGE_IS_NOT_VALID + message);
-            gatewayResponse.setErrorBody(NCIP_MESSAGE_IS_NOT_VALID + message);
+            log.error(NCIP_MESSAGE_IS_NOT_VALID + transferMessage);
+            gatewayResponse.setErrorBody(NCIP_MESSAGE_IS_NOT_VALID + transferMessage);
             gatewayResponse.setStatusCode(HttpStatus.SC_BAD_REQUEST);
         }
 

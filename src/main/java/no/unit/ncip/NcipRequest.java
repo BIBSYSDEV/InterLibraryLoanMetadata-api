@@ -7,19 +7,19 @@ import nva.commons.core.JacocoGenerated;
 
 public class NcipRequest {
 
-    private final NcipMessage message;
+    private final NcipTransferMessage ncipTransferMessage;
 
     @JsonCreator
-    public NcipRequest(@JsonProperty("message") NcipMessage message) {
-        this.message = message;
+    public NcipRequest(@JsonProperty("transferMessage") NcipTransferMessage transferMessage) {
+        this.ncipTransferMessage = transferMessage;
     }
 
     protected NcipRequest(Builder builder) {
-        this.message = builder.message;
+        this.ncipTransferMessage = builder.transferMessage;
     }
 
-    public NcipMessage getMessage() {
-        return message;
+    public NcipTransferMessage getTransferMessage() {
+        return ncipTransferMessage;
     }
 
     @JacocoGenerated
@@ -33,22 +33,22 @@ public class NcipRequest {
             return false;
         }
         NcipRequest that = (NcipRequest) o;
-        return Objects.equals(message, that.message);
+        return Objects.equals(ncipTransferMessage, that.ncipTransferMessage);
     }
 
     @JacocoGenerated
     @Override
     public int hashCode() {
-        return Objects.hash(message);
+        return Objects.hash(ncipTransferMessage);
     }
 
     @JacocoGenerated
     public static final class Builder {
 
-        private transient NcipMessage message;
+        private transient NcipTransferMessage transferMessage;
 
-        public NcipRequest.Builder withContents(NcipMessage message) {
-            this.message = message;
+        public NcipRequest.Builder withContents(NcipTransferMessage ncipTransferMessage) {
+            this.transferMessage = ncipTransferMessage;
             return this;
         }
 
