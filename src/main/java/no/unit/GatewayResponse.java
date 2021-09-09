@@ -1,13 +1,19 @@
 package no.unit;
 
-import com.google.gson.JsonObject;
-import no.unit.utils.StringUtils;
+import static nva.commons.apigateway.ApiGatewayHandler.ALLOWED_ORIGIN_ENV;
 
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import com.amazonaws.util.json.Jackson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import nva.commons.apigateway.exceptions.GatewayResponseSerializingException;
+import nva.commons.core.Environment;
+import nva.commons.core.JacocoGenerated;
+import nva.commons.core.StringUtils;
+import org.apache.http.HttpStatus;
 
 /**
  * POJO containing response object for API Gateway.
@@ -24,19 +30,28 @@ public class GatewayResponse {
     /**
      * GatewayResponse contains response status, response headers and body with payload resp. error messages.
      */
+    @JacocoGenerated
     public GatewayResponse() {
-        this.statusCode = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
+        this(new Environment(), EMPTY_JSON, HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    public GatewayResponse(Environment environment) {
+        this(environment, EMPTY_JSON, HttpStatus.SC_INTERNAL_SERVER_ERROR);
+    }
+
+    public GatewayResponse(Environment environment, String location) {
         this.body = EMPTY_JSON;
-        this.generateDefaultHeaders();
+        this.generateDefaultHeadersWithLocation(environment, location);
     }
 
     /**
      * GatewayResponse convenience constructor to set response status and body with payload direct.
+     *
      */
-    public GatewayResponse(final String body, final int status) {
+    public GatewayResponse(Environment environment, final String body, final int status) {
         this.statusCode = status;
         this.body = body;
-        this.generateDefaultHeaders();
+        this.generateDefaultHeaders(environment);
     }
 
     public String getBody() {
@@ -63,23 +78,42 @@ public class GatewayResponse {
      * Set error message as a json string to body.
      *
      * @param message message from exception
+     * @throws GatewayResponseSerializingException some parsing went wrong
      */
-    public void setErrorBody(String message) {
-        JsonObject json = new JsonObject();
-        json.addProperty(ERROR_KEY, message);
-        this.body = json.toString();
+    public void setErrorBody(String message) throws GatewayResponseSerializingException {
+        Map<String, String> map = new HashMap<>();
+        map.put(ERROR_KEY, message);
+        try {
+            this.body = Jackson.getObjectMapper().writeValueAsString(map);
+        } catch (JsonProcessingException e) {
+            throw new GatewayResponseSerializingException(e);
+        }
     }
 
-    private void generateDefaultHeaders() {
+    private void generateDefaultHeaders(Environment environment) {
         Map<String, String> headers = new ConcurrentHashMap<>();
         headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-        final String corsAllowDomain = Config.getInstance().getCorsHeader();
+        final String corsAllowDomain = environment.readEnv(ALLOWED_ORIGIN_ENV);
         if (StringUtils.isNotEmpty(corsAllowDomain)) {
             headers.put(CORS_ALLOW_ORIGIN_HEADER, corsAllowDomain);
         }
         headers.put("Access-Control-Allow-Methods", "OPTIONS,GET");
         headers.put("Access-Control-Allow-Credentials", "true");
         headers.put("Access-Control-Allow-Headers", HttpHeaders.CONTENT_TYPE);
+        this.headers = Map.copyOf(headers);
+    }
+
+    private void generateDefaultHeadersWithLocation(Environment environment, String location) {
+        Map<String, String> headers = new ConcurrentHashMap<>();
+        headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
+        final String corsAllowDomain = environment.readEnv(ALLOWED_ORIGIN_ENV);
+        if (StringUtils.isNotEmpty(corsAllowDomain)) {
+            headers.put(CORS_ALLOW_ORIGIN_HEADER, corsAllowDomain);
+        }
+        headers.put("Access-Control-Allow-Methods", "OPTIONS,GET");
+        headers.put("Access-Control-Allow-Credentials", "true");
+        headers.put("Access-Control-Allow-Headers", HttpHeaders.CONTENT_TYPE);
+        headers.put(HttpHeaders.LOCATION, location);
         this.headers = Map.copyOf(headers);
     }
 
