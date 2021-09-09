@@ -17,6 +17,14 @@ Parameters:
     Type: String
     Description: Url Endpoint to the SRU server
     Default: "instservice-test.bibsys.no"
+  PrimoServiceEndpoint:
+    Type: String
+    Description: Url Endpoints to the Primo API
+    Default: "api-eu.hosted.exlibrisgroup.com"
+  PrimoServiceApiKey:
+    Type: String
+    Description: Api key for contacting the Primo API
+    Default: '{{resolve:secretsmanager:apiKeyPrimo:SecretString}}'
 
 Conditions:
   HasDomainName: !Not [!Equals [!Ref CustomDomain, ""]]
