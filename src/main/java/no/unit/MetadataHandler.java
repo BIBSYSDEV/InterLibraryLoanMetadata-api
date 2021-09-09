@@ -2,8 +2,7 @@ package no.unit;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.google.gson.JsonObject;
-import no.unit.pnxservice.Pnxervices;
+import no.unit.ill.services.Pnxervices;
 
 import javax.ws.rs.core.Response;
 import java.util.Objects;
@@ -48,14 +47,14 @@ public class MetadataHandler implements RequestHandler<Map<String, Object>, Gate
             gatewayResponse.setStatusCode(Response.Status.BAD_REQUEST.getStatusCode());
             return gatewayResponse;
         }
-        JsonObject pnxServiceObject = getXServiceData(documentId);
+        String pnxServiceObject = getXServiceData(documentId);
         // InstitutionService institutionService = new InstitutionService();
         // final String libraryCode = institutionService.get("oriaCode", "NTNU_UB", "oriaDefaultNCIPserver");
         // pnxServiceObject.add("libraryCode", libraryCode);
-        return new GatewayResponse(pnxServiceObject.toString(), 200);
+        return new GatewayResponse(pnxServiceObject, Response.Status.OK.getStatusCode());
     }
 
-    protected JsonObject getXServiceData(String documentId) {
+    protected String getXServiceData(String documentId) {
         return pnxServices.getPnxData(documentId);
     }
 

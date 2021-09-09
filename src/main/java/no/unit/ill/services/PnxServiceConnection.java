@@ -1,4 +1,4 @@
-package no.unit.pnxservice;
+package no.unit.ill.services;
 
 import no.unit.Config;
 import org.apache.http.client.utils.URIBuilder;

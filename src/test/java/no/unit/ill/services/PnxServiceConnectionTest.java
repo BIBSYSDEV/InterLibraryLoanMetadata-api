@@ -1,4 +1,4 @@
-package no.unit.pnxservice;
+package no.unit.ill.services;
 
 
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package no.unit.pnxservice;
+package no.unit.ill.services;
 
 
 import com.google.gson.JsonArray;
@@ -86,9 +86,9 @@ public class Pnxervices {
         return docID.replaceFirst(PRIMO_RECORD_PREFIX, "");
     }
 
-    public JsonObject getPnxData(String documentId) {
+    public String getPnxData(String documentId) {
         JsonObject fullPNX = getFullPNX(documentId);
-        return extractUsefulDataFromXservice(fullPNX);
+        return extractUsefulDataFromXservice(fullPNX).toString();
     }
 
 

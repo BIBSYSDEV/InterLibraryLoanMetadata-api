@@ -2,9 +2,7 @@ package no.unit;
 
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import no.unit.pnxservice.Pnxervices;
+import no.unit.ill.services.Pnxervices;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Response;
@@ -53,7 +51,7 @@ public class MetadataHandlerTest {
         Context awsContext = mock(Context.class);
         Pnxervices pnxervices = mock(Pnxervices.class);
         Map<String, Object> event = new HashMap<>();
-        JsonObject condensedExample1 = JsonParser.parseString(createJson(CONDENSED_PNX_EXAMPLE_1)).getAsJsonObject();
+        String condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
         MetadataHandler app = new MetadataHandler(pnxervices);
         when(pnxervices.getPnxData(anyString())).thenReturn(condensedExample1);
         GatewayResponse result = app.handleRequest(null, awsContext);
@@ -68,7 +66,7 @@ public class MetadataHandlerTest {
         Map<String, Object> event = new HashMap<>();
         Map<String, String> queryParameters = new HashMap<>();
         String leksikon = "";
-        JsonObject condensedExample1 = JsonParser.parseString(createJson(CONDENSED_PNX_EXAMPLE_1)).getAsJsonObject();
+        String condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
         queryParameters.put(MetadataHandler.DOCUMENT_ID_KEY, leksikon);
         event.put(MetadataHandler.QUERY_STRING_PARAMETERS_KEY, queryParameters);
         MetadataHandler app = new MetadataHandler(pnxervices);
@@ -86,7 +84,7 @@ public class MetadataHandlerTest {
         Map<String, Object> event = new HashMap<>();
         Map<String, String> queryParameters = new HashMap<>();
         String leksikon = "BIBSYS_ILS71463631120002201";
-        JsonObject condensedExample1 = JsonParser.parseString(createJson(CONDENSED_PNX_EXAMPLE_1)).getAsJsonObject();
+        String condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
         queryParameters.put(MetadataHandler.DOCUMENT_ID_KEY, leksikon);
         event.put(MetadataHandler.QUERY_STRING_PARAMETERS_KEY, queryParameters);
         MetadataHandler app = new MetadataHandler(pnxervices);

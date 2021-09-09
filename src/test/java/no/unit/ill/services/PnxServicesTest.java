@@ -1,4 +1,4 @@
-package no.unit.pnxservice;
+package no.unit.ill.services;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -10,8 +10,8 @@ import java.net.URISyntaxException;
 import java.util.Objects;
 
 
-import static no.unit.pnxservice.Pnxervices.ERROR_WHILE_GETTING_AT_PRIMO_API_FOR;
-import static no.unit.pnxservice.Pnxervices.WRONG_URL_FOR_PRIMO_API;
+import static no.unit.ill.services.Pnxervices.ERROR_WHILE_GETTING_AT_PRIMO_API_FOR;
+import static no.unit.ill.services.Pnxervices.WRONG_URL_FOR_PRIMO_API;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,7 +56,9 @@ public class PnxServicesTest {
                         .getResourceAsStream(FULL_PNX_EXAMPLE_1)));
         when(pnxServiceConnection.connect(anyString())).thenReturn(inputStreamReader);
         Pnxervices pnxervices = new Pnxervices(pnxServiceConnection);
-        JsonObject result = pnxervices.getPnxData("test");
+        JsonObject result = JsonParser.parseString(
+                pnxervices.getPnxData("test"))
+                .getAsJsonObject();
         assertEquals(condensedPnxFromFile1, result);
 
     }
