@@ -5,6 +5,7 @@ import static java.util.Objects.isNull;
 import com.amazonaws.services.lambda.runtime.Context;
 import no.unit.GatewayResponse;
 import no.unit.ill.services.InstitutionService;
+import no.unit.utils.NcipUtils;
 import no.unit.utils.ParameterException;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
@@ -67,7 +68,7 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, GatewayResponse>
         log.debug("json input looks like that :" + transferMessage.toString());
         GatewayResponse gatewayResponse = new GatewayResponse(environment);
         if (transferMessage.isValid()) {
-            String xmlMessage = transferMessage.toXml();
+            String xmlMessage = NcipUtils.ncipMessageAsXml(transferMessage);
             String ncipServerUrl = transferMessage.getNcipServerUrl();
             ncipService = new NcipService();
             final NcipResponse ncipResponse = ncipService.send(xmlMessage, ncipServerUrl);
