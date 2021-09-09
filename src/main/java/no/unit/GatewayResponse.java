@@ -4,7 +4,6 @@ import static nva.commons.apigateway.ApiGatewayHandler.ALLOWED_ORIGIN_ENV;
 
 import com.amazonaws.util.json.Jackson;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.ws.rs.core.HttpHeaders;
@@ -81,7 +80,7 @@ public class GatewayResponse {
      * @throws GatewayResponseSerializingException some parsing went wrong
      */
     public void setErrorBody(String message) throws GatewayResponseSerializingException {
-        Map<String, String> map = new HashMap<>();
+        Map<String, String> map = new ConcurrentHashMap<>();
         map.put(ERROR_KEY, message);
         try {
             this.body = Jackson.getObjectMapper().writeValueAsString(map);

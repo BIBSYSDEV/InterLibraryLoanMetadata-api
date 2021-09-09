@@ -3,8 +3,6 @@ package no.unit.ncip;
 import static java.util.Objects.isNull;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import java.util.Map;
-import java.util.Objects;
 import no.unit.GatewayResponse;
 import no.unit.ill.services.InstitutionService;
 import no.unit.utils.ParameterException;
@@ -56,6 +54,7 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, GatewayResponse>
         log.debug("json input looks like that :" + message.toString());
         GatewayResponse gatewayResponse = new GatewayResponse(environment);
         if (message.isValid()) {
+            log.debug("lets do it");
             //TODO: the real action comes here
         } else {
             log.error(NCIP_MESSAGE_IS_NOT_VALID + message);

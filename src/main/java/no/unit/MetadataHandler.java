@@ -2,16 +2,13 @@ package no.unit;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-
-
 import java.util.Map;
-import no.unit.ill.services.InstitutionService;
 import nva.commons.core.Environment;
 
 public class MetadataHandler implements RequestHandler<Map<String, Object>, GatewayResponse> {
 
 
-    final Environment environment;
+    private final transient Environment environment;
 
     public MetadataHandler() {
         this.environment = new Environment();

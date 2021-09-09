@@ -45,10 +45,7 @@ public class NcipRequest {
     @JacocoGenerated
     public static final class Builder {
 
-        private NcipMessage message;
-
-        public Builder() {
-        }
+        private transient NcipMessage message;
 
         public NcipRequest.Builder withContents(NcipMessage message) {
             this.message = message;
