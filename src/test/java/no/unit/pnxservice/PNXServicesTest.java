@@ -2,8 +2,6 @@ package no.unit.pnxservice;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
 import java.io.InputStream;

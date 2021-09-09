@@ -4,8 +4,6 @@ package no.unit.pnxservice;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,8 +11,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -76,7 +72,7 @@ public class Pnxervices {
         this.connection = new PnxServiceConnection();
     }
 
-    public Pnxervices(PnxServiceConnection connection){
+    public Pnxervices(PnxServiceConnection connection) {
         this.connection = connection;
     }
 
@@ -90,7 +86,7 @@ public class Pnxervices {
         return docID.replaceFirst(PRIMO_RECORD_PREFIX, "");
     }
 
-    public JsonObject getPnxData(String documentId){
+    public JsonObject getPnxData(String documentId) {
         JsonObject fullPNX = getFullPNX(documentId);
         return extractUsefulDataFromXservice(fullPNX);
     }
@@ -100,20 +96,20 @@ public class Pnxervices {
 
     protected JsonObject getFullPNX(String documentId) {
         String docID = removePrimoRecordPrefix(documentId);
-        try(InputStreamReader streamReader = connection.connect(docID)) {
+        try (InputStreamReader streamReader = connection.connect(docID)) {
             String json = new BufferedReader(streamReader)
                     .lines()
                     .collect(Collectors.joining(System.lineSeparator()));
             return JsonParser.parseString(json).getAsJsonObject();
-        }catch ( URISyntaxException e) {
-           log.error(WRONG_URL_FOR_PRIMO_API, documentId, e);
-        }catch (IOException e) {
-           log.error(ERROR_WHILE_GETTING_AT_PRIMO_API_FOR,  documentId, e);
+        } catch (URISyntaxException e) {
+            log.error(WRONG_URL_FOR_PRIMO_API, documentId, e);
+        } catch (IOException e) {
+            log.error(ERROR_WHILE_GETTING_AT_PRIMO_API_FOR,  documentId, e);
         }
         return new JsonObject();
     }
 
-    protected JsonObject extractUsefulDataFromXservice(JsonObject response){
+    protected JsonObject extractUsefulDataFromXservice(JsonObject response) {
         JsonObject pnx = response.getAsJsonArray(DOCS_key).get(0).getAsJsonObject().getAsJsonObject(PNX_KEY);
         JsonObject extractedData = new JsonObject();
 
@@ -130,9 +126,9 @@ public class Pnxervices {
         extractedData.add(EXTRACTED_B_TITLE_KEY, addata.get(PNX_B_TITLE_KEY));
         extractedData.add(VOLUME, addata.get(VOLUME));
         extractedData.add(PAGES, addata.get(PAGES));
-        if(addata.has(PNX_LAD11_KEY)){
+        if (addata.has(PNX_LAD11_KEY)) {
             extractedData.add(EXTRACTED_MMS_ID_KEY, addata.get(PNX_LAD11_KEY));
-        }else {
+        } else {
             extractedData.add(EXTRACTED_MMS_ID_KEY, new JsonArray());
         }
 
@@ -143,9 +139,9 @@ public class Pnxervices {
         extractedData.add(PUBLISHER, display.get(PUBLISHER));
 
         JsonObject facets = pnx.getAsJsonObject(PNX_FACETS_KEY);
-        if(facets.has(PNX_LIBRARY_KEY)){
+        if (facets.has(PNX_LIBRARY_KEY)) {
             extractedData.add(EXTRACTED_LIBRARIES_KEY, facets.get(PNX_LIBRARY_KEY));
-        }else {
+        } else {
             extractedData.add(EXTRACTED_LIBRARIES_KEY, new JsonArray());
         }
 

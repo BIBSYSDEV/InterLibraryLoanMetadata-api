@@ -19,9 +19,9 @@ public class MetadataHandler implements RequestHandler<Map<String, Object>, Gate
     public static final String MANDATORY_PARAMETERS_MISSING = "Mandatory parameters 'document_id' is missing.";
     public static final String INTERNAL_SERVER_ERROR_MESSAGE = "An error occurred, error has been logged";
     public static final String DOCUMENT_ID_KEY = "document_id";
-    private transient final Pnxervices pnxServices;
+    private final transient Pnxervices pnxServices;
 
-    public MetadataHandler(){
+    public MetadataHandler() {
         this.pnxServices = new Pnxervices();
     }
 
@@ -48,12 +48,12 @@ public class MetadataHandler implements RequestHandler<Map<String, Object>, Gate
             gatewayResponse.setStatusCode(Response.Status.BAD_REQUEST.getStatusCode());
             return gatewayResponse;
         }
-         JsonObject pnxServiceObject = getXServiceData( documentId);
+        JsonObject pnxServiceObject = getXServiceData(documentId);
 
         return new GatewayResponse(pnxServiceObject.toString(), 200);
     }
 
-    protected JsonObject getXServiceData( String documentId) {
+    protected JsonObject getXServiceData(String documentId) {
         return pnxServices.getPnxData(documentId);
     }
 

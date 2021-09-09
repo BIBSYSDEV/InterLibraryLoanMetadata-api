@@ -17,7 +17,7 @@ public class StringUtils {
     public static String defaultString(String str) {
         if (isNotEmpty(str)){
             return str;
-        }else {
+        } else {
             return "";
         }
     }
