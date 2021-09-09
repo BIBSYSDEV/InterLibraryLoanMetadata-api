@@ -33,7 +33,6 @@ public class MetadataHandler implements RequestHandler<Map<String, Object>, Gate
         @SuppressWarnings("unchecked")
         Map<String, String> queryStringParameters = (Map<String, String>) input.get(QUERY_STRING_PARAMETERS_KEY);
         String documentId = queryStringParameters.get(DOCUMENT_ID_KEY);
-        System.out.println(queryStringParameters);
 
         if (isEmpty(documentId)) {
             gatewayResponse.setErrorBody(MANDATORY_PARAMETERS_MISSING);

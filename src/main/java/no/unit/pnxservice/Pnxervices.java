@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class Pnxervices {
 
     private static final String PRIMO_RECORD_PREFIX = "TN_";
-    private static final String WRONG_URL_FOR_PRIMO_API = "Wrong Url for primo api "
+    public static final String WRONG_URL_FOR_PRIMO_API = "Wrong Url for primo api "
             + " {}";
     public static final String ERROR_WHILE_GETTING_AT_PRIMO_API_FOR = "error while getting at "
             + "primo api for {}/{}";
@@ -64,15 +64,18 @@ public class Pnxervices {
 
 
 
-    private final transient PnxServiceConnection connection2;
+    private final transient PnxServiceConnection connection;
 
 
     /**
      *contructor.
      */
     public Pnxervices() {
-        this.connection2 = new PnxServiceConnection();
+        this.connection = new PnxServiceConnection();
+    }
 
+    public Pnxervices(PnxServiceConnection connection){
+        this.connection = connection;
     }
 
 
@@ -81,7 +84,7 @@ public class Pnxervices {
      * @param docID used for retrieving the PNX record
      * @return docID without primoRecordPrefix
      */
-    private String removePrimoRecordPrefix(String docID) {
+    protected String removePrimoRecordPrefix(String docID) {
         return docID.replaceFirst(PRIMO_RECORD_PREFIX, "");
     }
 
@@ -93,10 +96,9 @@ public class Pnxervices {
 
 
 
-    public JsonObject getFullPNX(String documentId) {
+    protected JsonObject getFullPNX(String documentId) {
         String docID = removePrimoRecordPrefix(documentId);
-        System.out.println("docID" +docID);
-        try(InputStreamReader streamReader = connection2.connect(docID)) {
+        try(InputStreamReader streamReader = connection.connect(docID)) {
             String json = new BufferedReader(streamReader)
                     .lines()
                     .collect(Collectors.joining(System.lineSeparator()));
@@ -112,7 +114,6 @@ public class Pnxervices {
     }
 
     protected JsonObject extractUsefulDataFromXservice(JsonObject response){
-        System.out.println(response);
         JsonObject pnx = response.getAsJsonArray(DOCS_key).get(0).getAsJsonObject().getAsJsonObject(PNX_KEY);
         JsonObject extractedData = new JsonObject();
 
