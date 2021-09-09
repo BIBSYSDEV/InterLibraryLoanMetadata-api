@@ -24,7 +24,11 @@ Parameters:
   PrimoServiceApiKey:
     Type: String
     Description: Api key for contacting the Primo API
-    Default: '{{resolve:secretsmanager:apiKeyPrimo:SecretString}}'
+    Default: "{{resolve:secretsmanager:apiKeyPrimo:SecretString}}"
+  BaseBibliotekServiceEndpoint:
+    Type: String
+    Description: Url Endpoint to the BaseBibliotek server
+    Default: "nb.no"
 
 Conditions:
   HasDomainName: !Not [!Equals [!Ref CustomDomain, ""]]
@@ -134,6 +138,7 @@ Resources:
         Variables:
           ALLOWED_ORIGIN: "*"
           INSTITUTIONSERVICE_ENDPOINT: !Ref InstitutionServiceEndpoint
+          BASEBIBLIOTEKSERVICE_ENDPOINT: !Ref BaseBibliotekServiceEndpoint
       Handler: no.unit.MetadataHandler::handleRequest
       Runtime: java11
       MemorySize: 1024

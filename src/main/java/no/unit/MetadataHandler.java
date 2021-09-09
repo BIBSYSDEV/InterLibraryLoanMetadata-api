@@ -49,7 +49,9 @@ public class MetadataHandler implements RequestHandler<Map<String, Object>, Gate
             return gatewayResponse;
         }
         JsonObject pnxServiceObject = getXServiceData(documentId);
-
+        // InstitutionService institutionService = new InstitutionService();
+        // final String libraryCode = institutionService.get("oriaCode", "NTNU_UB", "oriaDefaultNCIPserver");
+        // pnxServiceObject.add("libraryCode", libraryCode);
         return new GatewayResponse(pnxServiceObject.toString(), 200);
     }
 

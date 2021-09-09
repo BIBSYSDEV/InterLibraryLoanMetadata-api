@@ -21,8 +21,10 @@ public class ConfigTest {
     public void testCheckPropertiesSet() {
         final Config instance = Config.getInstance();
         instance.setInstitutionServiceHost(Config.INSTITUTIONSERVICE_ENDPOINT_KEY);
+        instance.setBasebibliotekServiceHost(Config.BASEBIBLIOTEKSERVICE_ENDPOINT_KEY);
         assertTrue(instance.checkProperties());
         assertEquals(Config.INSTITUTIONSERVICE_ENDPOINT_KEY, instance.getInstitutionServiceHost());
+        assertEquals(Config.BASEBIBLIOTEKSERVICE_ENDPOINT_KEY, instance.getBasebibliotekServiceHost());
     }
 
     @Test
