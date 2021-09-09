@@ -2,9 +2,8 @@ package no.unit;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import no.unit.pnxservice.HTTPConnectionWrapper;
+import com.google.gson.JsonObject;
 import no.unit.pnxservice.Pnxervices;
-import org.json.JSONObject;
 
 import javax.ws.rs.core.Response;
 import java.util.Objects;
@@ -34,20 +33,21 @@ public class MetadataHandler implements RequestHandler<Map<String, Object>, Gate
         @SuppressWarnings("unchecked")
         Map<String, String> queryStringParameters = (Map<String, String>) input.get(QUERY_STRING_PARAMETERS_KEY);
         String documentId = queryStringParameters.get(DOCUMENT_ID_KEY);
+        System.out.println(queryStringParameters);
 
         if (isEmpty(documentId)) {
             gatewayResponse.setErrorBody(MANDATORY_PARAMETERS_MISSING);
             gatewayResponse.setStatusCode(Response.Status.BAD_REQUEST.getStatusCode());
             return gatewayResponse;
         }
-        // JSONObject pnxServiceObject = getXServiceData(context, documentId);
-        JSONObject pnxServiceObject = new JSONObject();
+         JsonObject pnxServiceObject = getXServiceData( documentId);
+
         return new GatewayResponse(pnxServiceObject.toString(), 200);
     }
 
-    private JSONObject getXServiceData(Context context, String documentId) {
-        Pnxervices pnxServices = new Pnxervices(context, new HTTPConnectionWrapper(), "", "");
-        return pnxServices.doStuff(documentId);
+    protected JsonObject getXServiceData( String documentId) {
+        Pnxervices pnxServices = new Pnxervices();
+        return pnxServices.getPnxData(documentId);
     }
 
 }

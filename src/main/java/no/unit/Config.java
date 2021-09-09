@@ -7,10 +7,15 @@ public class Config {
     public static final String MISSING_ENVIRONMENT_VARIABLES = "Missing environment variables";
     public static final String CORS_ALLOW_ORIGIN_HEADER_ENVIRONMENT_NAME = "ALLOWED_ORIGIN";
     public static final String INSTITUTIONSERVICE_ENDPOINT_KEY = "INSTITUTIONSERVICE_ENDPOINT";
+    public static final String PRIMO_SERVICE_ENDPOINT_KEY = "PRIMO_SERVICE_ENDPOINT";
+    public static final String PRIMO_SERVICE_API_KEY = "PRIMO_SERVICE_API";
 
     private String corsHeader;
 
     private String institutionServiceHost;
+
+    private String primoRestApiHost;
+    private String primoRestApiKey;
 
     private Config() {
     }
@@ -22,6 +27,8 @@ public class Config {
         static {
             INSTANCE.setInstitutionServiceHost(System.getenv(INSTITUTIONSERVICE_ENDPOINT_KEY));
             INSTANCE.setCorsHeader(System.getenv(CORS_ALLOW_ORIGIN_HEADER_ENVIRONMENT_NAME));
+            INSTANCE.setPrimoRestApiHost(System.getenv(PRIMO_SERVICE_ENDPOINT_KEY));
+            INSTANCE.setPrimoRestApiKey(System.getenv(PRIMO_SERVICE_API_KEY));
         }
     }
 
@@ -47,6 +54,22 @@ public class Config {
 
     public String getInstitutionServiceHost() {
         return institutionServiceHost;
+    }
+
+    public String getPrimoRestApiHost() {
+        return primoRestApiHost;
+    }
+
+    public void setPrimoRestApiHost(String primoRestApiHost) {
+        this.primoRestApiHost = primoRestApiHost;
+    }
+
+    public String getPrimoRestApiKey() {
+        return primoRestApiKey;
+    }
+
+    public void setPrimoRestApiKey(String primoRestApiKey) {
+        this.primoRestApiKey = primoRestApiKey;
     }
 
     public String getCorsHeader() {

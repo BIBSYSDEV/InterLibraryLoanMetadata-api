@@ -1,16 +1,16 @@
 interface pnxserviceOutput {
-    isbn?: string[],
-    source?: string[],
-    record_id?: string[],
-    publicationPlace?: string[],
-    b_title?: string[],
-    volume?: string[],
-    creation_year?: string[],
-    creator?: string[],
-    pages?: string[],
-    publisher?: string[],
-    display_title?: string[],
-    libraries: Library[]
+    isbn: string[] | null,
+    source: string[] | null,
+    record_id: string[] | null,
+    publicationPlace: string[] | null,
+    b_title: string[] | null,
+    volume: string[] | null,
+    creation_year: string[] | null,
+    creator: string[] | null,
+    pages: string[] | null,
+    publisher: string[] | null,
+    display_title: string[] | null,
+    libraries: Library[] | null
 }
 
 interface Library {
