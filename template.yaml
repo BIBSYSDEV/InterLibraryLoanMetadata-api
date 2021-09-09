@@ -97,7 +97,7 @@ Resources:
                   content:
                     application/json:
                       schema:
-                        $ref: "#/components/schemas/getInterLibraryLoanRecordResponseBody"
+                        $ref: '#/components/schemas/getInterLibraryLoanRecordResponseBody'
                 '400':
                   description: Bad request.
                   content:
