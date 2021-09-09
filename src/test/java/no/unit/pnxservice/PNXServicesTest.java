@@ -22,8 +22,10 @@ import static org.mockito.Mockito.when;
 public class PNXServicesTest {
     public static final String FULL_PNX_EXAMPLE_1 = "full_pnx_example_1.json";
     public static final String FULL_PNX_EXAMPLE_2 = "full_pnx_example_2.json";
+    public static final String FULL_PNX_EXAMPLE_3 = "full_pnx_example_3.json";
     public static final String CONDENSED_PNX_EXAMPLE_1 = "condensed_pnx_example_1.json";
     public static final String CONDENSED_PNX_EXAMPLE_2 = "condensed_pnx_example_2.json";
+    public static final String CONDENSED_PNX_EXAMPLE_3 = "condensed_pnx_example_3.json";
 
     private String createJSON(String filename){
 
@@ -102,13 +104,17 @@ public class PNXServicesTest {
     public void itExtractsCorrectData(){
         JsonObject fullPNXExample1 = JsonParser.parseString( createJSON(FULL_PNX_EXAMPLE_1)).getAsJsonObject();
         JsonObject fullPNXExample2 = JsonParser.parseString( createJSON(FULL_PNX_EXAMPLE_2)).getAsJsonObject();
+        JsonObject fullPNXExample3 = JsonParser.parseString( createJSON(FULL_PNX_EXAMPLE_3)).getAsJsonObject();
         JsonObject condensedPNXFromFile1 = JsonParser.parseString( createJSON(CONDENSED_PNX_EXAMPLE_1)).getAsJsonObject();
         JsonObject condensedPNXFromFile2 = JsonParser.parseString( createJSON(CONDENSED_PNX_EXAMPLE_2)).getAsJsonObject();
+        JsonObject condensedPNXFromFile3 = JsonParser.parseString( createJSON(CONDENSED_PNX_EXAMPLE_3)).getAsJsonObject();
         Pnxervices pnxervices = new Pnxervices();
         JsonObject pnxServicesCondensedExample1 = pnxervices.extractUsefulDataFromXservice(fullPNXExample1);
         JsonObject pnxServicesCondensedExample2 = pnxervices.extractUsefulDataFromXservice(fullPNXExample2);
+        JsonObject pnxServicesCondensedExample3 = pnxervices.extractUsefulDataFromXservice(fullPNXExample3);
         assertEquals(condensedPNXFromFile1, pnxServicesCondensedExample1);
         assertEquals(condensedPNXFromFile2, pnxServicesCondensedExample2);
+        assertEquals(condensedPNXFromFile3, pnxServicesCondensedExample3);
     }
 
     @Test
