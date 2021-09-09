@@ -139,6 +139,8 @@ Resources:
           ALLOWED_ORIGIN: "*"
           INSTITUTIONSERVICE_ENDPOINT: !Ref InstitutionServiceEndpoint
           BASEBIBLIOTEKSERVICE_ENDPOINT: !Ref BaseBibliotekServiceEndpoint
+          PRIMO_SERVICE_ENDPOINT: !Ref PrimoServiceEndpoint
+          PRIMO_SERVICE_API: !Ref PrimoServiceApiKey
       Handler: no.unit.MetadataHandler::handleRequest
       Runtime: java11
       MemorySize: 1024
