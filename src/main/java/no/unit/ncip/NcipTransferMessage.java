@@ -23,21 +23,21 @@ public class NcipTransferMessage {
     public static final String REQUEST_TYPE = "requestType";
     public static final String COMMENT = "comment";    
     public static final String NCIP_SERVER_URL = "ncipServerUrl";
-    public final String toAgencyId;
-    public final String fromAgencyId;
-    private final String isbnValue;
-    public final String userIdentifierValue;
-    public final String author;
-    public final String title;
-    public final String publisher;
-    public final String publicationDate;
-    public final String placeOfPublication;
-    public final String bibliographicRecordIdentifier;
-    public final String bibliographicRecordIdentifierCode;
-    public final String type;
-    public final String requestType;
-    public final String comment;
-    private final String ncipServerUrl;
+    public final transient String toAgencyId;
+    public final transient String fromAgencyId;
+    public final transient String isbnValue;
+    public final transient String userIdentifierValue;
+    public final transient String author;
+    public final transient String title;
+    public final transient String publisher;
+    public final transient String publicationDate;
+    public final transient String placeOfPublication;
+    public final transient String bibliographicRecordIdentifier;
+    public final transient String bibliographicRecordIdentifierCode;
+    public final transient String type;
+    public final transient String requestType;
+    public final transient String comment;
+    public final transient String ncipServerUrl;
 
     /**
      * Creates and NcipTransferMessage with given properties.

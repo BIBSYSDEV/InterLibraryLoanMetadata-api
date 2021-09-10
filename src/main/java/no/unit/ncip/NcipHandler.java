@@ -18,10 +18,11 @@ import org.slf4j.LoggerFactory;
 
 public class NcipHandler extends ApiGatewayHandler<NcipRequest, GatewayResponse> {
 
-    public static final String NO_PARAMETERS_GIVEN_TO_HANDLER = "No parameters given to Handler";
+    @JacocoGenerated
     private static final transient Logger log = LoggerFactory.getLogger(NcipHandler.class);
+    public static final String NO_PARAMETERS_GIVEN_TO_HANDLER = "No parameters given to Handler";
     public static final String NCIP_MESSAGE_IS_NOT_VALID = "Ncip message is not valid: ";
-    private NcipService ncipService;
+    private transient NcipService ncipService;
 
     @JacocoGenerated
     public NcipHandler() {

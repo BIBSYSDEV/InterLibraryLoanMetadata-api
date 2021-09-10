@@ -4,8 +4,8 @@ public class NcipResponse {
 
     public String message;
     public int status;
-    String orderFromLibrary;
-    String orderTime;
-    String patron;
+    protected String orderFromLibrary;
+    protected String orderTime;
+    protected String patron;
     public String problemdetail;
 }

@@ -3,21 +3,25 @@ package no.unit.ncip;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
+import nva.commons.core.JacocoGenerated;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NcipService {
 
-    private CloseableHttpClient httpclient;
+    @JacocoGenerated
+    private static final transient Logger log = LoggerFactory.getLogger(NcipService.class);
+    public static final String FAILED_TO_READ_RESPONSE_BODY_FROM_NCIP_POST = "Failed to read response body from ncip "
+        + "POST";
+    public static final String FAILED_TO_SET_PAYLOAD_TO_HTTP_POST = "Failed to set payload to HttpPost.";
+    private final transient CloseableHttpClient httpclient;
 
     public NcipService() {
         httpclient = HttpClients.createDefault();
@@ -28,35 +32,23 @@ public class NcipService {
     }
 
     protected NcipResponse send(String payload, String ncipServerUrl) {
-        httpclient = HttpClients.createDefault();
         HttpPost httppost = new HttpPost(ncipServerUrl);
-
-        // Request parameters and other properties.
-        List<NameValuePair> params = new ArrayList<NameValuePair>(2);
-        params.add(new BasicNameValuePair("param-1", "12345"));
-        params.add(new BasicNameValuePair("param-2", "Hello!"));
         try {
             httppost.setEntity(new StringEntity(payload));
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.error(FAILED_TO_SET_PAYLOAD_TO_HTTP_POST, e);
         }
 
         NcipResponse ncipResponse = new NcipResponse();
-        CloseableHttpResponse response = null;
-        try {
-            response = httpclient.execute(httppost);
+        try (CloseableHttpResponse response = httpclient.execute(httppost)) {
+            ncipResponse.status = response.getStatusLine().getStatusCode();
+            ncipResponse.message = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            e.printStackTrace();
+            ncipResponse.status = HttpStatus.SC_INTERNAL_SERVER_ERROR;
+            ncipResponse.message = FAILED_TO_READ_RESPONSE_BODY_FROM_NCIP_POST;
+            ncipResponse.problemdetail = e.getMessage();
+            log.error(FAILED_TO_READ_RESPONSE_BODY_FROM_NCIP_POST, e);
         }
-        ncipResponse.status = response.getStatusLine().getStatusCode();
-        HttpEntity entity = response.getEntity();
-        String responseBody = "";
-        try {
-            responseBody = EntityUtils.toString(entity, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        ncipResponse.message = responseBody;
         return ncipResponse;
     }
 }

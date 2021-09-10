@@ -7,7 +7,7 @@ import nva.commons.core.JacocoGenerated;
 
 public class NcipRequest {
 
-    private final NcipTransferMessage ncipTransferMessage;
+    private final transient NcipTransferMessage ncipTransferMessage;
 
     @JsonCreator
     public NcipRequest(@JsonProperty("transferMessage") NcipTransferMessage transferMessage) {
