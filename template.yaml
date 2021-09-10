@@ -17,6 +17,14 @@ Parameters:
     Type: String
     Description: Url Endpoint to the SRU server
     Default: 'instservice-test.bibsys.no'
+  PrimoServiceEndpoint:
+    Type: String
+    Description: Url Endpoints to the Primo API
+    Default: 'api-eu.hosted.exlibrisgroup.com'
+  PrimoServiceApiKey:
+    Type: String
+    Description: Api key for contacting the Primo API
+    Default: "{{resolve:secretsmanager:apiKeyPrimo:SecretString}}"
   BaseBibliotekServiceEndpoint:
     Type: String
     Description: Url Endpoint to the BaseBibliotek server
@@ -37,7 +45,6 @@ Globals:
     EndpointConfiguration: REGIONAL
 
 Resources:
-
   InterLibraryLoanMetadataApi:
     Type: AWS::Serverless::Api
     Metadata:
@@ -66,8 +73,8 @@ Resources:
         paths:
           /:
             get:
-              summary:  Get bibliographic metadata by document id
-              description:  gets bibliographic metadata by document_id
+              summary: Get bibliographic metadata by document id
+              description: gets bibliographic metadata by document_id
               consumes:
                 - application/json
               produces:
@@ -75,7 +82,7 @@ Resources:
               parameters:
                 - in: query
                   name: document_id
-                  required: false
+                  required: true
                   type: string
                   description: document_id
               x-amazon-apigateway-integration:
@@ -129,9 +136,11 @@ Resources:
     Properties:
       Environment:
         Variables:
-          ALLOWED_ORIGIN:  '*'
+          ALLOWED_ORIGIN: '*'
           INSTITUTIONSERVICE_ENDPOINT: !Ref InstitutionServiceEndpoint
           BASEBIBLIOTEKSERVICE_ENDPOINT: !Ref BaseBibliotekServiceEndpoint
+          PRIMO_SERVICE_ENDPOINT: !Ref PrimoServiceEndpoint
+          PRIMO_SERVICE_API: !Ref PrimoServiceApiKey
       Handler: no.unit.MetadataHandler::handleRequest
       Runtime: java11
       MemorySize: 1024
