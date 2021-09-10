@@ -3,7 +3,12 @@ package no.unit.utils;
 import no.unit.ncip.NcipTransferMessage;
 
 public class NcipUtils {
-    
+
+    /**
+     * Generates xml formattted NCIP-message.
+     * @param msg NcipTransferMessage object that holds ncip data.
+     * @return xml formatted NCIP-message
+     */
     public static String ncipMessageAsXml(NcipTransferMessage msg) {
         StringBuilder ncipXML = new StringBuilder();
         ncipXML.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n")
@@ -36,24 +41,24 @@ public class NcipUtils {
             .append("            <ns1:BibliographicRecordId>\n")
             .append("                <ns1:BibliographicRecordIdentifier>").append(msg.bibliographicRecordIdentifier)
             .append("</ns1:BibliographicRecordIdentifier>\n")
-            .append("         <!-- Supported BibliographicRecordIdentifierCode is OwnerLocalRecordID, ISBN, ISSN and" )
+            .append("         <!-- Supported BibliographicRecordIdentifierCode is OwnerLocalRecordID, ISBN, ISSN and")
             .append(" EAN -->\n")
-            .append("         <!-- Supported values of OwnerLocalRecordID is simplyfied to 'LocalId' - each system " )
+            .append("         <!-- Supported values of OwnerLocalRecordID is simplyfied to 'LocalId' - each system ")
             .append("know it's own values. -->\n")
             .append("                <ns1:BibliographicRecordIdentifierCode>")
             .append(msg.bibliographicRecordIdentifierCode).append("</ns1:BibliographicRecordIdentifierCode>\n")
             .append("            </ns1:BibliographicRecordId>\n")
             .append("        </ns1:BibliographicId>\n")
             .append("        <ns1:RequestId>\n")
-            .append("            <!-- The Home library should fill out both AgencyId and generate a legal " )
+            .append("            <!-- The Home library should fill out both AgencyId and generate a legal ")
             .append("RequestIdentifierValue -->\n")
             .append("            <ns1:AgencyId/>\n")
             .append("            <!-- The RequestIdentifierValue must be part of the RequestId-->\n")
-            .append("            <!-- This value should be empty; Home library should generate this value IF the " )
+            .append("            <!-- This value should be empty; Home library should generate this value IF the ")
             .append("request is accepted and the Item is orded, see use-case 2 call #3 -->\n")
             .append("            <ns1:RequestIdentifierValue/>\n")
             .append("        </ns1:RequestId>\n")
-            .append("        <!-- The RequestId must be created by the initializing AgencyId and it has to be " )
+            .append("        <!-- The RequestId must be created by the initializing AgencyId and it has to be ")
             .append("globally unique -->\n")
             .append("        <!-- The RequestType must be one of the following: -->\n")
             .append("        <!-- Physical, a loan (of a physical item, create a reservation if not available) -->\n")
@@ -63,14 +68,14 @@ public class NcipUtils {
             .append("        <!-- LII, a patron initialized physical loan request, threat as a physical loan request ")
             .append("-->\n        <!-- LIINoReservation, a patron initialized physical loan request, do NOT create a")
             .append(" reservation if not available -->\n")
-            .append("        <!-- Depot, a border case; some libraries get a box of (foreign language) books from" )
+            .append("        <!-- Depot, a border case; some libraries get a box of (foreign language) books from")
             .append(" the national library -->\n")
             .append("        <!-- If your library don't receive 'Depot'-books; just respond with a \"Unknown Value ")
             .append("From Known Scheme\"-ProblemType -->\n")
             .append("        <ns1:RequestType>").append(msg.requestType).append("</ns1:RequestType>\n")
-            .append("        <!-- RequestScopeType is mandatory and must be \"Title\", signaling that the request is" )
+            .append("        <!-- RequestScopeType is mandatory and must be \"Title\", signaling that the request is")
             .append(" on title-level -->\n")
-            .append("        <!-- (and not Item-level - even though the request was on a Id that uniquely identify " )
+            .append("        <!-- (and not Item-level - even though the request was on a Id that uniquely identify ")
             .append("the requested Item) -->\n")
             .append("        <ns1:RequestScopeType>Title</ns1:RequestScopeType>\n")
             .append("        <!-- Include ItemOptionalFields.BibliographicDescription if you wish to receive ")

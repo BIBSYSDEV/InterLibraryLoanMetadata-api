@@ -78,6 +78,10 @@ public class NcipTransferMessage {
         this.ncipServerUrl = ncipServerUrl;
     }
 
+    /**
+     * Checks if sufficient data is send over.
+     * @return [TRUE] if valid
+     */
     public boolean isValid() {
         if (StringUtils.isBlank(bibliographicRecordIdentifier)) {
             return false;
@@ -91,7 +95,10 @@ public class NcipTransferMessage {
         if (StringUtils.isBlank(toAgencyId)) {
             return false;
         }
-        return !StringUtils.isBlank(userIdentifierValue);
+        if (StringUtils.isBlank(userIdentifierValue)) {
+            return false;
+        }
+        return !StringUtils.isBlank(ncipServerUrl);
     }
 
     @JacocoGenerated
