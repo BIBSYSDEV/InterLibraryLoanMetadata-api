@@ -4,7 +4,6 @@ import static java.util.Objects.isNull;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import no.unit.GatewayResponse;
-import no.unit.ill.services.InstitutionService;
 import no.unit.utils.NcipUtils;
 import no.unit.utils.ParameterException;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -71,7 +70,6 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, GatewayResponse>
         if (transferMessage.isValid()) {
             String xmlMessage = NcipUtils.ncipMessageAsXml(transferMessage);
             String ncipServerUrl = transferMessage.getNcipServerUrl();
-            ncipService = new NcipService();
             final NcipResponse ncipResponse = ncipService.send(xmlMessage, ncipServerUrl);
             gatewayResponse.setStatusCode(ncipResponse.status);
             gatewayResponse.setBody(ncipResponse.message);
@@ -81,10 +79,6 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, GatewayResponse>
             gatewayResponse.setStatusCode(HttpStatus.SC_BAD_REQUEST);
         }
 
-        InstitutionService institutionService = new InstitutionService();
-        final String libraryCode = institutionService.get("oriaCode", "NTNU_UB", "oriaDefaultNCIPserver");
-        gatewayResponse.setStatusCode(200);
-        gatewayResponse.setBody("libraryCode=" + libraryCode);
         return gatewayResponse;
     }
 
