@@ -107,6 +107,7 @@ public class NcipTransferMessage {
     }
 
     @Override
+    @JacocoGenerated
     public boolean equals(Object o) {
         if (this == o) {
             return true;
@@ -127,6 +128,7 @@ public class NcipTransferMessage {
     }
 
     @Override
+    @JacocoGenerated
     public int hashCode() {
         return Objects.hash(toAgencyId, fromAgencyId, isbnValue, userIdentifierValue, author, title, publisher,
             publicationDate, placeOfPublication, bibliographicRecordIdentifier, bibliographicRecordIdentifierCode, type,
