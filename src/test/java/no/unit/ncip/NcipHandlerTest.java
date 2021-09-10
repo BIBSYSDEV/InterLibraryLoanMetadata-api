@@ -25,13 +25,15 @@ import org.junit.jupiter.api.Test;
 
 public class NcipHandlerTest {
 
-    public static final String SUCCESS = "Success";
     private Environment environment;
     private NcipHandler handler;
     private NcipService ncipService;
     private Context context;
     public static final String NCIP_TRANSFER_MESSAGE = "ncipTransferMessage.json";
+    public static final String INCOMPLETE_NCIP_TRANSFER_MESSAGE = "incompleteNcipTransferMessage.json";
     public static final String MESSAGE = "message";
+    public static final String SUCCESS = "Success";
+    public static final String FAILURE = "failure";
 
     /**
      * javadoc for checkstyle.
@@ -64,7 +66,7 @@ public class NcipHandlerTest {
     }
 
     @Test
-    void handlerReturnsErrorWhithEmptyNcipTransferMessage() throws ApiGatewayException, JsonProcessingException {
+    void handleNcipMessageWithSuccess() throws ApiGatewayException, JsonProcessingException {
         String msg = IoUtils.stringFromResources(Path.of(NCIP_TRANSFER_MESSAGE));
         final NcipTransferMessage ncipTransferMessage = objectMapper.readValue(msg, NcipTransferMessage.class);
         NcipResponse ncipResponse = new NcipResponse();
@@ -76,5 +78,20 @@ public class NcipHandlerTest {
         var actual = handler.processInput(request, new RequestInfo(), context);
         assertEquals(HttpStatus.SC_OK, actual.getStatusCode());
         assertEquals(SUCCESS, actual.getBody());
+    }
+
+    @Test
+    void testMissingMandatoryParamsInNcipTransferMessage() throws ApiGatewayException, JsonProcessingException {
+        NcipResponse ncipResponse = new NcipResponse();
+        ncipResponse.status = HttpStatus.SC_BAD_REQUEST;
+        ncipResponse.message = FAILURE;
+        when(ncipService.send(anyString(), anyString())).thenReturn(ncipResponse);
+        String msg = IoUtils.stringFromResources(Path.of(INCOMPLETE_NCIP_TRANSFER_MESSAGE));
+        NcipTransferMessage ncipTransferMessage = objectMapper.readValue(msg, NcipTransferMessage.class);
+        NcipRequest request = new NcipRequest(ncipTransferMessage);
+        var handler = new NcipHandler(environment, ncipService);
+        var actual = handler.processInput(request, new RequestInfo(), context);
+        assertEquals(HttpStatus.SC_BAD_REQUEST, actual.getStatusCode());
+        assertTrue(actual.getBody().contains(NcipHandler.NCIP_MESSAGE_IS_NOT_VALID));
     }
 }
