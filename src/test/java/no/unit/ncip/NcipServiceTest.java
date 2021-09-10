@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -19,6 +20,7 @@ class NcipServiceTest {
 
     public static final String PAYLOAD = "payload";
     public static final String NCIP_SERVER_URL = "ncipServerUrl";
+    public static final String FAILURE = "failure";
 
     @Test
     public void testSendWithSuccess() throws IOException {
@@ -34,6 +36,17 @@ class NcipServiceTest {
         final NcipResponse ncipResponse = ncipService.send(PAYLOAD, NCIP_SERVER_URL);
         assertEquals(HttpStatus.SC_OK, ncipResponse.status);
         assertNull(ncipResponse.message);
+    }
+
+    @Test
+    public void testSendWithExceptionExpected() throws IOException {
+        CloseableHttpClient httpclient = mock(CloseableHttpClient.class);
+        NcipService ncipService = new NcipService(httpclient);
+        when(httpclient.execute(any(HttpPost.class))).thenThrow(new IOException(FAILURE));
+        final NcipResponse ncipResponse = ncipService.send("", NCIP_SERVER_URL);
+        assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, ncipResponse.status);
+        assertEquals(NcipService.FAILED_TO_READ_RESPONSE_BODY_FROM_NCIP_POST, ncipResponse.message);
+        assertEquals(FAILURE, ncipResponse.problemdetail);
     }
 
 }
