@@ -2,7 +2,7 @@ package no.unit;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import no.unit.ill.services.Pnxervices;
+import no.unit.ill.services.PnxServices;
 
 import javax.ws.rs.core.Response;
 import java.util.Objects;
@@ -18,13 +18,13 @@ public class MetadataHandler implements RequestHandler<Map<String, Object>, Gate
     public static final String MANDATORY_PARAMETERS_MISSING = "Mandatory parameters 'document_id' is missing.";
     public static final String INTERNAL_SERVER_ERROR_MESSAGE = "An error occurred, error has been logged";
     public static final String DOCUMENT_ID_KEY = "document_id";
-    private final transient Pnxervices pnxServices;
+    private final transient PnxServices pnxServices;
 
     public MetadataHandler() {
-        this.pnxServices = new Pnxervices();
+        this.pnxServices = new PnxServices();
     }
 
-    public MetadataHandler(Pnxervices pnxServices) {
+    public MetadataHandler(PnxServices pnxServices) {
         this.pnxServices = pnxServices;
     }
 

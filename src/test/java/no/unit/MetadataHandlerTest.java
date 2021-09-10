@@ -2,7 +2,7 @@ package no.unit;
 
 
 import com.amazonaws.services.lambda.runtime.Context;
-import no.unit.ill.services.Pnxervices;
+import no.unit.ill.services.PnxServices;
 import org.junit.jupiter.api.Test;
 
 import javax.ws.rs.core.Response;
@@ -49,11 +49,11 @@ public class MetadataHandlerTest {
     @Test
     public void noRecordIdSet() {
         Context awsContext = mock(Context.class);
-        Pnxervices pnxervices = mock(Pnxervices.class);
+        PnxServices pnxServices = mock(PnxServices.class);
         Map<String, Object> event = new HashMap<>();
         String condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
-        MetadataHandler app = new MetadataHandler(pnxervices);
-        when(pnxervices.getPnxData(anyString())).thenReturn(condensedExample1);
+        MetadataHandler app = new MetadataHandler(pnxServices);
+        when(pnxServices.getPnxData(anyString())).thenReturn(condensedExample1);
         GatewayResponse result = app.handleRequest(null, awsContext);
         GatewayResponse result2 = app.handleRequest(event, awsContext);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), result.getStatusCode());
@@ -62,15 +62,15 @@ public class MetadataHandlerTest {
 
     @Test
     public void recordIdIsEmptyString() {
-        Pnxervices pnxervices = mock(Pnxervices.class);
+        PnxServices pnxServices = mock(PnxServices.class);
         Map<String, Object> event = new HashMap<>();
         Map<String, String> queryParameters = new HashMap<>();
         String leksikon = "";
         String condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
         queryParameters.put(MetadataHandler.DOCUMENT_ID_KEY, leksikon);
         event.put(MetadataHandler.QUERY_STRING_PARAMETERS_KEY, queryParameters);
-        MetadataHandler app = new MetadataHandler(pnxervices);
-        when(pnxervices.getPnxData(anyString())).thenReturn(condensedExample1);
+        MetadataHandler app = new MetadataHandler(pnxServices);
+        when(pnxServices.getPnxData(anyString())).thenReturn(condensedExample1);
         Context awsContext = mock(Context.class);
         GatewayResponse result = app.handleRequest(event, awsContext);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), result.getStatusCode());
@@ -80,15 +80,15 @@ public class MetadataHandlerTest {
 
     @Test
     public void successfulResponse() {
-        Pnxervices pnxervices = mock(Pnxervices.class);
+        PnxServices pnxServices = mock(PnxServices.class);
         Map<String, Object> event = new HashMap<>();
         Map<String, String> queryParameters = new HashMap<>();
         String leksikon = "BIBSYS_ILS71463631120002201";
         String condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
         queryParameters.put(MetadataHandler.DOCUMENT_ID_KEY, leksikon);
         event.put(MetadataHandler.QUERY_STRING_PARAMETERS_KEY, queryParameters);
-        MetadataHandler app = new MetadataHandler(pnxervices);
-        when(pnxervices.getPnxData(anyString())).thenReturn(condensedExample1);
+        MetadataHandler app = new MetadataHandler(pnxServices);
+        when(pnxServices.getPnxData(anyString())).thenReturn(condensedExample1);
         Context awsContext = mock(Context.class);
         GatewayResponse result = app.handleRequest(event, awsContext);
         assertEquals(Response.Status.OK.getStatusCode(), result.getStatusCode());

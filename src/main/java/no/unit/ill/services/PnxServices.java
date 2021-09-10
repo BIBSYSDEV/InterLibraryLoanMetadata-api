@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
 
 
 
-public class Pnxervices {
+public class PnxServices {
 
-    private static final transient Logger log = LoggerFactory.getLogger(Pnxervices.class);
+    private static final transient Logger log = LoggerFactory.getLogger(PnxServices.class);
 
     private static final String PRIMO_RECORD_PREFIX = "TN_";
     public static final String WRONG_URL_FOR_PRIMO_API = "Wrong Url for primo api "
@@ -68,11 +68,11 @@ public class Pnxervices {
     /**
      *contructor.
      */
-    public Pnxervices() {
+    public PnxServices() {
         this.connection = new PnxServiceConnection();
     }
 
-    public Pnxervices(PnxServiceConnection connection) {
+    public PnxServices(PnxServiceConnection connection) {
         this.connection = connection;
     }
 

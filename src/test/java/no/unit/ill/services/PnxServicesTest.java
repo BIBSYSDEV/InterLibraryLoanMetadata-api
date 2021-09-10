@@ -10,8 +10,8 @@ import java.net.URISyntaxException;
 import java.util.Objects;
 
 
-import static no.unit.ill.services.Pnxervices.ERROR_WHILE_GETTING_AT_PRIMO_API_FOR;
-import static no.unit.ill.services.Pnxervices.WRONG_URL_FOR_PRIMO_API;
+import static no.unit.ill.services.PnxServices.ERROR_WHILE_GETTING_AT_PRIMO_API_FOR;
+import static no.unit.ill.services.PnxServices.WRONG_URL_FOR_PRIMO_API;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -55,9 +55,9 @@ public class PnxServicesTest {
                         .getClassLoader()
                         .getResourceAsStream(FULL_PNX_EXAMPLE_1)));
         when(pnxServiceConnection.connect(anyString())).thenReturn(inputStreamReader);
-        Pnxervices pnxervices = new Pnxervices(pnxServiceConnection);
+        PnxServices pnxServices = new PnxServices(pnxServiceConnection);
         JsonObject result = JsonParser.parseString(
-                pnxervices.getPnxData("test"))
+                pnxServices.getPnxData("test"))
                 .getAsJsonObject();
         assertEquals(condensedPnxFromFile1, result);
 
@@ -70,8 +70,8 @@ public class PnxServicesTest {
                 Objects.requireNonNull(getClass().getClassLoader().getResourceAsStream(
                 FULL_PNX_EXAMPLE_1)));
         when(pnxServiceConnection.connect(anyString())).thenReturn(inputStreamReader);
-        Pnxervices pnxervices = new Pnxervices(pnxServiceConnection);
-        JsonObject fullPnxResult = pnxervices.getFullPNX("test_test");
+        PnxServices pnxServices = new PnxServices(pnxServiceConnection);
+        JsonObject fullPnxResult = pnxServices.getFullPNX("test_test");
         assertTrue(fullPnxResult.getAsJsonArray("docs").get(0).getAsJsonObject().has("pnx"));
     }
 
@@ -80,9 +80,9 @@ public class PnxServicesTest {
         PnxServiceConnection pnxServiceConnection = mock(PnxServiceConnection.class);
         when(pnxServiceConnection.connect(anyString()))
                 .thenThrow(new URISyntaxException("docId", WRONG_URL_FOR_PRIMO_API));
-        Pnxervices pnxervices = new Pnxervices(pnxServiceConnection);
+        PnxServices pnxServices = new PnxServices(pnxServiceConnection);
         JsonObject expected = new JsonObject();
-        JsonObject result = pnxervices.getFullPNX("testtest");
+        JsonObject result = pnxServices.getFullPNX("testtest");
         assertEquals(expected, result);
     }
 
@@ -91,9 +91,9 @@ public class PnxServicesTest {
         PnxServiceConnection pnxServiceConnection = mock(PnxServiceConnection.class);
         when(pnxServiceConnection.connect(anyString()))
                 .thenThrow(new IOException(ERROR_WHILE_GETTING_AT_PRIMO_API_FOR));
-        Pnxervices pnxervices = new Pnxervices(pnxServiceConnection);
+        PnxServices pnxServices = new PnxServices(pnxServiceConnection);
         JsonObject expected = new JsonObject();
-        JsonObject result = pnxervices.getFullPNX("testtest");
+        JsonObject result = pnxServices.getFullPNX("testtest");
         assertEquals(expected, result);
     }
 
@@ -101,8 +101,8 @@ public class PnxServicesTest {
     public void removesPrimoPrefixCorrectly() {
         String withPrefix = "TN_BIBSYS_ILS71560264980002201";
         String withoutPrefix = "BIBSYS_ILS71560264980002201";
-        Pnxervices pnxervices = new Pnxervices();
-        String prepared = pnxervices.removePrimoRecordPrefix(withPrefix);
+        PnxServices pnxServices = new PnxServices();
+        String prepared = pnxServices.removePrimoRecordPrefix(withPrefix);
         assertEquals(withoutPrefix, prepared);
     }
 
@@ -120,10 +120,10 @@ public class PnxServicesTest {
         JsonObject condensedPnxFromFile3 = JsonParser
                 .parseString(createJson(CONDENSED_PNX_EXAMPLE_3))
                 .getAsJsonObject();
-        Pnxervices pnxervices = new Pnxervices();
-        JsonObject pnxServicesCondensedExample1 = pnxervices.extractUsefulDataFromXservice(fullPnxExample1);
-        JsonObject pnxServicesCondensedExample2 = pnxervices.extractUsefulDataFromXservice(fullPnxExample2);
-        JsonObject pnxServicesCondensedExample3 = pnxervices.extractUsefulDataFromXservice(fullPnxExample3);
+        PnxServices pnxServices = new PnxServices();
+        JsonObject pnxServicesCondensedExample1 = pnxServices.extractUsefulDataFromXservice(fullPnxExample1);
+        JsonObject pnxServicesCondensedExample2 = pnxServices.extractUsefulDataFromXservice(fullPnxExample2);
+        JsonObject pnxServicesCondensedExample3 = pnxServices.extractUsefulDataFromXservice(fullPnxExample3);
         assertEquals(condensedPnxFromFile1, pnxServicesCondensedExample1);
         assertEquals(condensedPnxFromFile2, pnxServicesCondensedExample2);
         assertEquals(condensedPnxFromFile3, pnxServicesCondensedExample3);
