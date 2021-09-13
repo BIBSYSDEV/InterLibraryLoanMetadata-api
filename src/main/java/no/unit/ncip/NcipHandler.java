@@ -20,7 +20,10 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, GatewayResponse>
     @JacocoGenerated
     private static final transient Logger log = LoggerFactory.getLogger(NcipHandler.class);
     public static final String NO_PARAMETERS_GIVEN_TO_HANDLER = "No parameters given to Handler";
-    public static final String NCIP_MESSAGE_IS_NOT_VALID = "Ncip message is not valid: ";
+    public static final String NCIP_MESSAGE_IS_NOT_VALID = "NCIP message is not valid: ";
+    public static final String NCIP_RESPONSE_FROM_SERVER = "Ill - NCIP response from server: ";
+    public static final String NCIP_XML_SEND_TO = "Ill - NCIP xml send to: ";
+    public static final String COLON = ": ";
     private transient NcipService ncipService;
 
     @JacocoGenerated
@@ -70,9 +73,15 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, GatewayResponse>
         if (transferMessage.isValid()) {
             String xmlMessage = NcipUtils.ncipMessageAsXml(transferMessage);
             String ncipServerUrl = transferMessage.getNcipServerUrl();
+            log.info(NCIP_XML_SEND_TO + ncipServerUrl + System.lineSeparator() + xmlMessage);
             final NcipResponse ncipResponse = ncipService.send(xmlMessage, ncipServerUrl);
+            log.info(NCIP_RESPONSE_FROM_SERVER + ncipServerUrl + System.lineSeparator() + ncipResponse);
             gatewayResponse.setStatusCode(ncipResponse.status);
-            gatewayResponse.setBody(ncipResponse.message);
+            if (ncipResponse.status < HttpStatus.SC_BAD_REQUEST) {
+                gatewayResponse.setBody(ncipResponse.message);
+            } else  {
+                gatewayResponse.setErrorBody(ncipResponse.message + COLON + ncipResponse.problemdetail);
+            }
         } else {
             log.error(NCIP_MESSAGE_IS_NOT_VALID + transferMessage);
             gatewayResponse.setErrorBody(NCIP_MESSAGE_IS_NOT_VALID + transferMessage);
@@ -86,5 +95,7 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, GatewayResponse>
     protected Integer getSuccessStatusCode(NcipRequest input, GatewayResponse output) {
         return output.getStatusCode();
     }
+
+
 
 }
