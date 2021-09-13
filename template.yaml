@@ -71,7 +71,7 @@ Resources:
           title: Inter Library Loan Metadata API
           version: '1.0'
         paths:
-          /:
+          /metadata:
             get:
               summary: Get bibliographic metadata by document id
               description: gets bibliographic metadata by document_id
@@ -120,6 +120,7 @@ Resources:
                           error:
                             type: string
                             description: error message
+          /ncip:
             post:
               summary: Ncip message to send
               description: sends NCIP message to external ncip-server
@@ -205,7 +206,7 @@ Resources:
           Properties:
             RestApiId: !Ref InterLibraryLoanMetadataApi
             Method: get
-            Path: /
+            Path: /metadata
 
   PostInterLibraryLoanNcipFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -222,7 +223,7 @@ Resources:
           Properties:
             RestApiId: !Ref InterLibraryLoanMetadataApi
             Method: post
-            Path: /
+            Path: /ncip
 
 
   InterLibraryLoanMetadataBasePathMapping:
