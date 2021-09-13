@@ -40,7 +40,7 @@ public class GatewayResponse {
 
     public GatewayResponse(Environment environment, String location) {
         this.body = EMPTY_JSON;
-        this.generateDefaultHeadersWithLocation(environment, location);
+        this.generateDefaultHeaders(environment, location);
     }
 
     /**
@@ -50,7 +50,7 @@ public class GatewayResponse {
     public GatewayResponse(Environment environment, final String body, final int status) {
         this.statusCode = status;
         this.body = body;
-        this.generateDefaultHeaders(environment);
+        this.generateDefaultHeaders(environment, null);
     }
 
     public String getBody() {
@@ -89,7 +89,7 @@ public class GatewayResponse {
         }
     }
 
-    private void generateDefaultHeaders(Environment environment) {
+    private void generateDefaultHeaders(Environment environment, String location) {
         Map<String, String> headers = new ConcurrentHashMap<>();
         headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         final String corsAllowDomain = environment.readEnv(ALLOWED_ORIGIN_ENV);
@@ -99,20 +99,9 @@ public class GatewayResponse {
         headers.put("Access-Control-Allow-Methods", "OPTIONS,GET");
         headers.put("Access-Control-Allow-Credentials", "true");
         headers.put("Access-Control-Allow-Headers", HttpHeaders.CONTENT_TYPE);
-        this.headers = Map.copyOf(headers);
-    }
-
-    private void generateDefaultHeadersWithLocation(Environment environment, String location) {
-        Map<String, String> headers = new ConcurrentHashMap<>();
-        headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON);
-        final String corsAllowDomain = environment.readEnv(ALLOWED_ORIGIN_ENV);
-        if (StringUtils.isNotEmpty(corsAllowDomain)) {
-            headers.put(CORS_ALLOW_ORIGIN_HEADER, corsAllowDomain);
+        if (StringUtils.isNotEmpty(location)) {
+            headers.put(HttpHeaders.LOCATION, location);
         }
-        headers.put("Access-Control-Allow-Methods", "OPTIONS,GET");
-        headers.put("Access-Control-Allow-Credentials", "true");
-        headers.put("Access-Control-Allow-Headers", HttpHeaders.CONTENT_TYPE);
-        headers.put(HttpHeaders.LOCATION, location);
         this.headers = Map.copyOf(headers);
     }
 
