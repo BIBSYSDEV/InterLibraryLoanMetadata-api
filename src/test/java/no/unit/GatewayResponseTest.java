@@ -55,7 +55,7 @@ public class GatewayResponseTest {
         Environment env = mock(Environment.class);
         GatewayResponse gatewayResponse =
             new GatewayResponse(env, LOCATION);
-        assertEquals(LOCATION , gatewayResponse.getHeaders().get(HttpHeaders.LOCATION));
+        assertEquals(LOCATION, gatewayResponse.getHeaders().get(HttpHeaders.LOCATION));
 
     }
 
