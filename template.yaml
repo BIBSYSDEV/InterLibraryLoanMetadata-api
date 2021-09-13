@@ -292,7 +292,7 @@ Resources:
         Variables:
           ALLOWED_ORIGIN: '*'
           BASEBIBLIOTEKSERVICE_ENDPOINT: !Ref BaseBibliotekServiceEndpoint
-      Handler: no.unit.LibcheckHandler::handleRequest
+      Handler: no.unit.libcheck.LibcheckHandler::handleRequest
       Runtime: java11
       MemorySize: 1024
       Events:

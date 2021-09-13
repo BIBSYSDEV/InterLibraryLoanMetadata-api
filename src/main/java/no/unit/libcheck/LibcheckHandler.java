@@ -1,20 +1,21 @@
-package no.unit;
+package no.unit.libcheck;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.google.gson.JsonObject;
+import no.unit.GatewayResponse;
 import no.unit.ill.services.BaseBibliotekBean;
 import no.unit.ill.services.BaseBibliotekService;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.apigateway.exceptions.GatewayResponseSerializingException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
-import org.apache.http.HttpStatus;
 
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
 import java.net.HttpURLConnection;
-import java.util.Map;
 import java.util.Objects;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -34,6 +35,7 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, GatewayResponse> {
 
     /**
      * Constructor for injecting used in testing.
+     *
      * @param environment environment
      */
     public LibcheckHandler(Environment environment) throws JAXBException {
@@ -43,6 +45,7 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, GatewayResponse> {
 
     /**
      * Constructor for injecting used in testing.
+     *
      * @param environment environment
      */
     public LibcheckHandler(Environment environment, BaseBibliotekService basebibliotekService) {
@@ -52,9 +55,10 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, GatewayResponse> {
 
 
     @Override
-    protected GatewayResponse processInput(Void input, RequestInfo requestInfo, Context context) {
+    protected GatewayResponse processInput(Void input, RequestInfo requestInfo, Context context)
+            throws ApiGatewayException {
 
-        String libuser = requestInfo.getQueryParameters().get(LIBUSER_KEY);
+        String libuser = requestInfo.getQueryParameter(LIBUSER_KEY);
         BaseBibliotekBean libraryData = basebibliotekService.libraryLookupByBibnr(libuser);
 
         JsonObject libcheckJsonObject = new JsonObject();
