@@ -13,4 +13,12 @@ public class StringUtils {
     public static boolean isNotEmpty(final CharSequence cs) {
         return !isEmpty(cs);
     }
+
+    public static String defaultString(String str) {
+        if (isNotEmpty(str)){
+            return str;
+        } else {
+            return "";
+        }
+    }
 }
