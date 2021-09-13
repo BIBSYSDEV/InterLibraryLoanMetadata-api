@@ -9,7 +9,7 @@ Parameters:
     Description: (Optional) Custom domain name for the API endpoint
   CustomDomainBasePath:
     Type: String
-    Default: 'interLibraryLoanMetadata'
+    Default: 'ill'
     Description: (Optional) Base path mapping in CustomDomain
     AllowedPattern: "^[a-zA-Z0-9$\\-_.+!*'(),]*$"
     ConstraintDescription: "May contain only letters, numbers and one of $-_.+!*'(),"
@@ -71,7 +71,7 @@ Resources:
           title: Inter Library Loan Metadata API
           version: '1.0'
         paths:
-          /:
+          /metadata:
             get:
               summary: Get bibliographic metadata by document id
               description: gets bibliographic metadata by document_id
@@ -98,6 +98,55 @@ Resources:
                     application/json:
                       schema:
                         $ref: '#/components/schemas/getInterLibraryLoanRecordResponseBody'
+                '400':
+                  description: Bad request.
+                  content:
+                    application/json:
+                      schema:
+                        title: 400 Bad request
+                        type: object
+                        properties:
+                          error:
+                            type: string
+                            description: error message
+                '500':
+                  description: Internal server error.
+                  content:
+                    application/json:
+                      schema:
+                        title: 500 internal server error
+                        type: object
+                        properties:
+                          error:
+                            type: string
+                            description: error message
+          /ncip:
+            post:
+              summary: Ncip message to send
+              description: sends NCIP message to external ncip-server
+              consumes:
+                - application/json
+              produces:
+                - application/json
+              parameters:
+                - in: ncip
+                  name: ncip
+                  required: true
+                  type: string
+                  description: ncip message
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${PostInterLibraryLoanNcipFunction.Arn}/invocations
+                responses: {}
+                httpMethod: POST
+                type: AWS_PROXY
+              responses:
+                '200':
+                  description: inter library loan metadata
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/putInterLibraryLoanNcipResponseBody'
                 '400':
                   description: Bad request.
                   content:
@@ -179,6 +228,13 @@ Resources:
                 title:
                   type: string
                   description: bibliographic record containing metadata
+            postInterLibraryLoanNcipResponseBody:
+              title: inter library loan ncip response
+              type: object
+              properties:
+                title:
+                  type: string
+                  description: response message from ncip-server
             getInterLibraryLoanLibcheckResponseBody:
               title: Inter library loan library check
               type: object
@@ -207,9 +263,27 @@ Resources:
         GetInterLibraryLoanMetadataRecordEvent:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            RestApiId: "InterLibraryLoanMetadataApi"
+            RestApiId: !Ref InterLibraryLoanMetadataApi
             Method: get
-            Path: /
+            Path: /metadata
+
+  PostInterLibraryLoanNcipFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN:  '*'
+      Handler: no.unit.ncip.NcipHandler::handleRequest
+      Runtime: java11
+      MemorySize: 1024
+      Events:
+        PutEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref InterLibraryLoanMetadataApi
+            Method: post
+            Path: /ncip
+
 
   GetInterLibraryLoanLibcheckFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction

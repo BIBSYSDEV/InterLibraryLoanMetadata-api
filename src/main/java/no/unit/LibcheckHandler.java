@@ -1,65 +1,71 @@
 package no.unit;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.google.gson.JsonObject;
 import no.unit.ill.services.BaseBibliotekBean;
 import no.unit.ill.services.BaseBibliotekService;
+import nva.commons.apigateway.ApiGatewayHandler;
+import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.core.Environment;
+import nva.commons.core.JacocoGenerated;
+import org.apache.http.HttpStatus;
 
 import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
+import java.net.HttpURLConnection;
 import java.util.Map;
 import java.util.Objects;
 
-import static no.unit.utils.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-public class LibcheckHandler implements RequestHandler<Map<String, Object>, GatewayResponse> {
 
-    public static final String QUERY_STRING_PARAMETERS_KEY = "queryStringParameters";
-    public static final String MANDATORY_PARAMETERS_MISSING = "Mandatory parameter 'libuser' is missing.";
-    public static final String INTERNAL_SERVER_ERROR_MESSAGE = "An error occurred, error has been logged";
+public class LibcheckHandler extends ApiGatewayHandler<Void, GatewayResponse> {
+
     public static final String LIBUSER_KEY = "libuser";
+
     private final transient BaseBibliotekService basebibliotekService;
 
+
+    @JacocoGenerated
     public LibcheckHandler() throws JAXBException {
+        this(new Environment());
+    }
+
+    /**
+     * Constructor for injecting used in testing.
+     * @param environment environment
+     */
+    public LibcheckHandler(Environment environment) throws JAXBException {
+        super(Void.class, environment);
         this.basebibliotekService = new BaseBibliotekService();
     }
 
-    public LibcheckHandler(BaseBibliotekService basebibliotekService) {
+    /**
+     * Constructor for injecting used in testing.
+     * @param environment environment
+     */
+    public LibcheckHandler(Environment environment, BaseBibliotekService basebibliotekService) {
+        super(Void.class, environment);
         this.basebibliotekService = basebibliotekService;
     }
 
+
     @Override
-    public GatewayResponse handleRequest(Map<String, Object> input, Context context) {
-        GatewayResponse gatewayResponse = new GatewayResponse();
+    protected GatewayResponse processInput(Void input, RequestInfo requestInfo, Context context) {
 
-        if (Objects.isNull(input) || !input.containsKey(QUERY_STRING_PARAMETERS_KEY)) {
-            gatewayResponse.setErrorBody(MANDATORY_PARAMETERS_MISSING);
-            gatewayResponse.setStatusCode(Response.Status.BAD_REQUEST.getStatusCode());
-            return gatewayResponse;
-        }
-
-        @SuppressWarnings("unchecked")
-        Map<String, String> queryStringParameters = (Map<String, String>) input.get(QUERY_STRING_PARAMETERS_KEY);
-        String libuser = queryStringParameters.get(LIBUSER_KEY);
-
-        if (isEmpty(libuser)) {
-            gatewayResponse.setErrorBody(MANDATORY_PARAMETERS_MISSING);
-            gatewayResponse.setStatusCode(Response.Status.BAD_REQUEST.getStatusCode());
-            return gatewayResponse;
-        }
-
-        BaseBibliotekBean libraryData = getLibraryData(libuser);
+        String libuser = requestInfo.getQueryParameters().get(LIBUSER_KEY);
+        BaseBibliotekBean libraryData = basebibliotekService.libraryLookupByBibnr(libuser);
 
         JsonObject libcheckJsonObject = new JsonObject();
         libcheckJsonObject.addProperty("isAlmaLibrary", "Alma".equalsIgnoreCase(libraryData.getKatsyst()));
         libcheckJsonObject.addProperty("isNcipLibrary", !isEmpty(libraryData.getNncippServer()));
 
-        return new GatewayResponse(libcheckJsonObject.toString(), Response.Status.OK.getStatusCode());
+        return new GatewayResponse(environment, libcheckJsonObject.toString(), HttpURLConnection.HTTP_OK);
     }
 
-    protected BaseBibliotekBean getLibraryData(String libuser) {
-        return basebibliotekService.libraryLookupByBibnr(libuser);
+    @Override
+    protected Integer getSuccessStatusCode(Void input, GatewayResponse output) {
+        return HttpURLConnection.HTTP_OK;
     }
-
 }

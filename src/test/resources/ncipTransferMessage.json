@@ -1,0 +1,17 @@
+{
+  "toAgencyId": "0183300",
+  "fromAgencyId": "2171900",
+  "isbnValue": "8256235152",
+  "userIdentifierValue": "pcb",
+  "author": "Fossan, Erling",
+  "title": "Operativsystemet MS-DOS",
+  "publisher": "NKI fjernundervisningen",
+  "publicationDate": "1995",
+  "placeOfPublication": "Bekkestua",
+  "bibliographicRecordIdentifier": "47BIBSYS_NB_999519503204702202",
+  "bibliographicRecordIdentifierCode": "almaMmsid",
+  "type": "book",
+  "requestType": "Physical",
+  "comment": "no comment fra PCB",
+  "ncipServerUrl": "https://ncip.mikromarc.no/ncipservice/ncipresponder/parser?db=hallingdal-felles"
+}

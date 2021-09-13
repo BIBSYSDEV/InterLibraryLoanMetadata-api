@@ -1,27 +1,29 @@
 package no.unit;
 
-
-import com.amazonaws.services.lambda.runtime.Context;
-import no.unit.ill.services.PnxServices;
-import org.junit.jupiter.api.Test;
-
-import javax.ws.rs.core.Response;
-
+import static nva.commons.apigateway.ApiGatewayHandler.ALLOWED_ORIGIN_ENV;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
+import com.amazonaws.services.lambda.runtime.Context;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import javax.ws.rs.core.Response;
+import no.unit.ill.services.PnxServices;
+import nva.commons.core.Environment;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class MetadataHandlerTest {
+
     public static final String CONDENSED_PNX_EXAMPLE_1 = "condensed_pnx_example_1.json";
+    private Environment environment;
+    private PnxServices pnxServices;
+    private MetadataHandler app;
+    private Context awsContext;
 
     private String createJson(String filename) {
 
@@ -37,7 +39,18 @@ public class MetadataHandlerTest {
             e.printStackTrace();
         }
         return  contentBuilder.toString();
+    }
 
+    /**
+     * javadoc for checkstyle.
+     */
+    @BeforeEach
+    public void init() {
+        environment = mock(Environment.class);
+        pnxServices = mock(PnxServices.class);
+        awsContext = mock(Context.class);
+        when(environment.readEnv(ALLOWED_ORIGIN_ENV)).thenReturn("*");
+        app = new MetadataHandler(environment, pnxServices);
     }
 
     @Test
@@ -48,11 +61,9 @@ public class MetadataHandlerTest {
 
     @Test
     public void noRecordIdSet() {
-        Context awsContext = mock(Context.class);
-        PnxServices pnxServices = mock(PnxServices.class);
+        when(environment.readEnv(ALLOWED_ORIGIN_ENV)).thenReturn(GatewayResponse.CORS_ALLOW_ORIGIN_HEADER);
         Map<String, Object> event = new HashMap<>();
         String condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
-        MetadataHandler app = new MetadataHandler(pnxServices);
         when(pnxServices.getPnxData(anyString())).thenReturn(condensedExample1);
         GatewayResponse result = app.handleRequest(null, awsContext);
         GatewayResponse result2 = app.handleRequest(event, awsContext);
@@ -62,14 +73,12 @@ public class MetadataHandlerTest {
 
     @Test
     public void recordIdIsEmptyString() {
-        PnxServices pnxServices = mock(PnxServices.class);
         Map<String, Object> event = new HashMap<>();
         Map<String, String> queryParameters = new HashMap<>();
         String leksikon = "";
         String condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
         queryParameters.put(MetadataHandler.DOCUMENT_ID_KEY, leksikon);
         event.put(MetadataHandler.QUERY_STRING_PARAMETERS_KEY, queryParameters);
-        MetadataHandler app = new MetadataHandler(pnxServices);
         when(pnxServices.getPnxData(anyString())).thenReturn(condensedExample1);
         Context awsContext = mock(Context.class);
         GatewayResponse result = app.handleRequest(event, awsContext);
@@ -80,17 +89,14 @@ public class MetadataHandlerTest {
 
     @Test
     public void successfulResponse() {
-        PnxServices pnxServices = mock(PnxServices.class);
         Map<String, Object> event = new HashMap<>();
         Map<String, String> queryParameters = new HashMap<>();
         String leksikon = "BIBSYS_ILS71463631120002201";
         String condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
         queryParameters.put(MetadataHandler.DOCUMENT_ID_KEY, leksikon);
         event.put(MetadataHandler.QUERY_STRING_PARAMETERS_KEY, queryParameters);
-        MetadataHandler app = new MetadataHandler(pnxServices);
         when(pnxServices.getPnxData(anyString())).thenReturn(condensedExample1);
-        Context awsContext = mock(Context.class);
-        GatewayResponse result = app.handleRequest(event, awsContext);
+        final GatewayResponse result = app.handleRequest(event, awsContext);
         assertEquals(Response.Status.OK.getStatusCode(), result.getStatusCode());
     }
 }
