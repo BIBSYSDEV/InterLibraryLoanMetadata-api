@@ -1,6 +1,6 @@
 package no.unit;
 
-import no.unit.utils.StringUtils;
+import nva.commons.core.StringUtils;
 
 public class Config {
 
