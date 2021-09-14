@@ -1,6 +1,7 @@
 package no.unit.libcheck;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import jakarta.xml.bind.JAXBException;
 import no.unit.ill.services.BaseBibliotekBean;
 import no.unit.ill.services.BaseBibliotekService;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -10,7 +11,6 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
-import javax.xml.bind.JAXBException;
 import java.net.HttpURLConnection;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;

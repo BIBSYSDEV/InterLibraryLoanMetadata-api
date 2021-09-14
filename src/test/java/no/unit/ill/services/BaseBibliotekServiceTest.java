@@ -4,10 +4,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
+import jakarta.xml.bind.JAXBException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import javax.xml.bind.JAXBException;
 
 import static no.unit.ill.services.BaseBibliotekService.WRONG_URL_FOR_GET_IN_BASEBIBLIOTEK_SERVICE_FOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;

@@ -1,6 +1,7 @@
 package no.unit.libcheck;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import jakarta.xml.bind.JAXBException;
 import no.unit.ill.services.BaseBibliotekBean;
 import no.unit.ill.services.BaseBibliotekService;
 import nva.commons.apigateway.RequestInfo;
@@ -9,7 +10,6 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import javax.xml.bind.JAXBException;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
