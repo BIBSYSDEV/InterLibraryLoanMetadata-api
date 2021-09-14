@@ -24,7 +24,7 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, GatewayResponse> {
     public static final String IS_ALMA_LIBRARY = "isAlmaLibrary";
     public static final String IS_NCIP_LIBRARY = "isNcipLibrary";
     public static final String ALMA_KATSYST = "Alma";
-    private static final String LIBRARY_NOT_FOUND = "Library not found: ";
+    public static final String LIBRARY_NOT_FOUND = "Library not found: ";
 
     private final transient BaseBibliotekService basebibliotekService;
 

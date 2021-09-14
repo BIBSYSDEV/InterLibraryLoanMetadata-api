@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static no.unit.libcheck.LibcheckHandler.ALMA_KATSYST;
+import static no.unit.libcheck.LibcheckHandler.LIBRARY_NOT_FOUND;
 import static no.unit.libcheck.LibcheckHandler.LIBUSER_KEY;
 import static nva.commons.apigateway.ApiGatewayHandler.ALLOWED_ORIGIN_ENV;
 import static nva.commons.apigateway.RequestInfo.MISSING_FROM_QUERY_PARAMETERS;
@@ -50,7 +51,7 @@ public class LibcheckHandlerTest {
     }
 
     @Test
-    void getSuccessStatusCodeReturnsOk() throws JAXBException {
+    void getSuccessStatusCodeReturnsOk() {
         var response = new GatewayResponse(environment, MOCK_RESPONSE_BODY, HttpURLConnection.HTTP_OK);
         Integer statusCode = handler.getSuccessStatusCode(null, response);
         assertEquals(HttpURLConnection.HTTP_OK, statusCode);
@@ -73,12 +74,26 @@ public class LibcheckHandlerTest {
     }
 
     @Test
-    void handlerThrowsExceptionWhenMissingQueryParam() throws ApiGatewayException {
+    void handlerThrowsExceptionWhenMissingQueryParam() {
         var handler = new LibcheckHandler(environment, baseBibliotekService);
         Exception exception = assertThrows(BadRequestException.class, () -> {
             handler.processInput(null, new RequestInfo(), context);
         });
         assertTrue(exception.getMessage().contains(MISSING_FROM_QUERY_PARAMETERS + LIBUSER_KEY));
+    }
+
+    @Test
+    void handlerThrowsExceptionWhenLibuserNull() {
+        when(baseBibliotekService.libraryLookupByBibnr(anyString())).thenReturn(null);
+        var handler = new LibcheckHandler(environment, baseBibliotekService);
+        RequestInfo requestInfo = new RequestInfo();
+        Map<String, String> queryParameters = new HashMap<>();
+        queryParameters.put(LIBUSER_KEY, MOCK_LIBUSER);
+        requestInfo.setQueryParameters(queryParameters);
+        Exception exception = assertThrows(BadRequestException.class, () -> {
+            handler.processInput(null, requestInfo, context);
+        });
+        assertTrue(exception.getMessage().contains(LIBRARY_NOT_FOUND + MOCK_LIBUSER));
     }
 
 }
