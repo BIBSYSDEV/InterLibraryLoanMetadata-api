@@ -169,6 +169,55 @@ Resources:
                           error:
                             type: string
                             description: error message
+          /libcheck:
+            get:
+              summary: Get library ncip and alma status
+              description: Retrieves whether library has ncip server and/or is alma library
+              consumes:
+                - application/json
+              produces:
+                - application/json
+              parameters:
+                - in: query
+                  name: libuser
+                  required: true
+                  type: string
+                  description: libuser
+              x-amazon-apigateway-integration:
+                uri:
+                  Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetInterLibraryLoanLibcheckFunction.Arn}/invocations
+                responses: {}
+                httpMethod: POST
+                type: AWS_PROXY
+              responses:
+                '200':
+                  description: Library ncip and alma status
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/getInterLibraryLoanLibcheckResponseBody'
+                '400':
+                  description: Bad request.
+                  content:
+                    application/json:
+                      schema:
+                        title: 400 Bad request
+                        type: object
+                        properties:
+                          error:
+                            type: string
+                            description: error message
+                '500':
+                  description: Internal server error.
+                  content:
+                    application/json:
+                      schema:
+                        title: 500 internal server error
+                        type: object
+                        properties:
+                          error:
+                            type: string
+                            description: error message
 
         components:
           schemas:
@@ -186,6 +235,16 @@ Resources:
                 title:
                   type: string
                   description: response message from ncip-server
+            getInterLibraryLoanLibcheckResponseBody:
+              title: Inter library loan library check
+              type: object
+              properties:
+                isAlmaLibrary:
+                  type: boolean
+                  description: Library is Alma library
+                isNcipLibrary:
+                  type: boolean
+                  description: Library has NCIP server
 
   GetInterLibraryLoanMetadataRecordFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -225,6 +284,24 @@ Resources:
             Method: post
             Path: /ncip
 
+
+  GetInterLibraryLoanLibcheckFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      Environment:
+        Variables:
+          ALLOWED_ORIGIN: '*'
+          BASEBIBLIOTEKSERVICE_ENDPOINT: !Ref BaseBibliotekServiceEndpoint
+      Handler: no.unit.libcheck.LibcheckHandler::handleRequest
+      Runtime: java11
+      MemorySize: 1024
+      Events:
+        GetInterLibraryLoanLibcheckEvent:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            RestApiId: !Ref InterLibraryLoanMetadataApi
+            Method: get
+            Path: /libcheck
 
   InterLibraryLoanMetadataBasePathMapping:
     Type: AWS::ApiGateway::BasePathMapping
