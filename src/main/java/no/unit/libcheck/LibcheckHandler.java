@@ -8,15 +8,11 @@ import no.unit.ill.services.BaseBibliotekService;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
-import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.apigateway.exceptions.GatewayResponseSerializingException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
-import javax.ws.rs.core.Response;
 import javax.xml.bind.JAXBException;
 import java.net.HttpURLConnection;
-import java.util.Objects;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -24,9 +20,11 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 public class LibcheckHandler extends ApiGatewayHandler<Void, GatewayResponse> {
 
     public static final String LIBUSER_KEY = "libuser";
+    public static final String IS_ALMA_LIBRARY = "isAlmaLibrary";
+    public static final String IS_NCIP_LIBRARY = "isNcipLibrary";
+    public static final String ALMA_KATSYST = "Alma";
 
     private final transient BaseBibliotekService basebibliotekService;
-
 
     @JacocoGenerated
     public LibcheckHandler() throws JAXBException {
@@ -53,7 +51,6 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, GatewayResponse> {
         this.basebibliotekService = basebibliotekService;
     }
 
-
     @Override
     protected GatewayResponse processInput(Void input, RequestInfo requestInfo, Context context)
             throws ApiGatewayException {
@@ -62,8 +59,8 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, GatewayResponse> {
         BaseBibliotekBean libraryData = basebibliotekService.libraryLookupByBibnr(libuser);
 
         JsonObject libcheckJsonObject = new JsonObject();
-        libcheckJsonObject.addProperty("isAlmaLibrary", "Alma".equalsIgnoreCase(libraryData.getKatsyst()));
-        libcheckJsonObject.addProperty("isNcipLibrary", !isEmpty(libraryData.getNncippServer()));
+        libcheckJsonObject.addProperty(IS_ALMA_LIBRARY, ALMA_KATSYST.equalsIgnoreCase(libraryData.getKatsyst()));
+        libcheckJsonObject.addProperty(IS_NCIP_LIBRARY, !isEmpty(libraryData.getNncippServer()));
 
         return new GatewayResponse(environment, libcheckJsonObject.toString(), HttpURLConnection.HTTP_OK);
     }
