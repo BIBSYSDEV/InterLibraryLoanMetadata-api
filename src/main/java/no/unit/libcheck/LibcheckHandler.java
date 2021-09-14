@@ -8,6 +8,7 @@ import no.unit.ill.services.BaseBibliotekService;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
@@ -23,6 +24,7 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, GatewayResponse> {
     public static final String IS_ALMA_LIBRARY = "isAlmaLibrary";
     public static final String IS_NCIP_LIBRARY = "isNcipLibrary";
     public static final String ALMA_KATSYST = "Alma";
+    private static final String LIBRARY_NOT_FOUND = "Library not found: ";
 
     private final transient BaseBibliotekService basebibliotekService;
 
@@ -56,7 +58,8 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, GatewayResponse> {
             throws ApiGatewayException {
 
         String libuser = requestInfo.getQueryParameter(LIBUSER_KEY);
-        BaseBibliotekBean libraryData = basebibliotekService.libraryLookupByBibnr(libuser);
+
+        BaseBibliotekBean libraryData = getLibraryData(libuser);
 
         JsonObject libcheckJsonObject = new JsonObject();
         libcheckJsonObject.addProperty(IS_ALMA_LIBRARY, ALMA_KATSYST.equalsIgnoreCase(libraryData.getKatsyst()));
@@ -68,5 +71,13 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, GatewayResponse> {
     @Override
     protected Integer getSuccessStatusCode(Void input, GatewayResponse output) {
         return HttpURLConnection.HTTP_OK;
+    }
+
+    private BaseBibliotekBean getLibraryData(String libuser) throws BadRequestException {
+        BaseBibliotekBean libraryData = basebibliotekService.libraryLookupByBibnr(libuser);
+        if (libraryData != null) {
+            return libraryData;
+        }
+        throw new BadRequestException(LIBRARY_NOT_FOUND + libuser);
     }
 }
