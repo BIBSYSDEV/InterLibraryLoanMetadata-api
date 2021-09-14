@@ -7,12 +7,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import javax.ws.rs.core.Response;
 import no.unit.ill.services.PnxServices;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +28,7 @@ public class MetadataHandlerTest {
     private MetadataHandler app;
     private Context awsContext;
 
-    private String createJson(String filename) {
+    private JsonObject createJson(String filename) {
 
         StringBuilder contentBuilder = new StringBuilder();
         int i;
@@ -38,7 +41,7 @@ public class MetadataHandlerTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return  contentBuilder.toString();
+        return JsonParser.parseString(contentBuilder.toString()).getAsJsonObject();
     }
 
     /**
@@ -60,15 +63,12 @@ public class MetadataHandlerTest {
     }
 
     @Test
-    public void noRecordIdSet() {
+    public void noRecordIdSet() throws ApiGatewayException {
         when(environment.readEnv(ALLOWED_ORIGIN_ENV)).thenReturn(GatewayResponse.CORS_ALLOW_ORIGIN_HEADER);
-        Map<String, Object> event = new HashMap<>();
-        String condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
+        JsonObject condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
         when(pnxServices.getPnxData(anyString())).thenReturn(condensedExample1);
-        GatewayResponse result = app.handleRequest(null, awsContext);
-        GatewayResponse result2 = app.handleRequest(event, awsContext);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), result.getStatusCode());
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), result2.getStatusCode());
+        MetadataResponse result = app.processInput(null,null, awsContext);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), result);
     }
 
     @Test
@@ -76,13 +76,13 @@ public class MetadataHandlerTest {
         Map<String, Object> event = new HashMap<>();
         Map<String, String> queryParameters = new HashMap<>();
         String leksikon = "";
-        String condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
+        JsonObject condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
         queryParameters.put(MetadataHandler.DOCUMENT_ID_KEY, leksikon);
         event.put(MetadataHandler.QUERY_STRING_PARAMETERS_KEY, queryParameters);
         when(pnxServices.getPnxData(anyString())).thenReturn(condensedExample1);
         Context awsContext = mock(Context.class);
-        GatewayResponse result = app.handleRequest(event, awsContext);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), result.getStatusCode());
+//        MetadataResponse result = app.processInput(event, awsContext);
+//        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), result);
     }
 
 
@@ -92,11 +92,11 @@ public class MetadataHandlerTest {
         Map<String, Object> event = new HashMap<>();
         Map<String, String> queryParameters = new HashMap<>();
         String leksikon = "BIBSYS_ILS71463631120002201";
-        String condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
+        JsonObject condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
         queryParameters.put(MetadataHandler.DOCUMENT_ID_KEY, leksikon);
         event.put(MetadataHandler.QUERY_STRING_PARAMETERS_KEY, queryParameters);
         when(pnxServices.getPnxData(anyString())).thenReturn(condensedExample1);
-        final GatewayResponse result = app.handleRequest(event, awsContext);
-        assertEquals(Response.Status.OK.getStatusCode(), result.getStatusCode());
+//        final MetadataResponse result = app.processInput(event, awsContext);
+//        assertEquals(Response.Status.OK.getStatusCode(), result);
     }
 }

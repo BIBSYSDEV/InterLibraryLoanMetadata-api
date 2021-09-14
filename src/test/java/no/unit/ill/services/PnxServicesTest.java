@@ -56,8 +56,7 @@ public class PnxServicesTest {
                         .getResourceAsStream(FULL_PNX_EXAMPLE_1)));
         when(pnxServiceConnection.connect(anyString())).thenReturn(inputStreamReader);
         PnxServices pnxServices = new PnxServices(pnxServiceConnection);
-        JsonObject result = JsonParser.parseString(
-                pnxServices.getPnxData("test"))
+        JsonObject result = pnxServices.getPnxData("test")
                 .getAsJsonObject();
         assertEquals(condensedPnxFromFile1, result);
 
