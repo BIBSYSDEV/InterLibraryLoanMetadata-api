@@ -88,11 +88,9 @@ public class PnxServices {
 
     public String getPnxData(String documentId) {
         JsonObject fullPNX = getFullPNX(documentId);
-        return extractUsefulDataFromXservice(fullPNX).toString();
+        log.info("That's my PNX: " + fullPNX);
+        return extractUsefulDataFromPnxService(fullPNX).toString();
     }
-
-
-
 
     protected JsonObject getFullPNX(String documentId) {
         String docID = removePrimoRecordPrefix(documentId);
@@ -109,7 +107,7 @@ public class PnxServices {
         return new JsonObject();
     }
 
-    protected JsonObject extractUsefulDataFromXservice(JsonObject response) {
+    protected JsonObject extractUsefulDataFromPnxService(JsonObject response) {
         JsonObject pnx = response.getAsJsonArray(DOCS_key).get(0).getAsJsonObject().getAsJsonObject(PNX_KEY);
         JsonObject extractedData = new JsonObject();
 

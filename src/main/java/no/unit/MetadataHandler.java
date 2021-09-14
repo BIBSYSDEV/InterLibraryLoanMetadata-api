@@ -64,14 +64,14 @@ public class MetadataHandler implements RequestHandler<Map<String, Object>, Gate
             gatewayResponse.setStatusCode(Response.Status.BAD_REQUEST.getStatusCode());
             return gatewayResponse;
         }
-        String pnxServiceObject = getXServiceData(documentId);
+        String pnxServiceObject = getPnxServiceData(documentId);
         // InstitutionService institutionService = new InstitutionService();
         // final String libraryCode = institutionService.get("oriaCode", "NTNU_UB", "oriaDefaultNCIPserver");
         // pnxServiceObject.add("libraryCode", libraryCode);
         return new GatewayResponse(environment, pnxServiceObject, Response.Status.OK.getStatusCode());
     }
 
-    protected String getXServiceData(String documentId) {
+    protected String getPnxServiceData(String documentId) {
         return pnxServices.getPnxData(documentId);
     }
 
