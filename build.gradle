@@ -90,6 +90,7 @@ checkstyle {
 }
 
 tasks.withType(Checkstyle) {
+    exclude { 'no/nb/basebibliotek/generated/*' }
     reports {
         xml.enabled false
         html.enabled true
