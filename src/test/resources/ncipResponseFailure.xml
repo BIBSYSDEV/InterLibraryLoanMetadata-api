@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ns1:NCIPMessage ns1:version="http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd"
+                 xmlns:ns1="http://www.niso.org/2008/ncip" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                 xsi:schemaLocation="http://www.niso.org/2008/ncip http://www.niso.org/schemas/ncip/v2_02/ncip_v2_02.xsd">
+    <ns1:RenewItemResponse>
+        <ns1:Problem>
+            <ns1:ProblemType>Not Renewable</ns1:ProblemType>
+            <ns1:ProblemDetail>Item may not be renewed </ns1:ProblemDetail>
+        </ns1:Problem>
+    </ns1:RenewItemResponse>
+</ns1:NCIPMessage>

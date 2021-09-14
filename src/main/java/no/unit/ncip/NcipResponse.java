@@ -2,10 +2,20 @@ package no.unit.ncip;
 
 public class NcipResponse {
 
-    public String message;
-    public int status;
-    protected String orderFromLibrary;
-    protected String orderTime;
-    protected String patron;
-    public String problemdetail;
+    public transient String message;
+    public transient int status;
+    public transient String problemdetail;
+
+    @Override
+    public String toString() {
+        return "NcipResponse{"
+            + "message='"
+            + message + '\''
+            + ", status="
+            + status
+            + ", problemdetail='"
+            + problemdetail
+            + '\''
+            + '}';
+    }
 }
