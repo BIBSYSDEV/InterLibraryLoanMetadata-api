@@ -29,13 +29,13 @@ import static org.mockito.Mockito.when;
 public class LibcheckHandlerTest {
 
     public static final String MOCK_NCIP_SERVER_URL = "https://ncip.server.url";
+    public static final String MOCK_RESPONSE_BODY = "{\"isAlmaLibrary\":true,\"isNcipLibrary\":true}";
+    public static final String MOCK_LIBUSER = "1234";
+
     private Environment environment;
     private LibcheckHandler handler;
     private BaseBibliotekService baseBibliotekService;
     private Context context;
-    public static final String MOCK_RESPONSE_BODY = "{\"isAlmaLibrary\":true,\"isNcipLibrary\":true}";
-    public static final String MOCK_LIBUSER = "1234";
-    public static final String LIBUSER = "libuser";
 
     /**
      * javadoc for checkstyle.
@@ -51,7 +51,6 @@ public class LibcheckHandlerTest {
 
     @Test
     void getSuccessStatusCodeReturnsOk() throws JAXBException {
-        LibcheckHandler handler = new LibcheckHandler(environment);
         var response = new GatewayResponse(environment, MOCK_RESPONSE_BODY, HttpURLConnection.HTTP_OK);
         Integer statusCode = handler.getSuccessStatusCode(null, response);
         assertEquals(HttpURLConnection.HTTP_OK, statusCode);
@@ -66,7 +65,7 @@ public class LibcheckHandlerTest {
         var handler = new LibcheckHandler(environment, baseBibliotekService);
         RequestInfo requestInfo = new RequestInfo();
         Map<String, String> queryParameters = new HashMap<>();
-        queryParameters.put(LIBUSER, MOCK_LIBUSER);
+        queryParameters.put(LIBUSER_KEY, MOCK_LIBUSER);
         requestInfo.setQueryParameters(queryParameters);
         var actual = handler.processInput(null, requestInfo, context);
         assertEquals(HttpURLConnection.HTTP_OK, actual.getStatusCode());
