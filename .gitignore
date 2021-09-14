@@ -288,3 +288,6 @@ samconfig.toml
 samconfig.toml.*
 
 /sam-app/
+
+# JAXB generated files:
+src/main/java/no/nb/basebibliotek/
