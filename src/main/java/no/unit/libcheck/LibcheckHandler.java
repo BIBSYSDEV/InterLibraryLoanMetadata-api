@@ -1,8 +1,6 @@
 package no.unit.libcheck;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import com.google.gson.JsonObject;
-import no.unit.GatewayResponse;
 import no.unit.ill.services.BaseBibliotekBean;
 import no.unit.ill.services.BaseBibliotekService;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -18,11 +16,9 @@ import java.net.HttpURLConnection;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 
-public class LibcheckHandler extends ApiGatewayHandler<Void, GatewayResponse> {
+public class LibcheckHandler extends ApiGatewayHandler<Void, LibcheckResponse> {
 
     public static final String LIBUSER_KEY = "libuser";
-    public static final String IS_ALMA_LIBRARY = "isAlmaLibrary";
-    public static final String IS_NCIP_LIBRARY = "isNcipLibrary";
     public static final String ALMA_KATSYST = "Alma";
     public static final String LIBRARY_NOT_FOUND = "Library not found: ";
 
@@ -54,22 +50,22 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, GatewayResponse> {
     }
 
     @Override
-    protected GatewayResponse processInput(Void input, RequestInfo requestInfo, Context context)
+    protected LibcheckResponse processInput(Void input, RequestInfo requestInfo, Context context)
             throws ApiGatewayException {
 
         String libuser = requestInfo.getQueryParameter(LIBUSER_KEY);
 
         BaseBibliotekBean libraryData = getLibraryData(libuser);
 
-        JsonObject libcheckJsonObject = new JsonObject();
-        libcheckJsonObject.addProperty(IS_ALMA_LIBRARY, ALMA_KATSYST.equalsIgnoreCase(libraryData.getKatsyst()));
-        libcheckJsonObject.addProperty(IS_NCIP_LIBRARY, !isEmpty(libraryData.getNncippServer()));
+        LibcheckResponse libcheckResponse = new LibcheckResponse();
+        libcheckResponse.setAlmaLibrary(ALMA_KATSYST.equalsIgnoreCase(libraryData.getKatsyst()));
+        libcheckResponse.setNcipLibrary(!isEmpty(libraryData.getNncippServer()));
 
-        return new GatewayResponse(environment, libcheckJsonObject.toString(), HttpURLConnection.HTTP_OK);
+        return libcheckResponse;
     }
 
     @Override
-    protected Integer getSuccessStatusCode(Void input, GatewayResponse output) {
+    protected Integer getSuccessStatusCode(Void input, LibcheckResponse output) {
         return HttpURLConnection.HTTP_OK;
     }
 
