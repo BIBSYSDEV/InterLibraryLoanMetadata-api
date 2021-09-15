@@ -18,7 +18,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import no.unit.MetadataResponse.Library;
 import no.unit.ill.services.BaseBibliotekBean;
 import no.unit.ill.services.BaseBibliotekService;
-import no.unit.ill.services.InstitutionService;
 import no.unit.ill.services.PnxServices;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
@@ -26,7 +25,6 @@ import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
-import nva.commons.core.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,20 +40,20 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     public static final String COULD_NOT_READ_LIBRARY_CODE = "Could not read libraryCode from: {}";
     private final transient PnxServices pnxServices;
     private final transient BaseBibliotekService baseBibliotekService;
-    private final transient InstitutionService institutionService;
+//    private final transient InstitutionService institutionService;
     private final transient Gson gson = new Gson();
 
     @JacocoGenerated
     public MetadataHandler() throws JAXBException {
-        this(new Environment(), new PnxServices(), new BaseBibliotekService(), new InstitutionService());
+        this(new Environment(), new PnxServices(), new BaseBibliotekService());
     }
 
-    public MetadataHandler(Environment environment, PnxServices pnxServices, BaseBibliotekService baseBibliotekService,
-                           InstitutionService institutionService) {
+    public MetadataHandler(Environment environment, PnxServices pnxServices, BaseBibliotekService baseBibliotekService) {
+//                           InstitutionService institutionService) {
         super(Void.class, environment);
         this.pnxServices = pnxServices;
         this.baseBibliotekService = baseBibliotekService;
-        this.institutionService = institutionService;
+//        this.institutionService = institutionService;
     }
 
     @Override
@@ -66,9 +64,9 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         }
         final String documentId = requestInfo.getQueryParameter(DOCUMENT_ID_KEY);
 
-//        final String instDefaultLibraryCode =
-//            institutionService.getInstituitionDefaultLibraryCode("NTNU_UB");
-//        log.debug("contact med instService "+ instDefaultLibraryCode);
+        //        final String instDefaultLibraryCode =
+        //            institutionService.getInstituitionDefaultLibraryCode("NTNU_UB");
+        //        log.debug("contact med instService "+ instDefaultLibraryCode);
         JsonObject pnxServiceObject = getPnxServiceData(documentId);
         log.debug("PnxService output: {}", gson.fromJson(pnxServiceObject, String.class));
         return generateMetadatResponse(pnxServiceObject);
@@ -123,21 +121,12 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         library.mms_id = mmsId;
         setDisplayNameAndNcipServerUrl(library);
         log.debug("library DisplayName: " + library.display_name);
-        library.from_library_code = getFromLibraryCode(institutionCode);
+//        library.from_library_code = institutionService.getInstituitionDefaultLibraryCode(institutionCode);
+        library.from_library_code = libraryCode;
         log.debug("library NcipServerUrl: " + library.ncip_server_url);
         return library;
     }
 
-    private String getFromLibraryCode(String institutionCode) throws IOException {
-        final String instDefaultLibraryCode =
-            institutionService.getInstituitionDefaultLibraryCode(institutionCode);
-        if (StringUtils.isNotEmpty(instDefaultLibraryCode)) {
-           return instDefaultLibraryCode;
-        } else {
-            log.error("Did not get something useful from instService");
-            throw new IOException("Did not get something useful from instService");
-        }
-    }
 
     private void setDisplayNameAndNcipServerUrl(Library library) {
         final BaseBibliotekBean baseBibliotekBean = baseBibliotekService.libraryLookupByBibnr(library.library_code);
@@ -162,7 +151,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         final JsonElement jsonArray = pnxServiceObject.get(key);
         log.debug("Parsing json for key={} is json={}", key, jsonArray);
         List jsonObjList = gson.fromJson(jsonArray, List.class);
-        return isNull(jsonObjList)? EMPTY_STRING : String.join(", ", jsonObjList);
+        return isNull(jsonObjList) ? EMPTY_STRING : String.join(", ", jsonObjList);
     }
 
     protected JsonObject getPnxServiceData(String documentId) {

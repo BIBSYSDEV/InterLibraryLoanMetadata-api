@@ -61,7 +61,7 @@ public class MetadataHandlerTest {
         institutionService = mock(InstitutionService.class);
         awsContext = mock(Context.class);
         when(environment.readEnv(ALLOWED_ORIGIN_ENV)).thenReturn("*");
-        handler = new MetadataHandler(environment, pnxServices, baseBibliotekService, institutionService);
+        handler = new MetadataHandler(environment, pnxServices, baseBibliotekService);
     }
 
     @Test
