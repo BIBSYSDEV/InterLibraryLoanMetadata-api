@@ -1,7 +1,7 @@
 package no.unit.libcheck;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import no.unit.GatewayResponse;
+import jakarta.xml.bind.JAXBException;
 import no.unit.ill.services.BaseBibliotekBean;
 import no.unit.ill.services.BaseBibliotekService;
 import nva.commons.apigateway.RequestInfo;
@@ -10,7 +10,6 @@ import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import javax.xml.bind.JAXBException;
 import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +29,6 @@ import static org.mockito.Mockito.when;
 public class LibcheckHandlerTest {
 
     public static final String MOCK_NCIP_SERVER_URL = "https://ncip.server.url";
-    public static final String MOCK_RESPONSE_BODY = "{\"isAlmaLibrary\":true,\"isNcipLibrary\":true}";
     public static final String MOCK_LIBUSER = "1234";
 
     private Environment environment;
@@ -52,8 +50,10 @@ public class LibcheckHandlerTest {
 
     @Test
     void getSuccessStatusCodeReturnsOk() {
-        var response = new GatewayResponse(environment, MOCK_RESPONSE_BODY, HttpURLConnection.HTTP_OK);
-        Integer statusCode = handler.getSuccessStatusCode(null, response);
+        LibcheckResponse libcheckResponse = new LibcheckResponse();
+        libcheckResponse.setAlmaLibrary(true);
+        libcheckResponse.setNcipLibrary(true);
+        Integer statusCode = handler.getSuccessStatusCode(null, libcheckResponse);
         assertEquals(HttpURLConnection.HTTP_OK, statusCode);
     }
 
@@ -69,8 +69,8 @@ public class LibcheckHandlerTest {
         queryParameters.put(LIBUSER_KEY, MOCK_LIBUSER);
         requestInfo.setQueryParameters(queryParameters);
         var actual = handler.processInput(null, requestInfo, context);
-        assertEquals(HttpURLConnection.HTTP_OK, actual.getStatusCode());
-        assertEquals(MOCK_RESPONSE_BODY, actual.getBody());
+        assertEquals(true, actual.isAlmaLibrary());
+        assertEquals(true, actual.isNcipLibrary());
     }
 
     @Test

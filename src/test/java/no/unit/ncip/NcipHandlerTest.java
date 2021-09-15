@@ -1,25 +1,26 @@
 package no.unit.ncip;
 
+import static no.unit.ncip.NcipHandler.DASH;
+import static no.unit.ncip.NcipHandler.NCIP_MESSAGE_IS_NOT_VALID;
 import static nva.commons.apigateway.ApiGatewayHandler.ALLOWED_ORIGIN_ENV;
 import static nva.commons.core.JsonUtils.objectMapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
+
+import java.net.HttpURLConnection;
 import java.nio.file.Path;
-import no.unit.utils.ParameterException;
-import nva.commons.apigateway.GatewayResponse;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.ioutils.IoUtils;
-import org.apache.http.HttpStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -50,18 +51,17 @@ public class NcipHandlerTest {
     @Test
     void getSuccessStatusCodeReturnsOK() {
         NcipHandler handler = new NcipHandler(environment);
-        var response =  new no.unit.GatewayResponse(environment, MESSAGE, HttpStatus.SC_OK);
+        var response =  new NcipResponse();
         Integer statusCode = handler.getSuccessStatusCode(null, response);
-        assertEquals(statusCode, HttpStatus.SC_OK);
+        assertEquals(statusCode, HttpURLConnection.HTTP_OK);
     }
 
 
     @Test
     void handlerThrowsExceptionWithEmptyRequest()  {
-        Exception exception = assertThrows(ParameterException.class, () -> {
+        Exception exception = assertThrows(BadRequestException.class, () -> {
             handler.processInput(null, new RequestInfo(), mock(Context.class));
         });
-
         assertTrue(exception.getMessage().contains(NcipHandler.NO_PARAMETERS_GIVEN_TO_HANDLER));
     }
 
@@ -70,28 +70,44 @@ public class NcipHandlerTest {
         String msg = IoUtils.stringFromResources(Path.of(NCIP_TRANSFER_MESSAGE));
         final NcipTransferMessage ncipTransferMessage = objectMapper.readValue(msg, NcipTransferMessage.class);
         NcipResponse ncipResponse = new NcipResponse();
-        ncipResponse.status = HttpStatus.SC_OK;
+        ncipResponse.status = HttpURLConnection.HTTP_OK;
         ncipResponse.message = SUCCESS;
         when(ncipService.send(anyString(), anyString())).thenReturn(ncipResponse);
         NcipRequest request = new NcipRequest(ncipTransferMessage);
         var handler = new NcipHandler(environment, ncipService);
         var actual = handler.processInput(request, new RequestInfo(), context);
-        assertEquals(HttpStatus.SC_OK, actual.getStatusCode());
-        assertEquals(SUCCESS, actual.getBody());
+        assertEquals(HttpURLConnection.HTTP_OK, actual.getStatus());
+        assertEquals(SUCCESS, actual.getMessage());
     }
 
     @Test
-    void testMissingMandatoryParamsInNcipTransferMessage() throws ApiGatewayException, JsonProcessingException {
-        NcipResponse ncipResponse = new NcipResponse();
-        ncipResponse.status = HttpStatus.SC_BAD_REQUEST;
-        ncipResponse.message = FAILURE;
-        when(ncipService.send(anyString(), anyString())).thenReturn(ncipResponse);
+    void testMissingMandatoryParamsInNcipTransferMessage() throws JsonProcessingException {
         String msg = IoUtils.stringFromResources(Path.of(INCOMPLETE_NCIP_TRANSFER_MESSAGE));
         NcipTransferMessage ncipTransferMessage = objectMapper.readValue(msg, NcipTransferMessage.class);
         NcipRequest request = new NcipRequest(ncipTransferMessage);
         var handler = new NcipHandler(environment, ncipService);
-        var actual = handler.processInput(request, new RequestInfo(), context);
-        assertEquals(HttpStatus.SC_BAD_REQUEST, actual.getStatusCode());
-        assertTrue(actual.getBody().contains(NcipHandler.NCIP_MESSAGE_IS_NOT_VALID));
+
+        Exception exception = assertThrows(BadRequestException.class, () -> {
+            handler.processInput(request, new RequestInfo(), context);
+        });
+        assertTrue(exception.getMessage().contains(NCIP_MESSAGE_IS_NOT_VALID));
+    }
+
+    @Test
+    void testProblemResponseFromNcipServer() throws JsonProcessingException {
+        NcipResponse ncipResponse = new NcipResponse();
+        ncipResponse.status = HttpURLConnection.HTTP_BAD_REQUEST;
+        ncipResponse.message = MESSAGE;
+        ncipResponse.problemdetail = FAILURE;
+        when(ncipService.send(anyString(), anyString())).thenReturn(ncipResponse);
+        String msg = IoUtils.stringFromResources(Path.of(NCIP_TRANSFER_MESSAGE));
+        NcipTransferMessage ncipTransferMessage = objectMapper.readValue(msg, NcipTransferMessage.class);
+        NcipRequest request = new NcipRequest(ncipTransferMessage);
+        var handler = new NcipHandler(environment, ncipService);
+
+        Exception exception = assertThrows(BadRequestException.class, () -> {
+            handler.processInput(request, new RequestInfo(), context);
+        });
+        assertTrue(exception.getMessage().contains(MESSAGE + DASH + FAILURE));
     }
 }

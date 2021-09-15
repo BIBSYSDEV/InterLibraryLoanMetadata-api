@@ -3,11 +3,11 @@ package no.unit.ncip;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import nva.commons.core.JacocoGenerated;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -59,7 +59,7 @@ public class NcipService {
                 ncipResponse.status = response.getStatusLine().getStatusCode();
             }
         } catch (IOException e) {
-            ncipResponse.status = HttpStatus.SC_INTERNAL_SERVER_ERROR;
+            ncipResponse.status = HttpURLConnection.HTTP_INTERNAL_ERROR;
             ncipResponse.message = FAILED_TO_READ_RESPONSE_BODY_FROM_NCIP_POST;
             ncipResponse.problemdetail = e.getMessage();
             log.error(FAILED_TO_READ_RESPONSE_BODY_FROM_NCIP_POST, e);
@@ -74,7 +74,7 @@ public class NcipService {
             NodeList problemNodeList = doc.getElementsByTagName(NS1_PROBLEM_TYPE);
             if (problemNodeList.getLength() > 0) {
                 response.message = problemNodeList.item(0).getTextContent();
-                response.status = HttpStatus.SC_BAD_REQUEST;
+                response.status = HttpURLConnection.HTTP_BAD_REQUEST;
                 log.warn(NCIP_REQUEST_ITEM_FAILED + response.message);
                 NodeList problemDetailNodeList = doc.getElementsByTagName(NS1_PROBLEM_DETAIL);
                 if (problemDetailNodeList.getLength() > 0) {
@@ -82,13 +82,13 @@ public class NcipService {
                 }
             } else {
                 response.message = ORDER_SUCCEEDED;
-                response.status = HttpStatus.SC_OK;
+                response.status = HttpURLConnection.HTTP_OK;
                 log.debug(NCIP_REQUEST_OK + response.message);
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
             log.error(SOMETHING_WENT_WRONG_DURING_PARSING_OF_XML_STRUCTURE + e.getMessage());
             response.message = ERROR_PARSING_ITEM_REQUEST_RESPONSE + inputStream;
-            response.status = HttpStatus.SC_BAD_REQUEST;
+            response.status = HttpURLConnection.HTTP_BAD_REQUEST;
         }
         return response;
     }
