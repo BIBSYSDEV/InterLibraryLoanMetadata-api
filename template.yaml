@@ -267,13 +267,6 @@ Resources:
             RestApiId: !Ref InterLibraryLoanMetadataApi
             Method: get
             Path: /metadata
-      VpcConfig:
-        SecurityGroupIds:
-          - sg-0538a941
-        SubnetIds:
-          - subnet-59e9db3f
-          - subnet-0b087751
-          - subnet-f80e03b0
 
   PostInterLibraryLoanNcipFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
