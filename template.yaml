@@ -24,7 +24,8 @@ Parameters:
   PrimoServiceApiKey:
     Type: String
     Description: Api key for contacting the Primo API
-    Default: "{{resolve:secretsmanager:apiKeyPrimo:SecretString}}"
+    Default: "{{resolve:secretsmanager:apiKeyPrimo:SecretString:apiKeyPrimo}}"
+    NoEcho: true
   BaseBibliotekServiceEndpoint:
     Type: String
     Description: Url Endpoint to the BaseBibliotek server

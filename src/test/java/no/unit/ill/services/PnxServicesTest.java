@@ -56,8 +56,7 @@ public class PnxServicesTest {
                         .getResourceAsStream(FULL_PNX_EXAMPLE_1)));
         when(pnxServiceConnection.connect(anyString())).thenReturn(inputStreamReader);
         PnxServices pnxServices = new PnxServices(pnxServiceConnection);
-        JsonObject result = JsonParser.parseString(
-                pnxServices.getPnxData("test"))
+        JsonObject result = pnxServices.getPnxData("test")
                 .getAsJsonObject();
         assertEquals(condensedPnxFromFile1, result);
 
@@ -121,9 +120,9 @@ public class PnxServicesTest {
                 .parseString(createJson(CONDENSED_PNX_EXAMPLE_3))
                 .getAsJsonObject();
         PnxServices pnxServices = new PnxServices();
-        JsonObject pnxServicesCondensedExample1 = pnxServices.extractUsefulDataFromXservice(fullPnxExample1);
-        JsonObject pnxServicesCondensedExample2 = pnxServices.extractUsefulDataFromXservice(fullPnxExample2);
-        JsonObject pnxServicesCondensedExample3 = pnxServices.extractUsefulDataFromXservice(fullPnxExample3);
+        JsonObject pnxServicesCondensedExample1 = pnxServices.extractUsefulDataFromPnxService(fullPnxExample1);
+        JsonObject pnxServicesCondensedExample2 = pnxServices.extractUsefulDataFromPnxService(fullPnxExample2);
+        JsonObject pnxServicesCondensedExample3 = pnxServices.extractUsefulDataFromPnxService(fullPnxExample3);
         assertEquals(condensedPnxFromFile1, pnxServicesCondensedExample1);
         assertEquals(condensedPnxFromFile2, pnxServicesCondensedExample2);
         assertEquals(condensedPnxFromFile3, pnxServicesCondensedExample3);

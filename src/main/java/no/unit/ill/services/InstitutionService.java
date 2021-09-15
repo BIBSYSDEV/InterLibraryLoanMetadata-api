@@ -19,6 +19,8 @@ public class InstitutionService {
         + "institutionService for {}/{}";
     public static final String ERROR_WHILE_GETTING_AT_INSTITUTION_SERVICE_FOR = "error while getting at "
         + "institutionService for {}/{}";
+    public static final String ORIA_CODE = "oriaCode";
+    public static final String ORIA_DEFAULT_NCI_PSERVER = "oriaDefaultNCIPserver";
 
     private final transient InstitutionServiceConnection connection;
 
@@ -54,5 +56,9 @@ public class InstitutionService {
             log.error(ERROR_WHILE_GETTING_AT_INSTITUTION_SERVICE_FOR, context, identifier, e);
         }
         return resultStr;
+    }
+
+    public String getInstituitionDefaultLibraryCode(String institutionCode) {
+        return this.get(ORIA_CODE, institutionCode, ORIA_DEFAULT_NCI_PSERVER);
     }
 }

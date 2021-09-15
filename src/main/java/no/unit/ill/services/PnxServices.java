@@ -23,7 +23,8 @@ public class PnxServices {
     public static final String WRONG_URL_FOR_PRIMO_API = "Wrong Url for primo api "
             + " {}";
     public static final String ERROR_WHILE_GETTING_AT_PRIMO_API_FOR = "error while getting at "
-            + "primo api for {}/{}";
+            + "primo api for {} ";
+    public static final String MY_EXTRACTED_PNX = "That's my extracted PNX: ";
 
     //full PNX json key names:
     private static final String PNX_KEY = "pnx";
@@ -42,25 +43,22 @@ public class PnxServices {
     private static final String PNX_LIBRARY_KEY = "library";
 
     //output json key names:
-    private static final String EXTRACTED_RECORD_ID_KEY = "record_id";
-    private static final String EXTRACTED_SOURCE_KEY = "source";
-    private static final String EXTRACTION_PUBLICATION_PLACE_KEY = "publication_place";
-    private static final String EXTRACTED_MMS_ID_KEY = "mms_id";
-    private static final String EXTRACTED_B_TITLE_KEY = "b_title";
-    private static final String EXTRACTED_CREATION_YEAR_KEY = "creation_year";
-    private static final String EXTRACTED_DISPLAY_TITLE_KEY = "display_title";
-    private static final String EXTRACTED_LIBRARIES_KEY = "libraries";
+    public static final String EXTRACTED_RECORD_ID_KEY = "record_id";
+    public static final String EXTRACTED_SOURCE_KEY = "source";
+    public static final String EXTRACTION_PUBLICATION_PLACE_KEY = "publication_place";
+    public static final String EXTRACTED_MMS_ID_KEY = "mms_id";
+    public static final String EXTRACTED_B_TITLE_KEY = "b_title";
+    public static final String EXTRACTED_CREATION_YEAR_KEY = "creation_year";
+    public static final String EXTRACTED_DISPLAY_TITLE_KEY = "display_title";
+    public static final String EXTRACTED_LIBRARIES_KEY = "libraries";
 
     //json key names that both output json and pnx json share:
-    private static final String ISBN = "isbn";
-    private static final String VOLUME = "volume";
-    private static final String PAGES = "pages";
-    private static final String CREATOR = "creator";
-    private static final String TITLE = "title";
-    private static final String PUBLISHER = "publisher";
-
-
-
+    public static final String ISBN = "isbn";
+    public static final String VOLUME = "volume";
+    public static final String PAGES = "pages";
+    public static final String CREATOR = "creator";
+    public static final String TITLE = "title";
+    public static final String PUBLISHER = "publisher";
 
     private final transient PnxServiceConnection connection;
 
@@ -86,13 +84,12 @@ public class PnxServices {
         return docID.replaceFirst(PRIMO_RECORD_PREFIX, "");
     }
 
-    public String getPnxData(String documentId) {
+    public JsonObject getPnxData(String documentId) {
         JsonObject fullPNX = getFullPNX(documentId);
-        return extractUsefulDataFromXservice(fullPNX).toString();
+        final JsonObject usefullPnx = extractUsefulDataFromPnxService(fullPNX);
+        log.info(MY_EXTRACTED_PNX + usefullPnx);
+        return usefullPnx;
     }
-
-
-
 
     protected JsonObject getFullPNX(String documentId) {
         String docID = removePrimoRecordPrefix(documentId);
@@ -109,7 +106,7 @@ public class PnxServices {
         return new JsonObject();
     }
 
-    protected JsonObject extractUsefulDataFromXservice(JsonObject response) {
+    protected JsonObject extractUsefulDataFromPnxService(JsonObject response) {
         JsonObject pnx = response.getAsJsonArray(DOCS_key).get(0).getAsJsonObject().getAsJsonObject(PNX_KEY);
         JsonObject extractedData = new JsonObject();
 
