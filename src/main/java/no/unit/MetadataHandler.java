@@ -66,9 +66,9 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         }
         final String documentId = requestInfo.getQueryParameter(DOCUMENT_ID_KEY);
 
-        final String instDefaultLibraryCode =
-            institutionService.getInstituitionDefaultLibraryCode("NTNU_UB");
-        log.debug("contact med instService "+ instDefaultLibraryCode);
+//        final String instDefaultLibraryCode =
+//            institutionService.getInstituitionDefaultLibraryCode("NTNU_UB");
+//        log.debug("contact med instService "+ instDefaultLibraryCode);
         JsonObject pnxServiceObject = getPnxServiceData(documentId);
         log.debug("PnxService output: {}", gson.fromJson(pnxServiceObject, String.class));
         return generateMetadatResponse(pnxServiceObject);
