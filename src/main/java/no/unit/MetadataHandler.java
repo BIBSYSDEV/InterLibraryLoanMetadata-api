@@ -121,35 +121,30 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         library.library_code = libraryCode;
         library.institution_code = institutionCode;
         library.mms_id = mmsId;
-        library.display_name = getDisplayName(libraryCode);
+        setDisplayNameAndNcipServerUrl(library);
         log.debug("library DisplayName: " + library.display_name);
-        library.ncip_server_url = getNcipServerUrl(institutionCode);
+        library.from_library_code = getFromLibraryCode(institutionCode);
         log.debug("library NcipServerUrl: " + library.ncip_server_url);
         return library;
     }
 
-    private String getNcipServerUrl(String institutionCode) throws IOException {
-        String ncipServerUrl = "";
+    private String getFromLibraryCode(String institutionCode) throws IOException {
         final String instDefaultLibraryCode =
             institutionService.getInstituitionDefaultLibraryCode(institutionCode);
         if (StringUtils.isNotEmpty(instDefaultLibraryCode)) {
-            final BaseBibliotekBean instDefaultBibliotekBean = baseBibliotekService.libraryLookupByBibnr(
-                instDefaultLibraryCode);
-            ncipServerUrl = instDefaultBibliotekBean.getNncippServer();
+           return instDefaultLibraryCode;
         } else {
             log.error("Did not get something useful from instService");
             throw new IOException("Did not get something useful from instService");
         }
-        return ncipServerUrl;
     }
 
-    private String getDisplayName(String libraryCode) {
-        String displayName = libraryCode;
-        final BaseBibliotekBean baseBibliotekBean = baseBibliotekService.libraryLookupByBibnr(libraryCode);
+    private void setDisplayNameAndNcipServerUrl(Library library) {
+        final BaseBibliotekBean baseBibliotekBean = baseBibliotekService.libraryLookupByBibnr(library.library_code);
         if (baseBibliotekBean != null) {
-            displayName = baseBibliotekBean.getInst();
+            library.display_name = baseBibliotekBean.getInst();
+            library.ncip_server_url = baseBibliotekBean.getNncippServer();
         }
-        return displayName;
     }
 
     private Map<String, String> getMmsidMap(JsonObject pnxServiceObject) {

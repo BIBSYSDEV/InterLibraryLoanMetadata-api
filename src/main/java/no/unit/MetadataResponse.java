@@ -25,6 +25,7 @@ public class MetadataResponse implements JsonSerializable {
         public String display_name;
         public String mms_id;
         public String library_code;
+        public String from_library_code;
         public String ncip_server_url;
 
     }
