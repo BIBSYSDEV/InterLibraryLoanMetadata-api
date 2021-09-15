@@ -135,4 +135,24 @@ public class NcipTransferMessage {
             requestType, comment);
     }
 
+    @Override
+    public String toString() {
+        return "NcipTransferMessage{" +
+                "toAgencyId='" + toAgencyId + '\'' +
+                ", fromAgencyId='" + fromAgencyId + '\'' +
+                ", isbnValue='" + isbnValue + '\'' +
+                ", userIdentifierValue='" + userIdentifierValue + '\'' +
+                ", author='" + author + '\'' +
+                ", title='" + title + '\'' +
+                ", publisher='" + publisher + '\'' +
+                ", publicationDate='" + publicationDate + '\'' +
+                ", placeOfPublication='" + placeOfPublication + '\'' +
+                ", bibliographicRecordIdentifier='" + bibliographicRecordIdentifier + '\'' +
+                ", bibliographicRecordIdentifierCode='" + bibliographicRecordIdentifierCode + '\'' +
+                ", type='" + type + '\'' +
+                ", requestType='" + requestType + '\'' +
+                ", comment='" + comment + '\'' +
+                ", ncipServerUrl='" + ncipServerUrl + '\'' +
+                '}';
+    }
 }

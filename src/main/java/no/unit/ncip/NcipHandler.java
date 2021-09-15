@@ -3,19 +3,19 @@ package no.unit.ncip;
 import static java.util.Objects.isNull;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import no.unit.GatewayResponse;
 import no.unit.utils.NcipUtils;
-import no.unit.utils.ParameterException;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
-import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NcipHandler extends ApiGatewayHandler<NcipRequest, GatewayResponse> {
+import java.net.HttpURLConnection;
+
+public class NcipHandler extends ApiGatewayHandler<NcipRequest, NcipResponse> {
 
     @JacocoGenerated
     private static final transient Logger log = LoggerFactory.getLogger(NcipHandler.class);
@@ -23,7 +23,7 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, GatewayResponse>
     public static final String NCIP_MESSAGE_IS_NOT_VALID = "NCIP message is not valid: ";
     public static final String NCIP_RESPONSE_FROM_SERVER = "Ill - NCIP response from server: ";
     public static final String NCIP_XML_SEND_TO = "Ill - NCIP xml send to: ";
-    public static final String COLON = ": ";
+    public static final String DASH = " - ";
     private transient NcipService ncipService;
 
     @JacocoGenerated
@@ -62,40 +62,33 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, GatewayResponse>
      *                             method
      */
     @Override
-    protected GatewayResponse processInput(NcipRequest request, RequestInfo requestInfo,
+    protected NcipResponse processInput(NcipRequest request, RequestInfo requestInfo,
                                            Context context) throws ApiGatewayException {
         if (isNull(request)) {
-            throw new ParameterException(NO_PARAMETERS_GIVEN_TO_HANDLER);
+            throw new BadRequestException(NO_PARAMETERS_GIVEN_TO_HANDLER);
         }
         final NcipTransferMessage transferMessage = request.getTransferMessage();
-        log.debug("json input looks like that :" + transferMessage.toString());
-        GatewayResponse gatewayResponse = new GatewayResponse(environment);
+        log.debug("json input looks like that :" + transferMessage);
         if (transferMessage.isValid()) {
             String xmlMessage = NcipUtils.ncipMessageAsXml(transferMessage);
             String ncipServerUrl = transferMessage.getNcipServerUrl();
             log.info(NCIP_XML_SEND_TO + ncipServerUrl + System.lineSeparator() + xmlMessage);
             final NcipResponse ncipResponse = ncipService.send(xmlMessage, ncipServerUrl);
             log.info(NCIP_RESPONSE_FROM_SERVER + ncipServerUrl + System.lineSeparator() + ncipResponse);
-            gatewayResponse.setStatusCode(ncipResponse.status);
-            if (ncipResponse.status < HttpStatus.SC_BAD_REQUEST) {
-                gatewayResponse.setBody(ncipResponse.message);
+            if (ncipResponse.status < HttpURLConnection.HTTP_BAD_REQUEST) {
+                return ncipResponse;
             } else  {
-                gatewayResponse.setErrorBody(ncipResponse.message + COLON + ncipResponse.problemdetail);
+                throw new BadRequestException(ncipResponse.message + DASH + ncipResponse.problemdetail);
             }
         } else {
             log.error(NCIP_MESSAGE_IS_NOT_VALID + transferMessage);
-            gatewayResponse.setErrorBody(NCIP_MESSAGE_IS_NOT_VALID + transferMessage);
-            gatewayResponse.setStatusCode(HttpStatus.SC_BAD_REQUEST);
+            throw new BadRequestException(NCIP_MESSAGE_IS_NOT_VALID + transferMessage);
         }
-
-        return gatewayResponse;
     }
 
     @Override
-    protected Integer getSuccessStatusCode(NcipRequest input, GatewayResponse output) {
-        return output.getStatusCode();
+    protected Integer getSuccessStatusCode(NcipRequest input, NcipResponse output) {
+        return HttpURLConnection.HTTP_OK;
     }
-
-
 
 }
