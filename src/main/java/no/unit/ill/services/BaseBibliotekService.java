@@ -126,10 +126,12 @@ public class BaseBibliotekService {
 
     private String getNncipUri(Record record) {
         Eressurser eressurser = record.getEressurser();
-        List<JAXBElement<String>> elementList = eressurser.getOAIOrSRUOrArielIp();
-        for (JAXBElement<String> element : elementList) {
-            if ("nncip_uri".equals(element.getName().getLocalPart())) {
-                return element.getValue().trim();
+        if (eressurser != null) {
+            List<JAXBElement<String>> elementList = eressurser.getOAIOrSRUOrArielIp();
+            for (JAXBElement<String> element : elementList) {
+                if ("nncip_uri".equals(element.getName().getLocalPart())) {
+                    return element.getValue().trim();
+                }
             }
         }
         return null;
