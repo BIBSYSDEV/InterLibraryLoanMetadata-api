@@ -152,8 +152,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         final JsonElement jsonArray = pnxServiceObject.get(key);
         log.debug("Parsing json for key={} is json={}", key, jsonArray);
         List jsonObjList = gson.fromJson(jsonArray, List.class);
-        final String joinedStr = String.join(", ", jsonObjList);
-        return joinedStr;
+        return isNull(jsonObjList)? EMPTY_STRING : String.join(", ", jsonObjList);
     }
 
     protected JsonObject getPnxServiceData(String documentId) {
