@@ -7,25 +7,27 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+
+import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.bind.JAXBException;
+
+import jakarta.xml.bind.JAXBException;
 import no.unit.MetadataResponse.Library;
 import no.unit.ill.services.BaseBibliotekBean;
 import no.unit.ill.services.BaseBibliotekService;
 import no.unit.ill.services.InstitutionService;
 import no.unit.ill.services.PnxServices;
-import no.unit.utils.ParameterException;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import nva.commons.core.StringUtils;
-import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +37,6 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     private static final transient Logger log = LoggerFactory.getLogger(MetadataHandler.class);
     public static final String NO_PARAMETERS_GIVEN_TO_HANDLER = "No parameters given to Handler";
     public static final String QUERY_STRING_PARAMETERS_KEY = "queryStringParameters";
-    public static final String MANDATORY_PARAMETERS_MISSING = "Mandatory parameters 'document_id' is missing.";
     public static final String DOCUMENT_ID_KEY = "document_id";
     public static final int LENGTH_OF_LIBRARYCODE = 7;
     public static final String EMPTY_STRING = "";
@@ -63,12 +64,10 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     protected MetadataResponse processInput(Void input, RequestInfo requestInfo, Context context)
         throws ApiGatewayException {
         if (isNull(requestInfo)) {
-            throw new ParameterException(NO_PARAMETERS_GIVEN_TO_HANDLER);
+            throw new BadRequestException(NO_PARAMETERS_GIVEN_TO_HANDLER);
         }
         final String documentId = requestInfo.getQueryParameter(DOCUMENT_ID_KEY);
-        if (StringUtils.isEmpty(documentId)) {
-            throw new ParameterException(MANDATORY_PARAMETERS_MISSING);
-        }
+
         JsonObject pnxServiceObject = getPnxServiceData(documentId);
         return generateMetadatResponse(pnxServiceObject);
     }
@@ -165,6 +164,6 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
     @Override
     protected Integer getSuccessStatusCode(Void input, MetadataResponse output) {
-        return HttpStatus.SC_OK;
+        return HttpURLConnection.HTTP_OK;
     }
 }
