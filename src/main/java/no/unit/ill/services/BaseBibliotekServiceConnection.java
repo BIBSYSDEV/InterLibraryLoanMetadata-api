@@ -3,12 +3,10 @@ package no.unit.ill.services;
 import no.unit.Config;
 import org.apache.http.client.utils.URIBuilder;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLConnection;
 
 public class BaseBibliotekServiceConnection {
 
@@ -25,7 +23,9 @@ public class BaseBibliotekServiceConnection {
      */
     public InputStream connect(String identifier) throws IOException, URISyntaxException {
         final URI uri = getUri(identifier);
-        return convertToByteArrayInputStream(uri.toURL().openStream());
+        URLConnection connection = uri.toURL().openConnection();
+        connection.setConnectTimeout(6000);
+        return convertToByteArrayInputStream(connection.getInputStream());
     }
 
     protected URI getUri(String identifier) throws URISyntaxException {

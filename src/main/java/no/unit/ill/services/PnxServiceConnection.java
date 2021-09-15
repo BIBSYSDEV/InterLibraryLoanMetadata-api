@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLConnection;
 
 
 public class PnxServiceConnection {
@@ -30,8 +31,10 @@ public class PnxServiceConnection {
 
 
     public InputStreamReader connect(String docId) throws IOException, URISyntaxException {
-        URI uri = generatePrimoUri(docId);
-        return new InputStreamReader(uri.toURL().openStream());
+        final URI uri = generatePrimoUri(docId);
+        URLConnection connection = uri.toURL().openConnection();
+        connection.setConnectTimeout(6000);
+        return new InputStreamReader(connection.getInputStream());
     }
 
     protected URI generatePrimoUri(String docId) throws URISyntaxException {

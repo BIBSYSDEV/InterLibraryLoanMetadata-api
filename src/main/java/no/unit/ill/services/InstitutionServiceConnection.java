@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLConnection;
+
 import no.unit.Config;
 import org.apache.http.client.utils.URIBuilder;
 
@@ -23,7 +25,9 @@ public class InstitutionServiceConnection {
      */
     public InputStreamReader connect(String context, String identifier) throws IOException, URISyntaxException {
         final URI uri = getUri(context, identifier);
-        return new InputStreamReader(uri.toURL().openStream());
+        URLConnection connection = uri.toURL().openConnection();
+        connection.setConnectTimeout(6000);
+        return new InputStreamReader(connection.getInputStream());
     }
 
     protected URI getUri(String context, String identifier) throws URISyntaxException {
