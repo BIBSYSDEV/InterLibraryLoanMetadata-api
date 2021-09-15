@@ -8,6 +8,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jakarta.xml.bind.JAXBException;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -66,6 +67,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         final String documentId = requestInfo.getQueryParameter(DOCUMENT_ID_KEY);
 
         JsonObject pnxServiceObject = getPnxServiceData(documentId);
+        log.debug("PnxService output: {}", gson.fromJson(pnxServiceObject, String.class));
         return generateMetadatResponse(pnxServiceObject);
     }
 
@@ -82,8 +84,9 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         response.creator = getArrayAsString(pnxServiceObject, PnxServices.CREATOR);
         response.display_title = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_DISPLAY_TITLE_KEY);
         response.publisher = getArrayAsString(pnxServiceObject, PnxServices.PUBLISHER);
-
+        log.debug("ResponseObject: " + gson.toJson(response));
         response.libraries.addAll(getLibraries(pnxServiceObject, response));
+        log.debug("ResponseObject with Libraries: " + gson.toJson(response));
         return response;
     }
 
@@ -97,7 +100,11 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
                 String libraryCode = input.substring(input.length() - LENGTH_OF_LIBRARYCODE);
                 String institutionCode = input.replace(libraryCode, EMPTY_STRING);
                 String mmsId = mmsidMap.get(institutionCode);
-                libraries.add(generateLibrary(response, mmsId, libraryCode, institutionCode));
+                try {
+                    libraries.add(generateLibrary(response, mmsId, libraryCode, institutionCode));
+                } catch (IOException e) {
+                    log.error("Skip library {} because of faulty response.", libraryCode, e);
+                }
             } else {
                 log.error(COULD_NOT_READ_LIBRARY_CODE, input);
             }
@@ -106,17 +113,19 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     }
 
     private Library generateLibrary(MetadataResponse response, String mmsId, String libraryCode,
-                                    String institutionCode) {
+                                    String institutionCode) throws IOException {
         Library library = response.new Library();
         library.library_code = libraryCode;
         library.institution_code = institutionCode;
         library.mms_id = mmsId;
         library.display_name = getDisplayName(libraryCode);
+        log.debug("library DisplayName: " + library.display_name);
         library.ncip_server_url = getNcipServerUrl(institutionCode);
+        log.debug("library NcipServerUrl: " + library.ncip_server_url);
         return library;
     }
 
-    private String getNcipServerUrl(String institutionCode) {
+    private String getNcipServerUrl(String institutionCode) throws IOException {
         String ncipServerUrl = "";
         final String instDefaultLibraryCode =
             institutionService.getInstituitionDefaultLibraryCode(institutionCode);
@@ -124,6 +133,9 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
             final BaseBibliotekBean instDefaultBibliotekBean = baseBibliotekService.libraryLookupByBibnr(
                 instDefaultLibraryCode);
             ncipServerUrl = instDefaultBibliotekBean.getNncippServer();
+        } else {
+            log.error("Did not get something useful from instService");
+            throw new IOException("Did not get something useful from instService");
         }
         return ncipServerUrl;
     }
