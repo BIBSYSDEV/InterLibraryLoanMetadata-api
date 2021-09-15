@@ -8,9 +8,15 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.xml.bind.JAXBException;
+import no.unit.MetadataResponse.Library;
+import no.unit.ill.services.BaseBibliotekBean;
+import no.unit.ill.services.BaseBibliotekService;
+import no.unit.ill.services.InstitutionService;
 import no.unit.ill.services.PnxServices;
 import no.unit.utils.ParameterException;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -36,20 +42,21 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     public static final String UNDERSCORE = "_";
     public static final String COULD_NOT_READ_LIBRARY_CODE = "Could not read libraryCode from: {}";
     private final transient PnxServices pnxServices;
+    private BaseBibliotekService baseBibliotekService;
+    private InstitutionService institutionService;
     private final Gson gson = new Gson();
 
     @JacocoGenerated
-    public MetadataHandler() {
-        this(new Environment(), new PnxServices());
+    public MetadataHandler() throws JAXBException {
+        this(new Environment(), new PnxServices(), new BaseBibliotekService(), new InstitutionService());
     }
 
-    public MetadataHandler(Environment environment) {
-        this(environment, new PnxServices());
-    }
-
-    public MetadataHandler(Environment environment, PnxServices pnxServices) {
+    public MetadataHandler(Environment environment, PnxServices pnxServices, BaseBibliotekService baseBibliotekService,
+                           InstitutionService institutionService) {
         super(Void.class, environment);
         this.pnxServices = pnxServices;
+        this.baseBibliotekService = baseBibliotekService;
+        this.institutionService = institutionService;
     }
 
     @Override
@@ -80,6 +87,61 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         response.display_title = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_DISPLAY_TITLE_KEY);
         response.publisher = getArrayAsString(pnxServiceObject, PnxServices.PUBLISHER);
 
+        response.libraries.addAll(getLibraries(pnxServiceObject, response));
+        return response;
+    }
+
+    private Collection<Library> getLibraries(JsonObject pnxServiceObject, MetadataResponse response) {
+        List<Library> libraries = new ArrayList<>();
+        Map<String, String> mmsidMap = getMmsidMap(pnxServiceObject);
+        final JsonArray libArray = pnxServiceObject.getAsJsonArray(PnxServices.EXTRACTED_LIBRARIES_KEY);
+        for (JsonElement jsonElement : libArray) {
+            final String input = jsonElement.getAsString();
+            if (input.length() > LENGTH_OF_LIBRARYCODE) {
+                String libraryCode = input.substring(input.length() - LENGTH_OF_LIBRARYCODE);
+                String institutionCode = input.replace(libraryCode, EMPTY_STRING);
+                String mmsId = mmsidMap.get(institutionCode);
+                libraries.add(generateLibrary(response, mmsId, libraryCode, institutionCode));
+            } else {
+                log.error(COULD_NOT_READ_LIBRARY_CODE, input);
+            }
+        }
+        return libraries;
+    }
+
+    private Library generateLibrary(MetadataResponse response, String mmsId, String libraryCode,
+                                    String institutionCode) {
+        Library library = response.new Library();
+        library.library_code = libraryCode;
+        library.institution_code = institutionCode;
+        library.mms_id = mmsId;
+        library.display_name = getDisplayName(libraryCode);
+        library.ncip_server_url = getNcipServerUrl(institutionCode);
+        return library;
+    }
+
+    private String getNcipServerUrl(String institutionCode) {
+        String ncipServerUrl = "";
+        final String instDefaultLibraryCode =
+            institutionService.getInstituitionDefaultLibraryCode(institutionCode);
+        if (StringUtils.isNotEmpty(instDefaultLibraryCode)) {
+            final BaseBibliotekBean instDefaultBibliotekBean = baseBibliotekService.libraryLookupByBibnr(
+                instDefaultLibraryCode);
+            ncipServerUrl = instDefaultBibliotekBean.getNncippServer();
+        }
+        return ncipServerUrl;
+    }
+
+    private String getDisplayName(String libraryCode) {
+        String displayName = libraryCode;
+        final BaseBibliotekBean baseBibliotekBean = baseBibliotekService.libraryLookupByBibnr(libraryCode);
+        if (baseBibliotekBean != null) {
+            displayName = baseBibliotekBean.getInst();
+        }
+        return displayName;
+    }
+
+    private Map<String, String> getMmsidMap(JsonObject pnxServiceObject) {
         Map<String, String> mmsidMap = new HashMap<>();
         final JsonArray mmsidArray = pnxServiceObject.getAsJsonArray(PnxServices.EXTRACTED_MMS_ID_KEY);
         for (JsonElement jsonElement : mmsidArray) {
@@ -87,22 +149,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
             final String[] split = input.split(UNDERSCORE);
             mmsidMap.put(split[1], split[2]);
         }
-        final JsonArray libArray = pnxServiceObject.getAsJsonArray(PnxServices.EXTRACTED_LIBRARIES_KEY);
-        for (JsonElement jsonElement : libArray) {
-            final String input = jsonElement.getAsString();
-            if (input.length() > LENGTH_OF_LIBRARYCODE) {
-                String libraryCode = input.substring(input.length() - LENGTH_OF_LIBRARYCODE);
-                String institutionCode = input.replace(libraryCode, EMPTY_STRING);
-                MetadataResponse.Library library = response.new Library();
-                library.library_code = libraryCode;
-                library.institution_code = institutionCode;
-                library.mms_id = mmsidMap.get(institutionCode);
-                response.libraries.add(library);
-            } else {
-                log.error(COULD_NOT_READ_LIBRARY_CODE, input);
-            }
-        }
-        return response;
+        return mmsidMap;
     }
 
     private String getArrayAsString(JsonObject pnxServiceObject, String key) {
