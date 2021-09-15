@@ -24,7 +24,7 @@ public class BaseBibliotekServiceConnection {
     public InputStream connect(String identifier) throws IOException, URISyntaxException {
         final URI uri = getUri(identifier);
         URLConnection connection = uri.toURL().openConnection();
-        connection.setConnectTimeout(6000);
+        connection.setConnectTimeout(10000);
         return convertToByteArrayInputStream(connection.getInputStream());
     }
 

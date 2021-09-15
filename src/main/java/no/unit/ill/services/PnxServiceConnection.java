@@ -33,7 +33,7 @@ public class PnxServiceConnection {
     public InputStreamReader connect(String docId) throws IOException, URISyntaxException {
         final URI uri = generatePrimoUri(docId);
         URLConnection connection = uri.toURL().openConnection();
-        connection.setConnectTimeout(6000);
+        connection.setConnectTimeout(10000);
         return new InputStreamReader(connection.getInputStream());
     }
 

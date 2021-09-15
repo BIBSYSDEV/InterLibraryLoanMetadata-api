@@ -26,7 +26,7 @@ public class InstitutionServiceConnection {
     public InputStreamReader connect(String context, String identifier) throws IOException, URISyntaxException {
         final URI uri = getUri(context, identifier);
         URLConnection connection = uri.toURL().openConnection();
-        connection.setConnectTimeout(6000);
+        connection.setConnectTimeout(10000);
         return new InputStreamReader(connection.getInputStream());
     }
 
