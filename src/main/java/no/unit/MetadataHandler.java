@@ -7,15 +7,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-
+import jakarta.xml.bind.JAXBException;
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import jakarta.xml.bind.JAXBException;
+import java.util.concurrent.ConcurrentHashMap;
 import no.unit.MetadataResponse.Library;
 import no.unit.ill.services.BaseBibliotekBean;
 import no.unit.ill.services.BaseBibliotekService;
@@ -36,16 +34,15 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     @JacocoGenerated
     private static final transient Logger log = LoggerFactory.getLogger(MetadataHandler.class);
     public static final String NO_PARAMETERS_GIVEN_TO_HANDLER = "No parameters given to Handler";
-    public static final String QUERY_STRING_PARAMETERS_KEY = "queryStringParameters";
     public static final String DOCUMENT_ID_KEY = "document_id";
     public static final int LENGTH_OF_LIBRARYCODE = 7;
     public static final String EMPTY_STRING = "";
     public static final String UNDERSCORE = "_";
     public static final String COULD_NOT_READ_LIBRARY_CODE = "Could not read libraryCode from: {}";
     private final transient PnxServices pnxServices;
-    private BaseBibliotekService baseBibliotekService;
-    private InstitutionService institutionService;
-    private final Gson gson = new Gson();
+    private final transient BaseBibliotekService baseBibliotekService;
+    private final transient InstitutionService institutionService;
+    private final transient Gson gson = new Gson();
 
     @JacocoGenerated
     public MetadataHandler() throws JAXBException {
@@ -141,7 +138,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     }
 
     private Map<String, String> getMmsidMap(JsonObject pnxServiceObject) {
-        Map<String, String> mmsidMap = new HashMap<>();
+        Map<String, String> mmsidMap = new ConcurrentHashMap<>();
         final JsonArray mmsidArray = pnxServiceObject.getAsJsonArray(PnxServices.EXTRACTED_MMS_ID_KEY);
         for (JsonElement jsonElement : mmsidArray) {
             final String input = jsonElement.getAsString();
@@ -153,7 +150,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
     private String getArrayAsString(JsonObject pnxServiceObject, String key) {
         final JsonArray jsonArray = pnxServiceObject.getAsJsonArray(key);
-        List jsonObjList = gson.fromJson(jsonArray, ArrayList.class);
+        List jsonObjList = gson.fromJson(jsonArray, List.class);
         final String joinedStr = String.join(", ", jsonObjList);
         return joinedStr;
     }
