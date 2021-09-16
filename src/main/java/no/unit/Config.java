@@ -1,9 +1,12 @@
 package no.unit;
 
 import nva.commons.core.StringUtils;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 public class Config {
 
+    public static final transient Marker ILL_MARKER = MarkerFactory.getDetachedMarker("ILL");
     public static final String MISSING_ENVIRONMENT_VARIABLES = "Missing environment variables";
     public static final String CORS_ALLOW_ORIGIN_HEADER_ENVIRONMENT_NAME = "ALLOWED_ORIGIN";
     public static final String INSTITUTIONSERVICE_ENDPOINT_KEY = "INSTITUTIONSERVICE_ENDPOINT";
