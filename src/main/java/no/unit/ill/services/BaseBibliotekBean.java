@@ -1,5 +1,7 @@
 package no.unit.ill.services;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
@@ -213,7 +215,7 @@ public class BaseBibliotekBean {
     }
 
     public boolean isOpenAtDate(LocalDate date) {
-        if (stengt.length() > 0) {
+        if (StringUtils.isNotEmpty(stengt)) {
             return false;
         }
         boolean startDatePresent = stengtFra.isPresent();
