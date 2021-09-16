@@ -3,7 +3,7 @@ package no.unit.ncip;
 import static java.util.Objects.isNull;
 
 import com.amazonaws.services.lambda.runtime.Context;
-import no.unit.Config;
+import java.net.HttpURLConnection;
 import no.unit.utils.NcipUtils;
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
@@ -14,25 +14,18 @@ import nva.commons.core.JacocoGenerated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.HttpURLConnection;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
-
 public class NcipHandler extends ApiGatewayHandler<NcipRequest, NcipResponse> {
 
     @JacocoGenerated
     private static final transient Logger log = LoggerFactory.getLogger(NcipHandler.class);
-    private static final transient Marker NCIP_PROXY_MARKER = MarkerFactory.getMarker("NCIP-proxy");
     public static final String NO_PARAMETERS_GIVEN_TO_HANDLER = "No parameters given to Handler";
     public static final String NCIP_MESSAGE_IS_NOT_VALID = "NCIP message is not valid: ";
     public static final String NCIP_RESPONSE_FROM_SERVER = "Ill - NCIP response from server: ";
     public static final String NCIP_XML_SEND_TO = "Ill - NCIP xml send to: ";
     public static final String DASH = " - ";
+    public static final String JSON_INPUT_LOOKS_LIKE_THAT = "json input looks like that :";
     private final transient NcipService ncipService;
 
-    static {
-        Config.ILL_MARKER.add(NCIP_PROXY_MARKER);
-    }
 
     @JacocoGenerated
     public NcipHandler() {
@@ -76,20 +69,20 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, NcipResponse> {
             throw new BadRequestException(NO_PARAMETERS_GIVEN_TO_HANDLER);
         }
         final NcipTransferMessage transferMessage = request.getTransferMessage();
-        log.debug(NCIP_PROXY_MARKER, "json input looks like that :" + transferMessage);
+        log.debug(JSON_INPUT_LOOKS_LIKE_THAT + transferMessage);
         if (transferMessage.isValid()) {
             String xmlMessage = NcipUtils.ncipMessageAsXml(transferMessage);
             String ncipServerUrl = transferMessage.getNcipServerUrl();
-            log.info(NCIP_PROXY_MARKER, NCIP_XML_SEND_TO + ncipServerUrl + System.lineSeparator() + xmlMessage);
+            log.info(NCIP_XML_SEND_TO + ncipServerUrl + System.lineSeparator() + xmlMessage);
             final NcipResponse ncipResponse = ncipService.send(xmlMessage, ncipServerUrl);
-            log.info(NCIP_PROXY_MARKER, NCIP_RESPONSE_FROM_SERVER + ncipServerUrl + System.lineSeparator() + ncipResponse);
+            log.info(NCIP_RESPONSE_FROM_SERVER + ncipServerUrl + System.lineSeparator() + ncipResponse);
             if (ncipResponse.status < HttpURLConnection.HTTP_BAD_REQUEST) {
                 return ncipResponse;
             } else  {
                 throw new BadRequestException(ncipResponse.message + DASH + ncipResponse.problemdetail);
             }
         } else {
-            log.error(NCIP_PROXY_MARKER, NCIP_MESSAGE_IS_NOT_VALID + transferMessage);
+            log.error(NCIP_MESSAGE_IS_NOT_VALID + transferMessage);
             throw new BadRequestException(NCIP_MESSAGE_IS_NOT_VALID + transferMessage);
         }
     }

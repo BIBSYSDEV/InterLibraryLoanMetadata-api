@@ -1,25 +1,19 @@
 package no.unit.ill.services;
 
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import no.unit.Config;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.stream.Collectors;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PnxServices {
 
     private static final transient Logger log = LoggerFactory.getLogger(PnxServices.class);
-    private static final transient Marker PNX_MARKER = MarkerFactory.getMarker("PNX");
 
     private static final String PRIMO_RECORD_PREFIX = "TN_";
     public static final String WRONG_URL_FOR_PRIMO_API = "Wrong Url for primo api "
@@ -64,10 +58,6 @@ public class PnxServices {
 
     private final transient PnxServiceConnection connection;
 
-    static {
-        Config.ILL_MARKER.add(PNX_MARKER);
-    }
-
     /**
      *contructor.
      */
@@ -92,7 +82,7 @@ public class PnxServices {
     public JsonObject getPnxData(String documentId) {
         JsonObject fullPNX = getFullPNX(documentId);
         final JsonObject usefullPnx = extractUsefulDataFromPnxService(fullPNX);
-        log.info(PNX_MARKER, MY_EXTRACTED_PNX + usefullPnx);
+        log.info(MY_EXTRACTED_PNX + usefullPnx);
         return usefullPnx;
     }
 
