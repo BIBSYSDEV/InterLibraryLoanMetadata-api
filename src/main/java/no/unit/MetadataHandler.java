@@ -102,7 +102,9 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
                 String institutionCode = input.replace(libraryCode, EMPTY_STRING);
                 String mmsId = mmsidMap.get(institutionCode);
                 try {
-                    libraries.add(generateLibrary(response, mmsId, libraryCode, institutionCode));
+                    final Library library = generateLibrary(response, mmsId, libraryCode, institutionCode);
+                    log.info("That's a Library: " + gson.toJson(library));
+                    libraries.add(library);
                 } catch (IOException e) {
                     log.error("Skip library {} because of faulty response.", libraryCode, e);
                 }

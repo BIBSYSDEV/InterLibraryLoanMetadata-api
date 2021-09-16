@@ -19,7 +19,7 @@ public class MetadataResponse implements JsonSerializable {
     public String display_title;
     public List<Library> libraries = new ArrayList<>();
 
-    protected class Library {
+    protected class Library implements JsonSerializable{
 
         public String institution_code;
         public String display_name;
