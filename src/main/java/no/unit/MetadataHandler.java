@@ -147,6 +147,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     }
 
     private String getArrayAsString(JsonObject pnxServiceObject, String key) {
+        log.debug("Looking for key={} ", key);
         final JsonElement jsonArray = pnxServiceObject.get(key);
         log.debug("Parsing json for key={} is json={}", key, jsonArray);
         List jsonObjList = gson.fromJson(jsonArray, List.class);
