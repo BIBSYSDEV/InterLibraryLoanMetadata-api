@@ -73,6 +73,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
     private MetadataResponse generateMetadatResponse(JsonObject pnxServiceObject) {
         MetadataResponse response = new MetadataResponse();
+        log.info("Start to generate response.");
         response.record_id = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_RECORD_ID_KEY);
         response.source = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_SOURCE_KEY);
         response.isbn = getArrayAsString(pnxServiceObject, PnxServices.ISBN);
@@ -84,9 +85,9 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         response.creator = getArrayAsString(pnxServiceObject, PnxServices.CREATOR);
         response.display_title = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_DISPLAY_TITLE_KEY);
         response.publisher = getArrayAsString(pnxServiceObject, PnxServices.PUBLISHER);
-        log.debug("ResponseObject: " + gson.toJson(response));
+        log.info("ResponseObject: " + gson.toJson(response));
         response.libraries.addAll(getLibraries(pnxServiceObject, response));
-        log.debug("ResponseObject with Libraries: " + gson.toJson(response));
+        log.info("ResponseObject with Libraries: " + gson.toJson(response));
         return response;
     }
 
@@ -119,10 +120,10 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         library.institution_code = institutionCode;
         library.mms_id = mmsId;
         setDisplayNameAndNcipServerUrl(library);
-        log.debug("library DisplayName: " + library.display_name);
+        log.info("library DisplayName: " + library.display_name);
 //        library.from_library_code = institutionService.getInstituitionDefaultLibraryCode(institutionCode);
         library.from_library_code = libraryCode;
-        log.debug("library NcipServerUrl: " + library.ncip_server_url);
+        log.info("library NcipServerUrl: " + library.ncip_server_url);
         return library;
     }
 
@@ -147,9 +148,9 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     }
 
     private String getArrayAsString(JsonObject pnxServiceObject, String key) {
-        log.debug("Looking for key={} ", key);
+        log.info("Looking for key={} ", key);
         final JsonElement jsonArray = pnxServiceObject.get(key);
-        log.debug("Parsing json for key={} is json={}", key, jsonArray);
+        log.info("Parsing json for key={} is json={}", key, jsonArray);
         List jsonObjList = gson.fromJson(jsonArray, List.class);
         return isNull(jsonObjList) ? EMPTY_STRING : String.join(", ", jsonObjList);
     }
