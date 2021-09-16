@@ -1,4 +1,4 @@
-package no.unit.ill.services;
+package no.unit.services;
 
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;

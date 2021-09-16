@@ -1,4 +1,4 @@
-package no.unit.ill.services;
+package no.unit.services;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -8,10 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.Objects;
-
-
-import static no.unit.ill.services.PnxServices.ERROR_WHILE_GETTING_AT_PRIMO_API_FOR;
-import static no.unit.ill.services.PnxServices.WRONG_URL_FOR_PRIMO_API;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -78,7 +74,7 @@ public class PnxServicesTest {
     public void handlesUriException() throws IOException, URISyntaxException {
         PnxServiceConnection pnxServiceConnection = mock(PnxServiceConnection.class);
         when(pnxServiceConnection.connect(anyString()))
-                .thenThrow(new URISyntaxException("docId", WRONG_URL_FOR_PRIMO_API));
+                .thenThrow(new URISyntaxException("docId", PnxServices.WRONG_URL_FOR_PRIMO_API));
         PnxServices pnxServices = new PnxServices(pnxServiceConnection);
         JsonObject expected = new JsonObject();
         JsonObject result = pnxServices.getFullPNX("testtest");
@@ -89,7 +85,7 @@ public class PnxServicesTest {
     public void handlesIOException() throws IOException, URISyntaxException {
         PnxServiceConnection pnxServiceConnection = mock(PnxServiceConnection.class);
         when(pnxServiceConnection.connect(anyString()))
-                .thenThrow(new IOException(ERROR_WHILE_GETTING_AT_PRIMO_API_FOR));
+                .thenThrow(new IOException(PnxServices.ERROR_WHILE_GETTING_AT_PRIMO_API_FOR));
         PnxServices pnxServices = new PnxServices(pnxServiceConnection);
         JsonObject expected = new JsonObject();
         JsonObject result = pnxServices.getFullPNX("testtest");

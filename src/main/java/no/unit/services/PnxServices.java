@@ -1,4 +1,4 @@
-package no.unit.ill.services;
+package no.unit.services;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;

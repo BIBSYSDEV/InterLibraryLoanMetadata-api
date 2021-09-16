@@ -1,4 +1,4 @@
-package no.unit.ill.services;
+package no.unit.services;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,7 +8,7 @@ import jakarta.xml.bind.JAXBException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static no.unit.ill.services.BaseBibliotekService.WRONG_URL_FOR_GET_IN_BASEBIBLIOTEK_SERVICE_FOR;
+import static no.unit.services.BaseBibliotekService.WRONG_URL_FOR_GET_IN_BASEBIBLIOTEK_SERVICE_FOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;

@@ -2,8 +2,8 @@ package no.unit.libcheck;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import jakarta.xml.bind.JAXBException;
-import no.unit.ill.services.BaseBibliotekBean;
-import no.unit.ill.services.BaseBibliotekService;
+import no.unit.services.BaseBibliotekBean;
+import no.unit.services.BaseBibliotekService;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;

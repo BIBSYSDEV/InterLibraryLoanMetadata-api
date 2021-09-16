@@ -1,4 +1,4 @@
-package no.unit.ill.services;
+package no.unit.services;
 
 import no.unit.Config;
 import org.apache.http.client.utils.URIBuilder;

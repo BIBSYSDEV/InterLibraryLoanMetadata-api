@@ -1,4 +1,4 @@
-package no.unit.ill.services;
+package no.unit.services;
 
 import org.apache.commons.lang3.StringUtils;
 

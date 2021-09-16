@@ -1,4 +1,4 @@
-package no.unit.utils;
+package no.unit.ncip;
 
 import no.unit.ncip.NcipTransferMessage;
 

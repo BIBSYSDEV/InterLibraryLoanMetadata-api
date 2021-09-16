@@ -1,4 +1,4 @@
-package no.unit.ill.services;
+package no.unit.services;
 
 import org.junit.jupiter.api.Test;
 
@@ -7,7 +7,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static no.unit.ill.services.BaseBibliotekServiceConnection.BASEBIBLIOTEK_BIBNR_MAPPING_PATH;
+import static no.unit.services.BaseBibliotekServiceConnection.BASEBIBLIOTEK_BIBNR_MAPPING_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BaseBibliotekServiceConnectionTest {
