@@ -30,13 +30,10 @@ import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
     public static final ZoneId NORWAY_ZONE_ID = ZoneId.of(ZoneOffset.of("+01:00").getId());
-    private static final transient Marker METADATA_MARKER = MarkerFactory.getMarker("Metadata");
     @JacocoGenerated
     private static final transient Logger log = LoggerFactory.getLogger(MetadataHandler.class);
     public static final String NO_PARAMETERS_GIVEN_TO_HANDLER = "No parameters given to Handler";
@@ -52,10 +49,6 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     private final transient BaseBibliotekService baseBibliotekService;
     private final transient Gson gson = new Gson();
 
-
-    static {
-        Config.ILL_MARKER.add(METADATA_MARKER);
-    }
 
     @JacocoGenerated
     public MetadataHandler() throws JAXBException {
@@ -93,7 +86,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         response.display_title = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_DISPLAY_TITLE_KEY);
         response.publisher = getArrayAsString(pnxServiceObject, PnxServices.PUBLISHER);
         response.libraries.addAll(getLibraries(pnxServiceObject, response));
-        log.info(METADATA_MARKER, RESPONSE_OBJECT + gson.toJson(response));
+        log.info(RESPONSE_OBJECT + gson.toJson(response));
         return response;
     }
 

@@ -1,8 +1,6 @@
 package no.unit;
 
 import nva.commons.core.StringUtils;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
 
 public class Config {
 
