@@ -14,11 +14,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.HttpURLConnection;
+import org.slf4j.Marker;
+import org.slf4j.MarkerFactory;
 
 public class NcipHandler extends ApiGatewayHandler<NcipRequest, NcipResponse> {
 
     @JacocoGenerated
     private static final transient Logger log = LoggerFactory.getLogger(NcipHandler.class);
+    private static final transient Marker ncipProxyMarker = MarkerFactory.getMarker("ILL - NCIP-proxy");
     public static final String NO_PARAMETERS_GIVEN_TO_HANDLER = "No parameters given to Handler";
     public static final String NCIP_MESSAGE_IS_NOT_VALID = "NCIP message is not valid: ";
     public static final String NCIP_RESPONSE_FROM_SERVER = "Ill - NCIP response from server: ";
@@ -62,8 +65,8 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, NcipResponse> {
      *                             method
      */
     @Override
-    protected NcipResponse processInput(NcipRequest request, RequestInfo requestInfo,
-                                           Context context) throws ApiGatewayException {
+    protected NcipResponse processInput(NcipRequest request, RequestInfo requestInfo, Context context)
+                throws ApiGatewayException {
         if (isNull(request)) {
             throw new BadRequestException(NO_PARAMETERS_GIVEN_TO_HANDLER);
         }
@@ -72,16 +75,16 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, NcipResponse> {
         if (transferMessage.isValid()) {
             String xmlMessage = NcipUtils.ncipMessageAsXml(transferMessage);
             String ncipServerUrl = transferMessage.getNcipServerUrl();
-            log.info(NCIP_XML_SEND_TO + ncipServerUrl + System.lineSeparator() + xmlMessage);
+            log.info(ncipProxyMarker, NCIP_XML_SEND_TO + ncipServerUrl + System.lineSeparator() + xmlMessage);
             final NcipResponse ncipResponse = ncipService.send(xmlMessage, ncipServerUrl);
-            log.info(NCIP_RESPONSE_FROM_SERVER + ncipServerUrl + System.lineSeparator() + ncipResponse);
+            log.info(ncipProxyMarker, NCIP_RESPONSE_FROM_SERVER + ncipServerUrl + System.lineSeparator() + ncipResponse);
             if (ncipResponse.status < HttpURLConnection.HTTP_BAD_REQUEST) {
                 return ncipResponse;
             } else  {
                 throw new BadRequestException(ncipResponse.message + DASH + ncipResponse.problemdetail);
             }
         } else {
-            log.error(NCIP_MESSAGE_IS_NOT_VALID + transferMessage);
+            log.error(ncipProxyMarker, NCIP_MESSAGE_IS_NOT_VALID + transferMessage);
             throw new BadRequestException(NCIP_MESSAGE_IS_NOT_VALID + transferMessage);
         }
     }

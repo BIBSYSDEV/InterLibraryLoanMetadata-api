@@ -42,6 +42,9 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     public static final String EMPTY_STRING = "";
     public static final String UNDERSCORE = "_";
     public static final String COULD_NOT_READ_LIBRARY_CODE = "Could not read libraryCode from: {}";
+    public static final String SKIP_LIBRARY_BECAUSE_OF_FAULTY_RESPONSE = "Skip library {} because of faulty response.";
+    public static final String RESPONSE_OBJECT = "ILL - ResponseObject: ";
+    public static final String COMMA_DELIMITER = ", ";
     private final transient PnxServices pnxServices;
     private final transient BaseBibliotekService baseBibliotekService;
     private final transient Gson gson = new Gson();
@@ -70,7 +73,6 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
     private MetadataResponse generateMetadatResponse(JsonObject pnxServiceObject) {
         MetadataResponse response = new MetadataResponse();
-        log.info("Start to generate response.");
         response.record_id = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_RECORD_ID_KEY);
         response.source = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_SOURCE_KEY);
         response.isbn = getArrayAsString(pnxServiceObject, PnxServices.ISBN);
@@ -82,9 +84,8 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         response.creator = getArrayAsString(pnxServiceObject, PnxServices.CREATOR);
         response.display_title = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_DISPLAY_TITLE_KEY);
         response.publisher = getArrayAsString(pnxServiceObject, PnxServices.PUBLISHER);
-        log.info("ResponseObject: " + gson.toJson(response));
         response.libraries.addAll(getLibraries(pnxServiceObject, response));
-        log.info("ResponseObject with Libraries: " + gson.toJson(response));
+        log.info(RESPONSE_OBJECT + gson.toJson(response));
         return response;
     }
 
@@ -100,10 +101,9 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
                 String mmsId = mmsidMap.get(institutionCode);
                 try {
                     final Library library = generateLibrary(response, mmsId, libraryCode, institutionCode);
-                    log.info("That's a Library: " + gson.toJson(library));
                     libraries.add(library);
                 } catch (IOException e) {
-                    log.error("Skip library {} because of faulty response.", libraryCode, e);
+                    log.error(SKIP_LIBRARY_BECAUSE_OF_FAULTY_RESPONSE, libraryCode, e);
                 }
             } else {
                 log.error(COULD_NOT_READ_LIBRARY_CODE, input);
@@ -119,8 +119,6 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         library.institution_code = institutionCode;
         library.mms_id = mmsId;
         setDisplayNameAndNcipServerUrl(library);
-        log.info("library DisplayName: " + library.display_name);
-        log.info("library NcipServerUrl: " + library.ncip_server_url);
         return library;
     }
 
@@ -145,12 +143,11 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         return mmsidMap;
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private String getArrayAsString(JsonObject pnxServiceObject, String key) {
-        log.info("Looking for key={} ", key);
         final JsonElement jsonArray = pnxServiceObject.get(key);
-        log.info("Parsing json for key={} is json={}", key, jsonArray);
         List jsonObjList = gson.fromJson(jsonArray, List.class);
-        return isNull(jsonObjList) ? EMPTY_STRING : String.join(", ", jsonObjList);
+        return isNull(jsonObjList) ? EMPTY_STRING : String.join(COMMA_DELIMITER, jsonObjList);
     }
 
     protected JsonObject getPnxServiceData(String documentId) {

@@ -4,14 +4,6 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
-import no.nb.basebibliotek.generated.BaseBibliotek;
-import no.nb.basebibliotek.generated.Eressurser;
-import no.nb.basebibliotek.generated.Record;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.xml.datatype.XMLGregorianCalendar;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -19,12 +11,20 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+import javax.xml.datatype.XMLGregorianCalendar;
+import no.nb.basebibliotek.generated.BaseBibliotek;
+import no.nb.basebibliotek.generated.Eressurser;
+import no.nb.basebibliotek.generated.Record;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class BaseBibliotekService {
 
     private static final transient Logger log = LoggerFactory.getLogger(BaseBibliotekService.class);
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+    public static final String NNCIP_URI = "nncip_uri";
 
     private final transient Unmarshaller jaxbUnmarshaller;
     private final transient BaseBibliotekServiceConnection connection;
@@ -129,7 +129,7 @@ public class BaseBibliotekService {
         if (eressurser != null) {
             List<JAXBElement<String>> elementList = eressurser.getOAIOrSRUOrArielIp();
             for (JAXBElement<String> element : elementList) {
-                if ("nncip_uri".equals(element.getName().getLocalPart())) {
+                if (NNCIP_URI.equals(element.getName().getLocalPart())) {
                     return element.getValue().trim();
                 }
             }

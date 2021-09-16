@@ -16,7 +16,6 @@ import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
 import no.unit.ill.services.BaseBibliotekService;
-import no.unit.ill.services.InstitutionService;
 import no.unit.ill.services.PnxServices;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -30,7 +29,6 @@ public class MetadataHandlerTest {
     private Environment environment;
     private PnxServices pnxServices;
     private BaseBibliotekService baseBibliotekService;
-    private InstitutionService institutionService;
     private MetadataHandler handler;
     private Context awsContext;
 
@@ -58,7 +56,6 @@ public class MetadataHandlerTest {
         environment = mock(Environment.class);
         pnxServices = mock(PnxServices.class);
         baseBibliotekService = mock(BaseBibliotekService.class);
-        institutionService = mock(InstitutionService.class);
         awsContext = mock(Context.class);
         when(environment.readEnv(ALLOWED_ORIGIN_ENV)).thenReturn("*");
         handler = new MetadataHandler(environment, pnxServices, baseBibliotekService);

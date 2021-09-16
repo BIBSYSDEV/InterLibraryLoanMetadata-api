@@ -25,15 +25,12 @@ public class PnxServiceConnection {
     private static final String LANGUAGE = "lang";
     private static final String ENGLISH = "eng";
     private static final String API_KEY = "apikey";
-
-
-
-
+    public static final int TIMEOUT = 10_000;
 
     public InputStreamReader connect(String docId) throws IOException, URISyntaxException {
         final URI uri = generatePrimoUri(docId);
         URLConnection connection = uri.toURL().openConnection();
-        connection.setConnectTimeout(10_000);
+        connection.setConnectTimeout(TIMEOUT);
         return new InputStreamReader(connection.getInputStream());
     }
 
