@@ -19,8 +19,8 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, NcipResponse> {
     private static final transient Logger log = LoggerFactory.getLogger(NcipHandler.class);
     public static final String NO_PARAMETERS_GIVEN_TO_HANDLER = "No parameters given to Handler";
     public static final String NCIP_MESSAGE_IS_NOT_VALID = "NCIP message is not valid: ";
-    public static final String NCIP_RESPONSE_FROM_SERVER = "Ill - NCIP response from server: ";
-    public static final String NCIP_XML_SEND_TO = "Ill - NCIP xml send to: ";
+    public static final String NCIP_RESPONSE_FROM_SERVER = "NCIP response from server: ";
+    public static final String NCIP_XML_SEND_TO = "NCIP xml send to: ";
     public static final String DASH = " - ";
     public static final String JSON_INPUT_LOOKS_LIKE_THAT = "json input looks like that :";
     private final transient NcipService ncipService;
