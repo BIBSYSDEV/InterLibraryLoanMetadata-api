@@ -36,11 +36,8 @@ public class BaseBibliotekServiceTest {
         InputStream inputStream = getClass().getResourceAsStream("/sampleLibraryFromBaseBibliotek.xml");
         when(connection.connect(anyString())).thenReturn(inputStream);
         BaseBibliotekBean basebibliotekBean = baseBibliotekService.libraryLookupByBibnr("xxxxx");
-        assertEquals("GOL", basebibliotekBean.getBibKode());
         assertEquals("https://ncip.mikromarc.no/ncipservice/ncipresponder/parser?db=hallingdal-felles",
                 basebibliotekBean.getNncippServer());
-        assertEquals("NO-2061700", basebibliotekBean.getBibNr());
-        assertEquals("", basebibliotekBean.getBibsysBibcode());
         assertEquals("", basebibliotekBean.getStengtFra());
     }
 

@@ -79,38 +79,12 @@ public class BaseBibliotekService {
             return null;
         } else {
             baseBibliotekBean = new BaseBibliotekBean();
-            baseBibliotekBean.setLandkode(landkode);
-            baseBibliotekBean.setBibNr(record.getIsil());
-            baseBibliotekBean.setBibKode(record.getBibkode());
-            // libraryBean.setBibsysBibcode(extractNodeTextFromDocument("bibsys_bib", xmlDoc));
             baseBibliotekBean.setStengt(record.getStengt());
             baseBibliotekBean.setInst(record.getInst());
-            baseBibliotekBean.setPadr(record.getPadr());
-            baseBibliotekBean.setPpostnr(record.getPpostnr());
-            baseBibliotekBean.setPpoststed(record.getPpoststed());
-            baseBibliotekBean.setVadr(record.getVadr());
-            baseBibliotekBean.setVpostnr(record.getVpostnr());
-            baseBibliotekBean.setVpoststed(record.getVpoststed());
-            baseBibliotekBean.setTlf(record.getTlf());
-            baseBibliotekBean.setEpostAdr(record.getEpostAdr());
-            baseBibliotekBean.setEpostBest(record.getEpostBest());
             baseBibliotekBean.setKatsyst(record.getKatsyst());
-            // libraryBean.setEpost_nill(extractNodeTextFromDocument("epost_nill", xmlDoc));
-            // libraryBean.setEpost_nillkvitt(extractNodeTextFromDocument("epost_nillkvitt", xmlDoc));
             baseBibliotekBean.setNncippServer(getNncipUri(record));
-
             baseBibliotekBean.setStengtTil(createDateString(record.getStengtTil()));
             baseBibliotekBean.setStengtFra(createDateString(record.getStengtFra()));
-
-            // Hack : If padr is empty set content of ppoststed
-            if (baseBibliotekBean.getPadr() == null && baseBibliotekBean.getPpoststed() != null) {
-                baseBibliotekBean.setPadr(baseBibliotekBean.getPpoststed());
-            }
-
-            // Hack: If vadr is empty set content of vpoststed
-            if (baseBibliotekBean.getVadr() == null && baseBibliotekBean.getVpoststed() != null) {
-                baseBibliotekBean.setVadr(baseBibliotekBean.getVpoststed());
-            }
         }
         return baseBibliotekBean;
     }

@@ -32,7 +32,7 @@ import org.junit.jupiter.api.Test;
 
 public class MetadataHandlerTest {
 
-    public static final String CONDENSED_PNX_EXAMPLE_1 = "condensed_pnx_example_1.json";
+    public static final String CONDENSED_PNX_EXAMPLE_4 = "condensed_pnx_example_4.json";
     private static final String MOCK_DOCUMENT_ID = "BIBSYS_ILS71560264980002201";
     private Environment environment;
     private PnxServices pnxServices;
@@ -105,7 +105,7 @@ public class MetadataHandlerTest {
         basebibliotekBean.setNncippServer(MOCK_NCIP_SERVER_URL);
         when(baseBibliotekService.libraryLookupByBibnr(anyString())).thenReturn(basebibliotekBean);
 
-        JsonObject jsonObject = createJson(CONDENSED_PNX_EXAMPLE_1);
+        JsonObject jsonObject = createJson(CONDENSED_PNX_EXAMPLE_4);
         when(pnxServices.getPnxData(anyString())).thenReturn(jsonObject);
 
         RequestInfo requestInfo = new RequestInfo();

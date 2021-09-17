@@ -76,8 +76,8 @@ public class NcipHandlerTest {
         NcipRequest request = new NcipRequest(ncipTransferMessage);
         var handler = new NcipHandler(environment, ncipService);
         var actual = handler.processInput(request, new RequestInfo(), context);
-        assertEquals(HttpURLConnection.HTTP_OK, actual.getStatus());
-        assertEquals(SUCCESS, actual.getMessage());
+        assertEquals(HttpURLConnection.HTTP_OK, actual.status);
+        assertEquals(SUCCESS, actual.message);
     }
 
     @Test

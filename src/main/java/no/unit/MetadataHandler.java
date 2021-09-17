@@ -8,7 +8,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jakarta.xml.bind.JAXBException;
-import java.io.IOException;
+
 import java.net.HttpURLConnection;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 import no.unit.MetadataResponse.Library;
 import no.unit.services.BaseBibliotekBean;
 import no.unit.services.BaseBibliotekService;
@@ -63,7 +64,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
     @Override
     protected MetadataResponse processInput(Void input, RequestInfo requestInfo, Context context)
-        throws ApiGatewayException {
+            throws ApiGatewayException {
         if (isNull(requestInfo)) {
             throw new BadRequestException(NO_PARAMETERS_GIVEN_TO_HANDLER);
         }
@@ -100,11 +101,10 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
                 String libraryCode = input.substring(input.length() - LENGTH_OF_LIBRARYCODE);
                 String institutionCode = input.replace(libraryCode, EMPTY_STRING);
                 String mmsId = mmsidMap.get(institutionCode);
-                try {
-                    final Library library = generateLibrary(response, mmsId, libraryCode, institutionCode);
-                    libraries.add(library);
-                } catch (IOException e) {
-                    log.error(SKIP_LIBRARY_BECAUSE_OF_FAULTY_RESPONSE, libraryCode, e);
+                final Library library = generateLibrary(response, mmsId, libraryCode, institutionCode);
+                libraries.add(library);
+                if ("".equalsIgnoreCase(library.display_name)) {
+                    log.error(SKIP_LIBRARY_BECAUSE_OF_FAULTY_RESPONSE, libraryCode);
                 }
             } else {
                 log.error(COULD_NOT_READ_LIBRARY_CODE, input);
@@ -114,7 +114,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     }
 
     private Library generateLibrary(MetadataResponse response, String mmsId, String libraryCode,
-                                    String institutionCode) throws IOException {
+                                    String institutionCode) {
         Library library = response.new Library();
         library.library_code = libraryCode;
         library.institution_code = institutionCode;
