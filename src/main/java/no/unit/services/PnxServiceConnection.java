@@ -1,4 +1,4 @@
-package no.unit.ill.services;
+package no.unit.services;
 
 import no.unit.Config;
 import org.apache.http.client.utils.URIBuilder;
@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLConnection;
 
 
 public class PnxServiceConnection {
@@ -24,14 +25,13 @@ public class PnxServiceConnection {
     private static final String LANGUAGE = "lang";
     private static final String ENGLISH = "eng";
     private static final String API_KEY = "apikey";
-
-
-
-
+    public static final int TIMEOUT = 10_000;
 
     public InputStreamReader connect(String docId) throws IOException, URISyntaxException {
-        URI uri = generatePrimoUri(docId);
-        return new InputStreamReader(uri.toURL().openStream());
+        final URI uri = generatePrimoUri(docId);
+        URLConnection connection = uri.toURL().openConnection();
+        connection.setConnectTimeout(TIMEOUT);
+        return new InputStreamReader(connection.getInputStream());
     }
 
     protected URI generatePrimoUri(String docId) throws URISyntaxException {

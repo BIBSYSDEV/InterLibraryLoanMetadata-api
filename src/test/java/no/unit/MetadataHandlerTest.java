@@ -1,31 +1,46 @@
 package no.unit;
 
+import static no.unit.MetadataHandler.DOCUMENT_ID_KEY;
+import static no.unit.MetadataHandler.NO_PARAMETERS_GIVEN_TO_HANDLER;
+import static no.unit.libcheck.LibcheckHandlerTest.MOCK_NCIP_SERVER_URL;
 import static nva.commons.apigateway.ApiGatewayHandler.ALLOWED_ORIGIN_ENV;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static nva.commons.apigateway.RequestInfo.MISSING_FROM_QUERY_PARAMETERS;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import jakarta.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
-import javax.ws.rs.core.Response;
-import no.unit.ill.services.PnxServices;
+
+import no.unit.services.BaseBibliotekBean;
+import no.unit.services.BaseBibliotekService;
+import no.unit.services.PnxServices;
+import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class MetadataHandlerTest {
 
-    public static final String CONDENSED_PNX_EXAMPLE_1 = "condensed_pnx_example_1.json";
+    public static final String CONDENSED_PNX_EXAMPLE_4 = "condensed_pnx_example_4.json";
+    private static final String MOCK_DOCUMENT_ID = "BIBSYS_ILS71560264980002201";
     private Environment environment;
     private PnxServices pnxServices;
-    private MetadataHandler app;
+    private BaseBibliotekService baseBibliotekService;
+    private MetadataHandler handler;
     private Context awsContext;
 
-    private String createJson(String filename) {
+    private JsonObject createJson(String filename) {
 
         StringBuilder contentBuilder = new StringBuilder();
         int i;
@@ -38,7 +53,7 @@ public class MetadataHandlerTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return  contentBuilder.toString();
+        return JsonParser.parseString(contentBuilder.toString()).getAsJsonObject();
     }
 
     /**
@@ -48,55 +63,59 @@ public class MetadataHandlerTest {
     public void init() {
         environment = mock(Environment.class);
         pnxServices = mock(PnxServices.class);
+        baseBibliotekService = mock(BaseBibliotekService.class);
         awsContext = mock(Context.class);
         when(environment.readEnv(ALLOWED_ORIGIN_ENV)).thenReturn("*");
-        app = new MetadataHandler(environment, pnxServices);
+        handler = new MetadataHandler(environment, pnxServices, baseBibliotekService);
     }
 
     @Test
-    public void testingDefaultConstructor() {
+    public void testingDefaultConstructor() throws JAXBException {
         //for test coverage
-        MetadataHandler app = new MetadataHandler();
+        MetadataHandler handler = new MetadataHandler();
     }
 
     @Test
-    public void noRecordIdSet() {
-        when(environment.readEnv(ALLOWED_ORIGIN_ENV)).thenReturn(GatewayResponse.CORS_ALLOW_ORIGIN_HEADER);
-        Map<String, Object> event = new HashMap<>();
-        String condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
-        when(pnxServices.getPnxData(anyString())).thenReturn(condensedExample1);
-        GatewayResponse result = app.handleRequest(null, awsContext);
-        GatewayResponse result2 = app.handleRequest(event, awsContext);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), result.getStatusCode());
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), result2.getStatusCode());
+    public void handlerThrowsExceptionWithEmptyRequest() {
+        Exception exception = assertThrows(BadRequestException.class, () -> {
+            handler.processInput(null, null, awsContext);
+        });
+        assertTrue(exception.getMessage().contains(NO_PARAMETERS_GIVEN_TO_HANDLER));
+    }
+
+
+    @Test
+    public void handlerThrowsExceptionWithMissingQueryParam() {
+        Exception exception = assertThrows(BadRequestException.class, () -> {
+            handler.processInput(null, new RequestInfo(), awsContext);
+        });
+        assertTrue(exception.getMessage().contains(MISSING_FROM_QUERY_PARAMETERS + DOCUMENT_ID_KEY));
     }
 
     @Test
-    public void recordIdIsEmptyString() {
-        Map<String, Object> event = new HashMap<>();
+    void getSuccessStatusCodeReturnsOk() {
+        Integer statusCode = handler.getSuccessStatusCode(null, new MetadataResponse());
+        assertEquals(HttpURLConnection.HTTP_OK, statusCode);
+    }
+
+    @Test
+    public void handlerSuccess() throws ApiGatewayException {
+
+        BaseBibliotekBean basebibliotekBean = new BaseBibliotekBean();
+        basebibliotekBean.setNncippServer(MOCK_NCIP_SERVER_URL);
+        when(baseBibliotekService.libraryLookupByBibnr(anyString())).thenReturn(basebibliotekBean);
+
+        JsonObject jsonObject = createJson(CONDENSED_PNX_EXAMPLE_4);
+        when(pnxServices.getPnxData(anyString())).thenReturn(jsonObject);
+
+        RequestInfo requestInfo = new RequestInfo();
         Map<String, String> queryParameters = new HashMap<>();
-        String leksikon = "";
-        String condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
-        queryParameters.put(MetadataHandler.DOCUMENT_ID_KEY, leksikon);
-        event.put(MetadataHandler.QUERY_STRING_PARAMETERS_KEY, queryParameters);
-        when(pnxServices.getPnxData(anyString())).thenReturn(condensedExample1);
-        Context awsContext = mock(Context.class);
-        GatewayResponse result = app.handleRequest(event, awsContext);
-        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(), result.getStatusCode());
+        queryParameters.put(DOCUMENT_ID_KEY, MOCK_DOCUMENT_ID);
+        requestInfo.setQueryParameters(queryParameters);
+
+        var actual = handler.processInput(null, requestInfo, awsContext);
+        assertEquals(MOCK_NCIP_SERVER_URL, actual.libraries.get(0).ncip_server_url);
+        assertEquals(MOCK_DOCUMENT_ID, actual.record_id);
     }
 
-
-
-    @Test
-    public void successfulResponse() {
-        Map<String, Object> event = new HashMap<>();
-        Map<String, String> queryParameters = new HashMap<>();
-        String leksikon = "BIBSYS_ILS71463631120002201";
-        String condensedExample1 = createJson(CONDENSED_PNX_EXAMPLE_1);
-        queryParameters.put(MetadataHandler.DOCUMENT_ID_KEY, leksikon);
-        event.put(MetadataHandler.QUERY_STRING_PARAMETERS_KEY, queryParameters);
-        when(pnxServices.getPnxData(anyString())).thenReturn(condensedExample1);
-        final GatewayResponse result = app.handleRequest(event, awsContext);
-        assertEquals(Response.Status.OK.getStatusCode(), result.getStatusCode());
-    }
 }

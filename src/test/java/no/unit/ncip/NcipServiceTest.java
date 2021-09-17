@@ -7,8 +7,9 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
+
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -30,14 +31,14 @@ class NcipServiceTest {
         HttpEntity entity = mock(HttpEntity.class);
         StatusLine statusLine = mock(StatusLine.class);
         when(response.getStatusLine()).thenReturn(statusLine);
-        when(statusLine.getStatusCode()).thenReturn(HttpStatus.SC_BAD_REQUEST);
+        when(statusLine.getStatusCode()).thenReturn(HttpURLConnection.HTTP_BAD_REQUEST);
         NcipService ncipService = new NcipService(httpclient);
         when(response.getEntity()).thenReturn(entity);
         final InputStream inputStream = getClass().getClassLoader().getResourceAsStream(NCIP_RESPONSE_FAILURE);
         when(entity.getContent()).thenReturn(inputStream);
         when(httpclient.execute(any(HttpPost.class))).thenReturn(response);
         final NcipResponse ncipResponse = ncipService.send(PAYLOAD, NCIP_SERVER_URL);
-        assertEquals(HttpStatus.SC_BAD_REQUEST, ncipResponse.status);
+        assertEquals(HttpURLConnection.HTTP_BAD_REQUEST, ncipResponse.status);
         assertEquals(NOT_RENEWABLE, ncipResponse.message);
     }
 
@@ -47,7 +48,7 @@ class NcipServiceTest {
         NcipService ncipService = new NcipService(httpclient);
         when(httpclient.execute(any(HttpPost.class))).thenThrow(new IOException(FAILURE));
         final NcipResponse ncipResponse = ncipService.send("", NCIP_SERVER_URL);
-        assertEquals(HttpStatus.SC_INTERNAL_SERVER_ERROR, ncipResponse.status);
+        assertEquals(HttpURLConnection.HTTP_INTERNAL_ERROR, ncipResponse.status);
         assertEquals(NcipService.FAILED_TO_READ_RESPONSE_BODY_FROM_NCIP_POST, ncipResponse.message);
         assertEquals(FAILURE, ncipResponse.problemdetail);
     }

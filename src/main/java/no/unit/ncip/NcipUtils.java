@@ -1,6 +1,4 @@
-package no.unit.utils;
-
-import no.unit.ncip.NcipTransferMessage;
+package no.unit.ncip;
 
 public class NcipUtils {
 

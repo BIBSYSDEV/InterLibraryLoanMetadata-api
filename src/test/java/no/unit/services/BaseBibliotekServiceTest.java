@@ -1,15 +1,14 @@
-package no.unit.ill.services;
+package no.unit.services;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
 
+import jakarta.xml.bind.JAXBException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.bind.JAXBException;
-
-import static no.unit.ill.services.BaseBibliotekService.WRONG_URL_FOR_GET_IN_BASEBIBLIOTEK_SERVICE_FOR;
+import static no.unit.services.BaseBibliotekService.WRONG_URL_FOR_GET_IN_BASEBIBLIOTEK_SERVICE_FOR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -37,11 +36,8 @@ public class BaseBibliotekServiceTest {
         InputStream inputStream = getClass().getResourceAsStream("/sampleLibraryFromBaseBibliotek.xml");
         when(connection.connect(anyString())).thenReturn(inputStream);
         BaseBibliotekBean basebibliotekBean = baseBibliotekService.libraryLookupByBibnr("xxxxx");
-        assertEquals("GOL", basebibliotekBean.getBibKode());
         assertEquals("https://ncip.mikromarc.no/ncipservice/ncipresponder/parser?db=hallingdal-felles",
                 basebibliotekBean.getNncippServer());
-        assertEquals("NO-2061700", basebibliotekBean.getBibNr());
-        assertEquals("", basebibliotekBean.getBibsysBibcode());
         assertEquals("", basebibliotekBean.getStengtFra());
     }
 

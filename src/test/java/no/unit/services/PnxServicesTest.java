@@ -1,4 +1,4 @@
-package no.unit.ill.services;
+package no.unit.services;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -8,10 +8,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.Objects;
-
-
-import static no.unit.ill.services.PnxServices.ERROR_WHILE_GETTING_AT_PRIMO_API_FOR;
-import static no.unit.ill.services.PnxServices.WRONG_URL_FOR_PRIMO_API;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -56,8 +52,7 @@ public class PnxServicesTest {
                         .getResourceAsStream(FULL_PNX_EXAMPLE_1)));
         when(pnxServiceConnection.connect(anyString())).thenReturn(inputStreamReader);
         PnxServices pnxServices = new PnxServices(pnxServiceConnection);
-        JsonObject result = JsonParser.parseString(
-                pnxServices.getPnxData("test"))
+        JsonObject result = pnxServices.getPnxData("test")
                 .getAsJsonObject();
         assertEquals(condensedPnxFromFile1, result);
 
@@ -79,7 +74,7 @@ public class PnxServicesTest {
     public void handlesUriException() throws IOException, URISyntaxException {
         PnxServiceConnection pnxServiceConnection = mock(PnxServiceConnection.class);
         when(pnxServiceConnection.connect(anyString()))
-                .thenThrow(new URISyntaxException("docId", WRONG_URL_FOR_PRIMO_API));
+                .thenThrow(new URISyntaxException("docId", PnxServices.WRONG_URL_FOR_PRIMO_API));
         PnxServices pnxServices = new PnxServices(pnxServiceConnection);
         JsonObject expected = new JsonObject();
         JsonObject result = pnxServices.getFullPNX("testtest");
@@ -90,7 +85,7 @@ public class PnxServicesTest {
     public void handlesIOException() throws IOException, URISyntaxException {
         PnxServiceConnection pnxServiceConnection = mock(PnxServiceConnection.class);
         when(pnxServiceConnection.connect(anyString()))
-                .thenThrow(new IOException(ERROR_WHILE_GETTING_AT_PRIMO_API_FOR));
+                .thenThrow(new IOException(PnxServices.ERROR_WHILE_GETTING_AT_PRIMO_API_FOR));
         PnxServices pnxServices = new PnxServices(pnxServiceConnection);
         JsonObject expected = new JsonObject();
         JsonObject result = pnxServices.getFullPNX("testtest");
@@ -121,9 +116,9 @@ public class PnxServicesTest {
                 .parseString(createJson(CONDENSED_PNX_EXAMPLE_3))
                 .getAsJsonObject();
         PnxServices pnxServices = new PnxServices();
-        JsonObject pnxServicesCondensedExample1 = pnxServices.extractUsefulDataFromXservice(fullPnxExample1);
-        JsonObject pnxServicesCondensedExample2 = pnxServices.extractUsefulDataFromXservice(fullPnxExample2);
-        JsonObject pnxServicesCondensedExample3 = pnxServices.extractUsefulDataFromXservice(fullPnxExample3);
+        JsonObject pnxServicesCondensedExample1 = pnxServices.extractUsefulDataFromPnxService(fullPnxExample1);
+        JsonObject pnxServicesCondensedExample2 = pnxServices.extractUsefulDataFromPnxService(fullPnxExample2);
+        JsonObject pnxServicesCondensedExample3 = pnxServices.extractUsefulDataFromPnxService(fullPnxExample3);
         assertEquals(condensedPnxFromFile1, pnxServicesCondensedExample1);
         assertEquals(condensedPnxFromFile2, pnxServicesCondensedExample2);
         assertEquals(condensedPnxFromFile3, pnxServicesCondensedExample3);

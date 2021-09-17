@@ -1,17 +1,9 @@
-package no.unit.ill.services;
+package no.unit.services;
 
-import no.nb.basebibliotek.generated.BaseBibliotek;
-import no.nb.basebibliotek.generated.Eressurser;
-import no.nb.basebibliotek.generated.Record;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.datatype.XMLGregorianCalendar;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Unmarshaller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -19,12 +11,20 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
+import javax.xml.datatype.XMLGregorianCalendar;
+import no.nb.basebibliotek.generated.BaseBibliotek;
+import no.nb.basebibliotek.generated.Eressurser;
+import no.nb.basebibliotek.generated.Record;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class BaseBibliotekService {
 
     private static final transient Logger log = LoggerFactory.getLogger(BaseBibliotekService.class);
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+    public static final String NNCIP_URI = "nncip_uri";
 
     private final transient Unmarshaller jaxbUnmarshaller;
     private final transient BaseBibliotekServiceConnection connection;
@@ -79,38 +79,12 @@ public class BaseBibliotekService {
             return null;
         } else {
             baseBibliotekBean = new BaseBibliotekBean();
-            baseBibliotekBean.setLandkode(landkode);
-            baseBibliotekBean.setBibNr(record.getIsil());
-            baseBibliotekBean.setBibKode(record.getBibkode());
-            // libraryBean.setBibsysBibcode(extractNodeTextFromDocument("bibsys_bib", xmlDoc));
             baseBibliotekBean.setStengt(record.getStengt());
             baseBibliotekBean.setInst(record.getInst());
-            baseBibliotekBean.setPadr(record.getPadr());
-            baseBibliotekBean.setPpostnr(record.getPpostnr());
-            baseBibliotekBean.setPpoststed(record.getPpoststed());
-            baseBibliotekBean.setVadr(record.getVadr());
-            baseBibliotekBean.setVpostnr(record.getVpostnr());
-            baseBibliotekBean.setVpoststed(record.getVpoststed());
-            baseBibliotekBean.setTlf(record.getTlf());
-            baseBibliotekBean.setEpostAdr(record.getEpostAdr());
-            baseBibliotekBean.setEpostBest(record.getEpostBest());
             baseBibliotekBean.setKatsyst(record.getKatsyst());
-            // libraryBean.setEpost_nill(extractNodeTextFromDocument("epost_nill", xmlDoc));
-            // libraryBean.setEpost_nillkvitt(extractNodeTextFromDocument("epost_nillkvitt", xmlDoc));
             baseBibliotekBean.setNncippServer(getNncipUri(record));
-
             baseBibliotekBean.setStengtTil(createDateString(record.getStengtTil()));
             baseBibliotekBean.setStengtFra(createDateString(record.getStengtFra()));
-
-            // Hack : If padr is empty set content of ppoststed
-            if (baseBibliotekBean.getPadr() == null && baseBibliotekBean.getPpoststed() != null) {
-                baseBibliotekBean.setPadr(baseBibliotekBean.getPpoststed());
-            }
-
-            // Hack: If vadr is empty set content of vpoststed
-            if (baseBibliotekBean.getVadr() == null && baseBibliotekBean.getVpoststed() != null) {
-                baseBibliotekBean.setVadr(baseBibliotekBean.getVpoststed());
-            }
         }
         return baseBibliotekBean;
     }
@@ -126,10 +100,12 @@ public class BaseBibliotekService {
 
     private String getNncipUri(Record record) {
         Eressurser eressurser = record.getEressurser();
-        List<JAXBElement<String>> elementList = eressurser.getOAIOrSRUOrArielIp();
-        for (JAXBElement<String> element : elementList) {
-            if ("nncip_uri".equals(element.getName().getLocalPart())) {
-                return element.getValue().trim();
+        if (eressurser != null) {
+            List<JAXBElement<String>> elementList = eressurser.getOAIOrSRUOrArielIp();
+            for (JAXBElement<String> element : elementList) {
+                if (NNCIP_URI.equals(element.getName().getLocalPart())) {
+                    return element.getValue().trim();
+                }
             }
         }
         return null;
