@@ -5,19 +5,18 @@ import nva.commons.core.StringUtils;
 public class Config {
 
     public static final String MISSING_ENVIRONMENT_VARIABLES = "Missing environment variables";
-    public static final String CORS_ALLOW_ORIGIN_HEADER_ENVIRONMENT_NAME = "ALLOWED_ORIGIN";
     public static final String INSTITUTIONSERVICE_ENDPOINT_KEY = "INSTITUTIONSERVICE_ENDPOINT";
     public static final String PRIMO_SERVICE_ENDPOINT_KEY = "PRIMO_SERVICE_ENDPOINT";
     public static final String PRIMO_SERVICE_API_KEY = "PRIMO_SERVICE_API";
     public static final String BASEBIBLIOTEKSERVICE_ENDPOINT_KEY = "BASEBIBLIOTEKSERVICE_ENDPOINT";
+    public static final String STAGE_KEY = "STAGE";
 
-    private String corsHeader;
-
-    private String institutionServiceHost;
     private String basebibliotekServiceHost;
 
     private String primoRestApiHost;
     private String primoRestApiKey;
+
+    private String stage;
 
     private Config() {
     }
@@ -27,11 +26,10 @@ public class Config {
         private static final Config INSTANCE = new Config();
 
         static {
-            INSTANCE.setInstitutionServiceHost(System.getenv(INSTITUTIONSERVICE_ENDPOINT_KEY));
             INSTANCE.setBasebibliotekServiceHost(System.getenv(BASEBIBLIOTEKSERVICE_ENDPOINT_KEY));
-            INSTANCE.setCorsHeader(System.getenv(CORS_ALLOW_ORIGIN_HEADER_ENVIRONMENT_NAME));
             INSTANCE.setPrimoRestApiHost(System.getenv(PRIMO_SERVICE_ENDPOINT_KEY));
             INSTANCE.setPrimoRestApiKey(System.getenv(PRIMO_SERVICE_API_KEY));
+            INSTANCE.setStage(System.getenv(STAGE_KEY));
         }
     }
 
@@ -45,18 +43,14 @@ public class Config {
      * @return <code>TRUE</code> if property is present.
      */
     public boolean checkProperties() {
-        if (StringUtils.isEmpty(institutionServiceHost) || StringUtils.isEmpty(basebibliotekServiceHost)) {
-            throw new RuntimeException(MISSING_ENVIRONMENT_VARIABLES);
+        if (StringUtils.isEmpty(basebibliotekServiceHost) ||
+                StringUtils.isEmpty(primoRestApiHost) ||
+                StringUtils.isEmpty(primoRestApiKey) ||
+                StringUtils.isEmpty(stage)
+        ) {
+            throw new IllegalStateException(MISSING_ENVIRONMENT_VARIABLES);
         }
         return true;
-    }
-
-    public String getInstitutionServiceHost() {
-        return institutionServiceHost;
-    }
-
-    protected void setInstitutionServiceHost(String institutionServiceHost) {
-        this.institutionServiceHost = institutionServiceHost;
     }
 
     public String getBasebibliotekServiceHost() {
@@ -65,6 +59,14 @@ public class Config {
 
     protected void setBasebibliotekServiceHost(String basebibliotekServiceHost) {
         this.basebibliotekServiceHost = basebibliotekServiceHost;
+    }
+
+    public String getStage() {
+        return stage;
+    }
+
+    public void setStage(String stage) {
+        this.stage = stage;
     }
 
     public String getPrimoRestApiHost() {
@@ -81,14 +83,6 @@ public class Config {
 
     public void setPrimoRestApiKey(String primoRestApiKey) {
         this.primoRestApiKey = primoRestApiKey;
-    }
-
-    public String getCorsHeader() {
-        return corsHeader;
-    }
-
-    public void setCorsHeader(String corsHeader) {
-        this.corsHeader = corsHeader;
     }
 
 }

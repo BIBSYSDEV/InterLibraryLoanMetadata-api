@@ -46,6 +46,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     public static final String SKIP_LIBRARY_BECAUSE_OF_FAULTY_RESPONSE = "Skip library {} because of faulty response.";
     public static final String RESPONSE_OBJECT = "ResponseObject: ";
     public static final String COMMA_DELIMITER = ", ";
+    public static final String NCIP_TEST_SERVER_URL = "https://ncip.server.url";
     private final transient PnxServices pnxServices;
     private final transient BaseBibliotekService baseBibliotekService;
     private final transient Gson gson = new Gson();
@@ -128,8 +129,12 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         final BaseBibliotekBean baseBibliotekBean = baseBibliotekService.libraryLookupByBibnr(library.library_code);
         if (baseBibliotekBean != null) {
             library.display_name = baseBibliotekBean.getInst();
-            library.ncip_server_url = baseBibliotekBean.getNncippServer();
             library.available_for_loan = baseBibliotekBean.isOpenAtDate(LocalDate.now(NORWAY_ZONE_ID));
+            if("prod".equalsIgnoreCase(Config.getInstance().getStage())) {
+                library.ncip_server_url = baseBibliotekBean.getNncippServer();
+            } else {
+                library.ncip_server_url = NCIP_TEST_SERVER_URL;
+            }
         }
     }
 

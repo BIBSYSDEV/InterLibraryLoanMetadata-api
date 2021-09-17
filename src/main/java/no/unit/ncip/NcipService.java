@@ -23,17 +23,17 @@ public class NcipService {
 
     @JacocoGenerated
     private static final transient Logger log = LoggerFactory.getLogger(NcipService.class);
-    public static final String FAILED_TO_READ_RESPONSE_BODY_FROM_NCIP_POST = "Ill - Failed to read response body from "
+    public static final String FAILED_TO_READ_RESPONSE_BODY_FROM_NCIP_POST = "Failed to read response body from "
         + "ncip POST";
-    public static final String FAILED_TO_SET_PAYLOAD_TO_HTTP_POST = "Ill - Failed to set payload to HttpPost.";
+    public static final String FAILED_TO_SET_PAYLOAD_TO_HTTP_POST = "Failed to set payload to HttpPost.";
     public static final String ORDER_SUCCEEDED = "Order succeeded";
     public static final String NS1_PROBLEM_TYPE = "ns1:ProblemType";
     public static final String NS1_PROBLEM_DETAIL = "ns1:ProblemDetail";
-    public static final String NCIP_REQUEST_ITEM_FAILED = "Ill - NCIP request item failed : ";
-    public static final String NCIP_REQUEST_OK = "Ill - NCIP request ok : ";
-    public static final String SOMETHING_WENT_WRONG_DURING_PARSING_OF_XML_STRUCTURE = "Ill - Something went wrong "
+    public static final String NCIP_REQUEST_ITEM_FAILED = "NCIP request item failed : ";
+    public static final String NCIP_REQUEST_OK = "NCIP request ok : ";
+    public static final String SOMETHING_WENT_WRONG_DURING_PARSING_OF_XML_STRUCTURE = "Something went wrong "
         + "during parsing of xmlStructure: ";
-    public static final String ERROR_PARSING_ITEM_REQUEST_RESPONSE = "Ill - error parsing ItemRequestResponse : ";
+    public static final String ERROR_PARSING_ITEM_REQUEST_RESPONSE = "error parsing ItemRequestResponse : ";
     private final transient CloseableHttpClient httpclient;
 
     public NcipService() {
