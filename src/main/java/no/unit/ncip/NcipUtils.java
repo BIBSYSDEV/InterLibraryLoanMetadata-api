@@ -1,7 +1,5 @@
 package no.unit.ncip;
 
-import no.unit.ncip.NcipTransferMessage;
-
 public class NcipUtils {
 
     /**
