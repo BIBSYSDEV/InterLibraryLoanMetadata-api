@@ -79,7 +79,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         response.record_id = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_RECORD_ID_KEY);
         response.source = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_SOURCE_KEY);
         response.isbn = getArrayAsString(pnxServiceObject, PnxServices.ISBN);
-        response.publicationPlace = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTION_PUBLICATION_PLACE_KEY);
+        response.publication_place = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTION_PUBLICATION_PLACE_KEY);
         response.b_title = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_B_TITLE_KEY);
         response.volume = getArrayAsString(pnxServiceObject, PnxServices.VOLUME);
         response.pages = getArrayAsString(pnxServiceObject, PnxServices.PAGES);

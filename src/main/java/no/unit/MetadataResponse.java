@@ -9,7 +9,7 @@ public class MetadataResponse implements JsonSerializable {
     public String isbn;
     public String source;
     public String record_id;
-    public String publicationPlace;
+    public String publication_place;
     public String b_title;
     public String volume;
     public String creation_year;
