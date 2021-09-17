@@ -87,7 +87,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         response.display_title = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_DISPLAY_TITLE_KEY);
         response.publisher = getArrayAsString(pnxServiceObject, PnxServices.PUBLISHER);
         response.libraries.addAll(getLibraries(pnxServiceObject, response));
-        log.info(RESPONSE_OBJECT + gson.toJson(response));
+        log.debug(RESPONSE_OBJECT + gson.toJson(response));
         return response;
     }
 

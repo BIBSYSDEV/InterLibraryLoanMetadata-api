@@ -80,7 +80,7 @@ public class PnxServices {
     public JsonObject getPnxData(String documentId) {
         JsonObject fullPNX = getFullPNX(documentId);
         final JsonObject usefullPnx = extractUsefulDataFromPnxService(fullPNX);
-        log.info(MY_EXTRACTED_PNX + usefullPnx);
+        log.debug(MY_EXTRACTED_PNX + usefullPnx);
         return usefullPnx;
     }
 
