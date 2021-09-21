@@ -67,7 +67,7 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, NcipResponse> {
         if (isNull(ncipRequest)) {
             throw new BadRequestException(NO_PARAMETERS_GIVEN_TO_HANDLER);
         }
-        log.debug(JSON_INPUT_LOOKS_LIKE_THAT + ncipRequest);
+        log.info(JSON_INPUT_LOOKS_LIKE_THAT + ncipRequest);
         if (ncipRequest.isValid()) {
             String xmlMessage = NcipUtils.ncipMessageAsXml(ncipRequest);
             String ncipServerUrl = ncipRequest.ncipServerUrl;

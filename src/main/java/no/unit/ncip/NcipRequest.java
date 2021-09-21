@@ -7,21 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 
 public class NcipRequest {
 
-    public static final String TO_AGENCY_ID = "toAgencyId";
-    public static final String FROM_AGENCY_ID = "fromAgencyId";
-    public static final String ISBN_VALUE = "isbnValue";
-    public static final String USER_IDENTIFIER_VALUE = "userIdentifierValue";
-    public static final String AUTHOR = "author";
-    public static final String TITLE = "title";
-    public static final String PUBLISHER = "publisher";
-    public static final String PUBLICATION_DATE = "publicationDate";
-    public static final String PLACE_OF_PUBLICATION = "placeOfPublication";
-    public static final String BIBLIOGRAPHIC_RECORD_IDENTIFIER = "bibliographicRecordIdentifier";
-    public static final String BIBLIOGRAPHIC_RECORD_IDENTIFIER_CODE = "bibliographicRecordIdentifierCode";
-    public static final String TYPE = "type";
-    public static final String REQUEST_TYPE = "requestType";
-    public static final String COMMENT = "comment";
-    public static final String NCIP_SERVER_URL = "ncipServerUrl";
     public transient String toAgencyId;
     public transient String fromAgencyId;
     public transient String isbnValue;
@@ -38,25 +23,24 @@ public class NcipRequest {
     public transient String comment;
     public transient String ncipServerUrl;
 
-    @JacocoGenerated
     @JsonCreator
+    @JacocoGenerated
     @SuppressWarnings("PMD.ExcessiveParameterList")
-    public NcipRequest(@JsonProperty(TO_AGENCY_ID) String toAgencyId,
-                       @JsonProperty(FROM_AGENCY_ID) String fromAgencyId,
-                       @JsonProperty(ISBN_VALUE) String isbnValue,
-                       @JsonProperty(USER_IDENTIFIER_VALUE) String userIdentifierValue,
-                       @JsonProperty(AUTHOR) String author,
-                       @JsonProperty(TITLE) String title,
-                       @JsonProperty(PUBLISHER) String publisher,
-                       @JsonProperty(PUBLICATION_DATE) String publicationDate,
-                       @JsonProperty(PLACE_OF_PUBLICATION) String placeOfPublication,
-                       @JsonProperty(BIBLIOGRAPHIC_RECORD_IDENTIFIER) String bibliographicRecordIdentifier,
-                       @JsonProperty(BIBLIOGRAPHIC_RECORD_IDENTIFIER_CODE)
-                                   String bibliographicRecordIdentifierCode,
-                       @JsonProperty(TYPE) String type,
-                       @JsonProperty(REQUEST_TYPE) String requestType,
-                       @JsonProperty(COMMENT) String comment,
-                       @JsonProperty(NCIP_SERVER_URL) String ncipServerUrl) {
+    public NcipRequest(@JsonProperty("toAgencyId") String toAgencyId,
+                       @JsonProperty("fromAgencyId") String fromAgencyId,
+                       @JsonProperty("isbnValue") String isbnValue,
+                       @JsonProperty("userIdentifierValue") String userIdentifierValue,
+                       @JsonProperty("author") String author,
+                       @JsonProperty("title") String title,
+                       @JsonProperty("publisher") String publisher,
+                       @JsonProperty("publicationDate") String publicationDate,
+                       @JsonProperty("placeOfPublication") String placeOfPublication,
+                       @JsonProperty("bibliographicRecordIdentifier") String bibliographicRecordIdentifier,
+                       @JsonProperty("bibliographicRecordIdentifierCode") String bibliographicRecordIdentifierCode,
+                       @JsonProperty("type") String type,
+                       @JsonProperty("requestType") String requestType,
+                       @JsonProperty("comment") String comment,
+                       @JsonProperty("ncipServerUrl") String ncipServerUrl) {
         this.toAgencyId = toAgencyId;
         this.fromAgencyId = fromAgencyId;
         this.isbnValue = isbnValue;
@@ -118,8 +102,5 @@ public class NcipRequest {
         }
         return !StringUtils.isBlank(ncipServerUrl);
     }
-
-
-
 
 }
