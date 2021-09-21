@@ -71,6 +71,14 @@ Resources:
           HttpMethod: POST
           ThrottlingBurstLimit: 1
           ThrottlingRateLimit: 1
+        - ResourcePath: /metadata
+          HttpMethod: GET
+          ThrottlingBurstLimit: 10
+          ThrottlingRateLimit: 10
+        - ResourcePath: /libcheck
+          HttpMethod: GET
+          ThrottlingBurstLimit: 10
+          ThrottlingRateLimit: 10
       DefinitionBody:
         openapi: 3.0.3
         info:
