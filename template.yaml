@@ -18,18 +18,18 @@ Parameters:
     Default: 'environment'
     Description: dev/test/prod
   PrimoServiceEndpoint:
-    Type: String
+    Type: AWS::SSM::Parameter::Value<String>
     Description: Url Endpoints to the Primo API
-    Default: 'api-eu.hosted.exlibrisgroup.com'
+    Default: '/primo/pnxServiceEndpoint'
   PrimoServiceApiKey:
     Type: String
     Description: Api key for contacting the Primo API
     Default: "{{resolve:secretsmanager:apiKeyPrimo:SecretString:apiKeyPrimo}}"
     NoEcho: true
   BaseBibliotekServiceEndpoint:
-    Type: String
+    Type: AWS::SSM::Parameter::Value<String>
     Description: Url Endpoint to the BaseBibliotek server
-    Default: 'nb.no'
+    Default: '/nb/baseBibliotekEndpoint'
 
 Conditions:
   HasDomainName: !Not [!Equals [!Ref CustomDomain, '']]
