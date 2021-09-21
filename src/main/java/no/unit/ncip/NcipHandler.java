@@ -4,6 +4,7 @@ import static java.util.Objects.isNull;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import java.net.HttpURLConnection;
+
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -50,7 +51,6 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, NcipResponse> {
     }
 
 
-
     /**
      * Implements the main logic of the handler. Any exception thrown by this method will be handled by method.
      *
@@ -72,7 +72,9 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, NcipResponse> {
         if (transferMessage.isValid()) {
             String xmlMessage = NcipUtils.ncipMessageAsXml(transferMessage);
             String ncipServerUrl = transferMessage.getNcipServerUrl();
-            log.info(NCIP_XML_SEND_TO + ncipServerUrl + System.lineSeparator() + xmlMessage);
+            log.info(NCIP_XML_SEND_TO + ncipServerUrl + System.lineSeparator() +
+                    NcipUtils.retractUserIdentifier(xmlMessage));
+            System.out.println(NcipUtils.retractUserIdentifier(xmlMessage));
             final NcipResponse ncipResponse = ncipService.send(xmlMessage, ncipServerUrl);
             log.info(NCIP_RESPONSE_FROM_SERVER + ncipServerUrl + System.lineSeparator() + ncipResponse);
             if (ncipResponse.status < HttpURLConnection.HTTP_BAD_REQUEST) {
