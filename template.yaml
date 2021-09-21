@@ -66,6 +66,11 @@ Resources:
       StageName: v1
       EndpointConfiguration:
         Type: REGIONAL
+      MethodSettings:
+        - ResourcePath: /ncip
+          HttpMethod: POST
+          ThrottlingBurstLimit: 1
+          ThrottlingRateLimit: 1
       DefinitionBody:
         openapi: 3.0.3
         info:
