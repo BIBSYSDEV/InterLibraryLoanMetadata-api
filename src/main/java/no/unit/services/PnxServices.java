@@ -16,10 +16,8 @@ public class PnxServices {
     private static final transient Logger log = LoggerFactory.getLogger(PnxServices.class);
 
     private static final String PRIMO_RECORD_PREFIX = "TN_";
-    public static final String WRONG_URL_FOR_PRIMO_API = "Wrong Url for primo api "
-            + " {}";
-    public static final String ERROR_WHILE_GETTING_AT_PRIMO_API_FOR = "error while getting at "
-            + "primo api for {} ";
+    public static final String WRONG_URL_FOR_PRIMO_API = "Wrong Url for primo api {}";
+    public static final String ERROR_WHILE_GETTING_AT_PRIMO_API_FOR = "error while getting at primo api for {} ";
     public static final String MY_EXTRACTED_PNX = "That's my extracted PNX: ";
 
     //full PNX json key names:
@@ -82,7 +80,7 @@ public class PnxServices {
     public JsonObject getPnxData(String documentId) {
         JsonObject fullPNX = getFullPNX(documentId);
         final JsonObject usefullPnx = extractUsefulDataFromPnxService(fullPNX);
-        log.info(MY_EXTRACTED_PNX + usefullPnx);
+        log.debug(MY_EXTRACTED_PNX + usefullPnx);
         return usefullPnx;
     }
 

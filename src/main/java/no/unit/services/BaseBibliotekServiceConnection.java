@@ -1,9 +1,13 @@
 package no.unit.services;
 
+
 import no.unit.Config;
 import org.apache.http.client.utils.URIBuilder;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;

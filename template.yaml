@@ -13,23 +13,23 @@ Parameters:
     Description: (Optional) Base path mapping in CustomDomain
     AllowedPattern: "^[a-zA-Z0-9$\\-_.+!*'(),]*$"
     ConstraintDescription: "May contain only letters, numbers and one of $-_.+!*'(),"
-  InstitutionServiceEndpoint:
-    Type: String
-    Description: Url Endpoint to the SRU server
-    Default: 'instservice-test.bibsys.no'
+  Stage:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: 'environment'
+    Description: dev/test/prod
   PrimoServiceEndpoint:
-    Type: String
+    Type: AWS::SSM::Parameter::Value<String>
     Description: Url Endpoints to the Primo API
-    Default: 'api-eu.hosted.exlibrisgroup.com'
+    Default: '/primo/pnxServiceEndpoint'
   PrimoServiceApiKey:
     Type: String
     Description: Api key for contacting the Primo API
     Default: "{{resolve:secretsmanager:apiKeyPrimo:SecretString:apiKeyPrimo}}"
     NoEcho: true
   BaseBibliotekServiceEndpoint:
-    Type: String
+    Type: AWS::SSM::Parameter::Value<String>
     Description: Url Endpoint to the BaseBibliotek server
-    Default: 'nb.no'
+    Default: '/nb/baseBibliotekEndpoint'
 
 Conditions:
   HasDomainName: !Not [!Equals [!Ref CustomDomain, '']]
@@ -66,6 +66,19 @@ Resources:
       StageName: v1
       EndpointConfiguration:
         Type: REGIONAL
+      MethodSettings:
+        - ResourcePath: /ncip
+          HttpMethod: POST
+          ThrottlingBurstLimit: 1
+          ThrottlingRateLimit: 1
+        - ResourcePath: /metadata
+          HttpMethod: GET
+          ThrottlingBurstLimit: 10
+          ThrottlingRateLimit: 10
+        - ResourcePath: /libcheck
+          HttpMethod: GET
+          ThrottlingBurstLimit: 10
+          ThrottlingRateLimit: 10
       DefinitionBody:
         openapi: 3.0.3
         info:
@@ -253,7 +266,7 @@ Resources:
       Environment:
         Variables:
           ALLOWED_ORIGIN: '*'
-          INSTITUTIONSERVICE_ENDPOINT: !Ref InstitutionServiceEndpoint
+          STAGE: !Ref Stage
           BASEBIBLIOTEKSERVICE_ENDPOINT: !Ref BaseBibliotekServiceEndpoint
           PRIMO_SERVICE_ENDPOINT: !Ref PrimoServiceEndpoint
           PRIMO_SERVICE_API: !Ref PrimoServiceApiKey

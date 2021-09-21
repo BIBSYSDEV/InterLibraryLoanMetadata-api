@@ -46,6 +46,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     public static final String SKIP_LIBRARY_BECAUSE_OF_FAULTY_RESPONSE = "Skip library {} because of faulty response.";
     public static final String RESPONSE_OBJECT = "ResponseObject: ";
     public static final String COMMA_DELIMITER = ", ";
+    public static final String NCIP_TEST_SERVER_URL = "https://ncip.server.url";
     private final transient PnxServices pnxServices;
     private final transient BaseBibliotekService baseBibliotekService;
     private final transient Gson gson = new Gson();
@@ -78,7 +79,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         response.record_id = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_RECORD_ID_KEY);
         response.source = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_SOURCE_KEY);
         response.isbn = getArrayAsString(pnxServiceObject, PnxServices.ISBN);
-        response.publicationPlace = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTION_PUBLICATION_PLACE_KEY);
+        response.publication_place = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTION_PUBLICATION_PLACE_KEY);
         response.b_title = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_B_TITLE_KEY);
         response.volume = getArrayAsString(pnxServiceObject, PnxServices.VOLUME);
         response.pages = getArrayAsString(pnxServiceObject, PnxServices.PAGES);
@@ -87,7 +88,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         response.display_title = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_DISPLAY_TITLE_KEY);
         response.publisher = getArrayAsString(pnxServiceObject, PnxServices.PUBLISHER);
         response.libraries.addAll(getLibraries(pnxServiceObject, response));
-        log.info(RESPONSE_OBJECT + gson.toJson(response));
+        log.debug(RESPONSE_OBJECT + gson.toJson(response));
         return response;
     }
 
@@ -128,8 +129,12 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         final BaseBibliotekBean baseBibliotekBean = baseBibliotekService.libraryLookupByBibnr(library.library_code);
         if (baseBibliotekBean != null) {
             library.display_name = baseBibliotekBean.getInst();
-            library.ncip_server_url = baseBibliotekBean.getNncippServer();
             library.available_for_loan = baseBibliotekBean.isOpenAtDate(LocalDate.now(NORWAY_ZONE_ID));
+            if("prod".equalsIgnoreCase(Config.getInstance().getStage())) {
+                library.ncip_server_url = baseBibliotekBean.getNncippServer();
+            } else {
+                library.ncip_server_url = NCIP_TEST_SERVER_URL;
+            }
         }
     }
 

@@ -1,6 +1,13 @@
 package no.unit.ncip;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class NcipUtils {
+
+    public static final String RETRACTED = "Retracted";
+    public static final String REGEX_PATTERN_REPLACE_TAG_CONTENT =
+            "<ns1:UserIdentifierValue>(.*?)</ns1:UserIdentifierValue>";
 
     /**
      * Generates xml formattted NCIP-message.
@@ -96,9 +103,18 @@ public class NcipUtils {
             + "    </ns1:ItemRequested>\n"
             + "</ns1:NCIPMessage>\n";
         return ncipXML;
-    } 
-    
-    
+    }
+
+    protected static String retractUserIdentifier(String xml) {
+        Pattern pattern = Pattern.compile(REGEX_PATTERN_REPLACE_TAG_CONTENT);
+        Matcher matcher = pattern.matcher(xml);
+
+        String modifiedXml = xml;
+        if (matcher.find()) {
+            modifiedXml = xml.replaceAll(matcher.group(1), RETRACTED);
+        }
+        return modifiedXml;
+    }
     
     
 }

@@ -4,6 +4,7 @@ import static java.util.Objects.isNull;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import java.net.HttpURLConnection;
+
 import nva.commons.apigateway.ApiGatewayHandler;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
@@ -19,8 +20,8 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, NcipResponse> {
     private static final transient Logger log = LoggerFactory.getLogger(NcipHandler.class);
     public static final String NO_PARAMETERS_GIVEN_TO_HANDLER = "No parameters given to Handler";
     public static final String NCIP_MESSAGE_IS_NOT_VALID = "NCIP message is not valid: ";
-    public static final String NCIP_RESPONSE_FROM_SERVER = "Ill - NCIP response from server: ";
-    public static final String NCIP_XML_SEND_TO = "Ill - NCIP xml send to: ";
+    public static final String NCIP_RESPONSE_FROM_SERVER = "NCIP response from server: ";
+    public static final String NCIP_XML_SEND_TO = "NCIP xml send to: ";
     public static final String DASH = " - ";
     public static final String JSON_INPUT_LOOKS_LIKE_THAT = "json input looks like that :";
     private final transient NcipService ncipService;
@@ -50,7 +51,6 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, NcipResponse> {
     }
 
 
-
     /**
      * Implements the main logic of the handler. Any exception thrown by this method will be handled by method.
      *
@@ -72,7 +72,9 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, NcipResponse> {
         if (transferMessage.isValid()) {
             String xmlMessage = NcipUtils.ncipMessageAsXml(transferMessage);
             String ncipServerUrl = transferMessage.getNcipServerUrl();
-            log.info(NCIP_XML_SEND_TO + ncipServerUrl + System.lineSeparator() + xmlMessage);
+            log.info(NCIP_XML_SEND_TO + ncipServerUrl + System.lineSeparator() +
+                    NcipUtils.retractUserIdentifier(xmlMessage));
+            System.out.println(NcipUtils.retractUserIdentifier(xmlMessage));
             final NcipResponse ncipResponse = ncipService.send(xmlMessage, ncipServerUrl);
             log.info(NCIP_RESPONSE_FROM_SERVER + ncipServerUrl + System.lineSeparator() + ncipResponse);
             if (ncipResponse.status < HttpURLConnection.HTTP_BAD_REQUEST) {
