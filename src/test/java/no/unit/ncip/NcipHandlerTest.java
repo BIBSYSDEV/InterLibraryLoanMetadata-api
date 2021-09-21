@@ -68,12 +68,11 @@ public class NcipHandlerTest {
     @Test
     void handleNcipMessageWithSuccess() throws ApiGatewayException, JsonProcessingException {
         String msg = IoUtils.stringFromResources(Path.of(NCIP_TRANSFER_MESSAGE));
-        final NcipTransferMessage ncipTransferMessage = objectMapper.readValue(msg, NcipTransferMessage.class);
+        final NcipRequest request = objectMapper.readValue(msg, NcipRequest.class);
         NcipResponse ncipResponse = new NcipResponse();
         ncipResponse.status = HttpURLConnection.HTTP_OK;
         ncipResponse.message = SUCCESS;
         when(ncipService.send(anyString(), anyString())).thenReturn(ncipResponse);
-        NcipRequest request = new NcipRequest(ncipTransferMessage);
         var handler = new NcipHandler(environment, ncipService);
         var actual = handler.processInput(request, new RequestInfo(), context);
         assertEquals(HttpURLConnection.HTTP_OK, actual.status);
@@ -83,8 +82,7 @@ public class NcipHandlerTest {
     @Test
     void testMissingMandatoryParamsInNcipTransferMessage() throws JsonProcessingException {
         String msg = IoUtils.stringFromResources(Path.of(INCOMPLETE_NCIP_TRANSFER_MESSAGE));
-        NcipTransferMessage ncipTransferMessage = objectMapper.readValue(msg, NcipTransferMessage.class);
-        NcipRequest request = new NcipRequest(ncipTransferMessage);
+        NcipRequest request = objectMapper.readValue(msg, NcipRequest.class);
         var handler = new NcipHandler(environment, ncipService);
 
         Exception exception = assertThrows(BadRequestException.class, () -> {
@@ -101,8 +99,7 @@ public class NcipHandlerTest {
         ncipResponse.problemdetail = FAILURE;
         when(ncipService.send(anyString(), anyString())).thenReturn(ncipResponse);
         String msg = IoUtils.stringFromResources(Path.of(NCIP_TRANSFER_MESSAGE));
-        NcipTransferMessage ncipTransferMessage = objectMapper.readValue(msg, NcipTransferMessage.class);
-        NcipRequest request = new NcipRequest(ncipTransferMessage);
+        NcipRequest request = objectMapper.readValue(msg, NcipRequest.class);
         var handler = new NcipHandler(environment, ncipService);
 
         Exception exception = assertThrows(BadRequestException.class, () -> {

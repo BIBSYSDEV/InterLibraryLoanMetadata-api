@@ -11,10 +11,10 @@ public class NcipUtils {
 
     /**
      * Generates xml formattted NCIP-message.
-     * @param msg NcipTransferMessage object that holds ncip data.
+     * @param ncipRequest NcipTransferMessage object that holds ncip data.
      * @return xml formatted NCIP-message
      */
-    public static String ncipMessageAsXml(NcipTransferMessage msg) {
+    public static String ncipMessageAsXml(NcipRequest ncipRequest) {
         String ncipXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
             + "<ns1:NCIPMessage xmlns:ns1=\"http://www.niso.org/2008/ncip\" xmlns:xsi=\"http://www.w3"
             + ".org/2001/XMLSchema-instance\"\n"
@@ -27,15 +27,15 @@ public class NcipUtils {
             + "        <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->\n"
             + "        <ns1:InitiationHeader>\n"
             + "            <ns1:FromAgencyId>\n"
-            + "                <ns1:AgencyId>" + msg.fromAgencyId + "</ns1:AgencyId>\n"
+            + "                <ns1:AgencyId>" + ncipRequest.fromAgencyId + "</ns1:AgencyId>\n"
             + "            </ns1:FromAgencyId>\n"
             + "            <ns1:ToAgencyId>\n"
-            + "                <ns1:AgencyId>" + msg.toAgencyId + "</ns1:AgencyId>\n"
+            + "                <ns1:AgencyId>" + ncipRequest.toAgencyId + "</ns1:AgencyId>\n"
             + "            </ns1:ToAgencyId>\n"
             + "        </ns1:InitiationHeader>\n"
             + "        <!-- The UserId must be unique in the scope of Home Library -->\n"
             + "        <ns1:UserId>\n"
-            + "            <ns1:UserIdentifierValue>" + msg.userIdentifierValue
+            + "            <ns1:UserIdentifierValue>" + ncipRequest.userIdentifierValue
             + "</ns1:UserIdentifierValue>\n"
             + "        </ns1:UserId>\n"
             + "        <!-- NCIP demands use of either a ItemId or a BibliographicId. -->\n"
@@ -43,14 +43,14 @@ public class NcipUtils {
             + " NCIP demands a RequesId when a BibliographicId is used -->\n"
             + "        <ns1:BibliographicId>\n"
             + "            <ns1:BibliographicRecordId>\n"
-            + "                <ns1:BibliographicRecordIdentifier>" + msg.bibliographicRecordIdentifier
+            + "                <ns1:BibliographicRecordIdentifier>" + ncipRequest.bibliographicRecordIdentifier
             + "</ns1:BibliographicRecordIdentifier>\n"
             + "         <!-- Supported BibliographicRecordIdentifierCode is OwnerLocalRecordID, ISBN, ISSN and"
             + " EAN -->\n"
             + "         <!-- Supported values of OwnerLocalRecordID is simplyfied to 'LocalId' - each system "
             + "know it's own values. -->\n"
             + "                <ns1:BibliographicRecordIdentifierCode>"
-            + msg.bibliographicRecordIdentifierCode + "</ns1:BibliographicRecordIdentifierCode>\n"
+            + ncipRequest.bibliographicRecordIdentifierCode + "</ns1:BibliographicRecordIdentifierCode>\n"
             + "            </ns1:BibliographicRecordId>\n"
             + "        </ns1:BibliographicId>\n"
             + "        <ns1:RequestId>\n"
@@ -76,7 +76,7 @@ public class NcipUtils {
             + " the national library -->\n"
             + "        <!-- If your library don't receive 'Depot'-books; just respond with a \"Unknown Value "
             + "From Known Scheme\"-ProblemType -->\n"
-            + "        <ns1:RequestType>" + msg.requestType + "</ns1:RequestType>\n"
+            + "        <ns1:RequestType>" + ncipRequest.requestType + "</ns1:RequestType>\n"
             + "        <!-- RequestScopeType is mandatory and must be \"Title\", signaling that the request is"
             + " on title-level -->\n"
             + "        <!-- (and not Item-level - even though the request was on a Id that uniquely identify "
@@ -86,19 +86,19 @@ public class NcipUtils {
             + "Bibliographic data in the response -->\n"
             + "        <ns1:ItemOptionalFields>\n"
             + "            <ns1:BibliographicDescription>\n"
-            + "                <ns1:Author>" + msg.author + "</ns1:Author>\n"
-            + "                <ns1:PlaceOfPublication>" + msg.placeOfPublication
+            + "                <ns1:Author>" + ncipRequest.author + "</ns1:Author>\n"
+            + "                <ns1:PlaceOfPublication>" + ncipRequest.placeOfPublication
             + "</ns1:PlaceOfPublication>\n"
-            + "                <ns1:PublicationDate>" + msg.publicationDate
+            + "                <ns1:PublicationDate>" + ncipRequest.publicationDate
             + "</ns1:PublicationDate>\n"
-            + "                <ns1:Publisher>" + msg.publisher + "</ns1:Publisher>\n"
-            + "                <ns1:Title>" + msg.title + "</ns1:Title>\n"
-            + "                <ns1:BibliographicLevel>" + msg.type + "</ns1:BibliographicLevel>\n"
-            + "                <ns1:MediumType>" + msg.type + "</ns1:MediumType>\n"
+            + "                <ns1:Publisher>" + ncipRequest.publisher + "</ns1:Publisher>\n"
+            + "                <ns1:Title>" + ncipRequest.title + "</ns1:Title>\n"
+            + "                <ns1:BibliographicLevel>" + ncipRequest.type + "</ns1:BibliographicLevel>\n"
+            + "                <ns1:MediumType>" + ncipRequest.type + "</ns1:MediumType>\n"
             + "            </ns1:BibliographicDescription>\n"
             + "        </ns1:ItemOptionalFields>\n"
             + "        <ns1:Ext>\n"
-            + "            <ns1:ItemNote>" + msg.comment + "</ns1:ItemNote>\n"
+            + "            <ns1:ItemNote>" + ncipRequest.comment + "</ns1:ItemNote>\n"
             + "        </ns1:Ext>\n"
             + "    </ns1:ItemRequested>\n"
             + "</ns1:NCIPMessage>\n";

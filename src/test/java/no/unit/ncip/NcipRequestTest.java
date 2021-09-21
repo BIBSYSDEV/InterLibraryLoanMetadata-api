@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 
-class NcipTransferMessageTest {
+class NcipRequestTest {
 
     public static final String TO_AGENCY_ID = "toAgencyId";
     public static final String FROM_AGENCY_ID = "fromAgencyId";
@@ -27,7 +27,7 @@ class NcipTransferMessageTest {
 
     @Test
     public void testValidWithAllParams() {
-        NcipTransferMessage msg = new NcipTransferMessage(TO_AGENCY_ID, FROM_AGENCY_ID, ISBN_VALUE,
+        NcipRequest msg = new NcipRequest(TO_AGENCY_ID, FROM_AGENCY_ID, ISBN_VALUE,
             USER_IDENTIFIER_VALUE, AUTHOR, TITLE, PUBLISHER, PUBLICATION_DATE, PLACE_OF_PUBLICATION,
             BIBLIOGRAPHIC_RECORD_IDENTIFIER, BIBLIOGRAPHIC_RECORD_IDENTIFIER_CODE, TYPE, REQUEST_TYPE, COMMENT,
             NCIP_SERVER_URL);
@@ -36,37 +36,37 @@ class NcipTransferMessageTest {
 
     @Test
     public void testValidWithoutSomeParams() {
-        NcipTransferMessage msg = new NcipTransferMessage(TO_AGENCY_ID, FROM_AGENCY_ID, ISBN_VALUE,
+        NcipRequest msg = new NcipRequest(TO_AGENCY_ID, FROM_AGENCY_ID, ISBN_VALUE,
             USER_IDENTIFIER_VALUE, AUTHOR, TITLE, PUBLISHER, PUBLICATION_DATE, PLACE_OF_PUBLICATION,
             EMPTY_STRING, BIBLIOGRAPHIC_RECORD_IDENTIFIER_CODE, TYPE, REQUEST_TYPE, COMMENT,
             NCIP_SERVER_URL);
         assertFalse(msg.isValid());
 
-        msg = new NcipTransferMessage(TO_AGENCY_ID, FROM_AGENCY_ID, ISBN_VALUE,
+        msg = new NcipRequest(TO_AGENCY_ID, FROM_AGENCY_ID, ISBN_VALUE,
             USER_IDENTIFIER_VALUE, AUTHOR, TITLE, PUBLISHER, PUBLICATION_DATE, PLACE_OF_PUBLICATION,
             BIBLIOGRAPHIC_RECORD_IDENTIFIER, EMPTY_STRING, TYPE, REQUEST_TYPE, COMMENT,
             NCIP_SERVER_URL);
         assertFalse(msg.isValid());
 
-        msg = new NcipTransferMessage(TO_AGENCY_ID, EMPTY_STRING, ISBN_VALUE,
+        msg = new NcipRequest(TO_AGENCY_ID, EMPTY_STRING, ISBN_VALUE,
             USER_IDENTIFIER_VALUE, AUTHOR, TITLE, PUBLISHER, PUBLICATION_DATE, PLACE_OF_PUBLICATION,
             BIBLIOGRAPHIC_RECORD_IDENTIFIER, BIBLIOGRAPHIC_RECORD_IDENTIFIER_CODE, TYPE, REQUEST_TYPE, COMMENT,
             NCIP_SERVER_URL);
         assertFalse(msg.isValid());
 
-        msg = new NcipTransferMessage(EMPTY_STRING, FROM_AGENCY_ID, ISBN_VALUE,
+        msg = new NcipRequest(EMPTY_STRING, FROM_AGENCY_ID, ISBN_VALUE,
             USER_IDENTIFIER_VALUE, AUTHOR, TITLE, PUBLISHER, PUBLICATION_DATE, PLACE_OF_PUBLICATION,
             BIBLIOGRAPHIC_RECORD_IDENTIFIER, BIBLIOGRAPHIC_RECORD_IDENTIFIER_CODE, TYPE, REQUEST_TYPE, COMMENT,
             NCIP_SERVER_URL);
         assertFalse(msg.isValid());
 
-        msg = new NcipTransferMessage(TO_AGENCY_ID, FROM_AGENCY_ID, ISBN_VALUE,
+        msg = new NcipRequest(TO_AGENCY_ID, FROM_AGENCY_ID, ISBN_VALUE,
             EMPTY_STRING, AUTHOR, TITLE, PUBLISHER, PUBLICATION_DATE, PLACE_OF_PUBLICATION,
             BIBLIOGRAPHIC_RECORD_IDENTIFIER, BIBLIOGRAPHIC_RECORD_IDENTIFIER_CODE, TYPE, REQUEST_TYPE, COMMENT,
             NCIP_SERVER_URL);
         assertFalse(msg.isValid());
 
-        msg = new NcipTransferMessage(TO_AGENCY_ID, FROM_AGENCY_ID, EMPTY_STRING,
+        msg = new NcipRequest(TO_AGENCY_ID, FROM_AGENCY_ID, EMPTY_STRING,
             USER_IDENTIFIER_VALUE, AUTHOR, TITLE, PUBLISHER, PUBLICATION_DATE, PLACE_OF_PUBLICATION,
             BIBLIOGRAPHIC_RECORD_IDENTIFIER, BIBLIOGRAPHIC_RECORD_IDENTIFIER_CODE, TYPE, REQUEST_TYPE, COMMENT,
             NCIP_SERVER_URL);
