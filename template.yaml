@@ -318,6 +318,30 @@ Resources:
             Method: get
             Path: /libcheck
 
+  PostInterLibraryLoanNcipFunctionAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: !Sub "PostInterLibraryLoanNcipFunctionAlarm-${AWS::StackName}"
+      AlarmDescription: 'Alot of invocations (NCIP requests) alarm. Take action (disable lambda) if not "real" requests.'
+      Namespace: AWS/Lambda
+      Dimensions:
+        - Name: FunctionName
+          Value: !Ref PostInterLibraryLoanNcipFunction
+      MetricName: Invocations
+      Statistic: Sum
+      Period: 600 #10 minutes
+      EvaluationPeriods: 1
+      Threshold: 100
+      ComparisonOperator: GreaterThanThreshold
+      TreatMissingData: notBreaching
+      AlarmActions:
+        - !Ref PostInterLibraryLoanNcipFunctionAlarmNotification
+
+  PostInterLibraryLoanNcipFunctionAlarmNotification:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub "PostInterLibraryLoanNcipFunctionAlarmNotification-${AWS::StackName}"
+
   InterLibraryLoanMetadataBasePathMapping:
     Type: AWS::ApiGateway::BasePathMapping
     Condition: HasDomainName
