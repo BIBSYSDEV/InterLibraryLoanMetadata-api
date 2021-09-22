@@ -42,6 +42,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     public static final int LENGTH_OF_LIBRARYCODE = 7;
     public static final String EMPTY_STRING = "";
     public static final String UNDERSCORE = "_";
+    public static final String PREFIX_47BIBSYS = "47BIBSYS";
     public static final String COULD_NOT_READ_LIBRARY_CODE = "Could not read libraryCode from: {}";
     public static final String SKIP_LIBRARY_BECAUSE_OF_FAULTY_RESPONSE = "Skip library {} because of faulty response.";
     public static final String RESPONSE_OBJECT = "ResponseObject: ";
@@ -138,14 +139,15 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         }
     }
 
-    private Map<String, String> getMmsidMap(JsonObject pnxServiceObject) {
+    protected Map<String, String> getMmsidMap(JsonObject pnxServiceObject) {
         Map<String, String> mmsidMap = new ConcurrentHashMap<>();
         final JsonArray mmsidArray = pnxServiceObject.getAsJsonArray(PnxServices.EXTRACTED_MMS_ID_KEY);
         for (JsonElement jsonElement : mmsidArray) {
             final String input = jsonElement.getAsString();
             final String[] split = input.split(UNDERSCORE);
             final String mmsId = split[split.length - 1];
-            final String inst = input.replace(UNDERSCORE + mmsId, EMPTY_STRING);
+            String inst = input.replace(UNDERSCORE + mmsId, EMPTY_STRING);
+            inst = inst.replace(PREFIX_47BIBSYS + UNDERSCORE, EMPTY_STRING);
             mmsidMap.put(inst, mmsId);
         }
         return mmsidMap;
