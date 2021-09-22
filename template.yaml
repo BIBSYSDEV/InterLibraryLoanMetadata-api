@@ -69,8 +69,8 @@ Resources:
       MethodSettings:
         - ResourcePath: /ncip
           HttpMethod: POST
-          ThrottlingBurstLimit: 1
-          ThrottlingRateLimit: 1
+          ThrottlingBurstLimit: 2
+          ThrottlingRateLimit: 2
         - ResourcePath: /metadata
           HttpMethod: GET
           ThrottlingBurstLimit: 10
