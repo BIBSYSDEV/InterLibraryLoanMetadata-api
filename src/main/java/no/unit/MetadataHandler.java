@@ -144,7 +144,9 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         for (JsonElement jsonElement : mmsidArray) {
             final String input = jsonElement.getAsString();
             final String[] split = input.split(UNDERSCORE);
-            mmsidMap.put(split[1], split[2]);
+            final String mmsId = split[split.length - 1];
+            final String inst = input.replace(UNDERSCORE + mmsId, EMPTY_STRING);
+            mmsidMap.put(inst, mmsId);
         }
         return mmsidMap;
     }
