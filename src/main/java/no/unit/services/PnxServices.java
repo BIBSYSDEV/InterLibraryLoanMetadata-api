@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import no.unit.Config;
@@ -91,7 +90,6 @@ public class PnxServices {
     protected JsonObject getFullPNX(String documentId) {
         String docID = removePrimoRecordPrefix(documentId);
         String apiKey = Config.getInstance().getPrimoRestApiKey();
-        Pattern apiKeyPattern = Pattern.compile(apiKey);
         String maskedApiKey = getMaskedPrimoRestApiKey(apiKey);
         try (InputStreamReader streamReader = connection.connect(docID)) {
             String json = new BufferedReader(streamReader)
@@ -99,10 +97,10 @@ public class PnxServices {
                     .collect(Collectors.joining(System.lineSeparator()));
             return JsonParser.parseString(json).getAsJsonObject();
         } catch (URISyntaxException e) {
-            URISyntaxException uriSyntaxException = new URISyntaxException(e.getInput().replaceAll(apiKeyPattern.pattern(), maskedApiKey), e.getReason().replaceAll(apiKeyPattern.pattern(), maskedApiKey), e.getIndex());
+            URISyntaxException uriSyntaxException = new URISyntaxException(e.getInput().replaceAll(apiKey, maskedApiKey), e.getReason().replaceAll(apiKey, maskedApiKey), e.getIndex());
             log.error(WRONG_URL_FOR_PRIMO_API, documentId, uriSyntaxException);
         } catch (IOException e) {
-            IOException ioException = new IOException(e.getMessage().replaceAll(apiKeyPattern.pattern(), maskedApiKey));
+            IOException ioException = new IOException(e.getMessage().replaceAll(apiKey, maskedApiKey));
             log.error(ERROR_WHILE_GETTING_AT_PRIMO_API_FOR,  documentId, ioException);
         }
         return new JsonObject();
