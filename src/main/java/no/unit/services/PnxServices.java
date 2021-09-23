@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -23,6 +22,7 @@ public class PnxServices {
     public static final String WRONG_URL_FOR_PRIMO_API = "Wrong Url for primo api {}";
     public static final String ERROR_WHILE_GETTING_AT_PRIMO_API_FOR = "error while getting at primo api for {} ";
     public static final String MY_EXTRACTED_PNX = "That's my extracted PNX: ";
+    public static final int TYPICAL_API_KEY_MIN_LENGTH = 32;
 
     //full PNX json key names:
     private static final String PNX_KEY = "pnx";
@@ -148,7 +148,6 @@ public class PnxServices {
     }
 
     protected String getMaskedPrimoRestApiKey(String apiKey){
-        int TYPICAL_API_KEY_MIN_LENGTH = 32;
         if (apiKey.length() > TYPICAL_API_KEY_MIN_LENGTH) {
             return "XXXXXX" + apiKey.substring(apiKey.length() - 4);
         }else {
