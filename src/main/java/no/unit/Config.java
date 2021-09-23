@@ -5,7 +5,6 @@ import nva.commons.core.StringUtils;
 public class Config {
 
     public static final String MISSING_ENVIRONMENT_VARIABLES = "Missing environment variables";
-    public static final String INSTITUTIONSERVICE_ENDPOINT_KEY = "INSTITUTIONSERVICE_ENDPOINT";
     public static final String PRIMO_SERVICE_ENDPOINT_KEY = "PRIMO_SERVICE_ENDPOINT";
     public static final String PRIMO_SERVICE_API_KEY = "PRIMO_SERVICE_API";
     public static final String BASEBIBLIOTEKSERVICE_ENDPOINT_KEY = "BASEBIBLIOTEKSERVICE_ENDPOINT";
