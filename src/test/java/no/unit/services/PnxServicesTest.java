@@ -123,4 +123,16 @@ public class PnxServicesTest {
         assertEquals(condensedPnxFromFile2, pnxServicesCondensedExample2);
         assertEquals(condensedPnxFromFile3, pnxServicesCondensedExample3);
     }
+
+    @Test
+    public void itMasksApiKeysCorrectly() {
+        PnxServiceConnection pnxServiceConnection = mock(PnxServiceConnection.class);
+        PnxServices pnxServices = new PnxServices(pnxServiceConnection);
+        String mockApiKey1 = "aeroieardfkjlsfdkjskjljadkjdflsdfkajfdlaøsdfasdfjk";
+        String expectedMaskedApiKey_1 = "XXXXXXdfjk";
+        String mockApiKey2 = "kjfaølfdkjdfk";
+        String expectedMaskedApiKey2 = "<API_KEY>";
+        assertEquals(expectedMaskedApiKey_1, pnxServices.getMaskedPrimoRestApiKey(mockApiKey1));
+        assertEquals(expectedMaskedApiKey2, pnxServices.getMaskedPrimoRestApiKey(mockApiKey2));
+    }
 }
