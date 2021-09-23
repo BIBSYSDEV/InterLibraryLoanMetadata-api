@@ -118,4 +118,11 @@ public class MetadataHandlerTest {
         assertEquals(MOCK_DOCUMENT_ID, actual.record_id);
     }
 
+    @Test
+    public void testMmsIdMap() {
+        JsonObject jsonObject = createJson(CONDENSED_PNX_EXAMPLE_4);
+        final Map<String, String> mmsidMap = handler.getMmsidMap(jsonObject);
+        assertNotNull(mmsidMap.get("NTNU_UB"));
+    }
+
 }

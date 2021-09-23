@@ -54,7 +54,7 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, NcipResponse> {
     /**
      * Implements the main logic of the handler. Any exception thrown by this method will be handled by method.
      *
-     * @param request     The input object to the method. Usually a deserialized json.
+     * @param ncipRequest     The input object to the method. Usually a deserialized json.
      * @param requestInfo Request headers and path.
      * @param context     the ApiGateway context.
      * @return the Response body that is going to be serialized in json
@@ -62,16 +62,15 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, NcipResponse> {
      *                             method
      */
     @Override
-    protected NcipResponse processInput(NcipRequest request, RequestInfo requestInfo, Context context)
+    protected NcipResponse processInput(NcipRequest ncipRequest, RequestInfo requestInfo, Context context)
                 throws ApiGatewayException {
-        if (isNull(request)) {
+        if (isNull(ncipRequest)) {
             throw new BadRequestException(NO_PARAMETERS_GIVEN_TO_HANDLER);
         }
-        final NcipTransferMessage transferMessage = request.getTransferMessage();
-        log.debug(JSON_INPUT_LOOKS_LIKE_THAT + transferMessage);
-        if (transferMessage.isValid()) {
-            String xmlMessage = NcipUtils.ncipMessageAsXml(transferMessage);
-            String ncipServerUrl = transferMessage.getNcipServerUrl();
+        log.debug(JSON_INPUT_LOOKS_LIKE_THAT + ncipRequest);
+        if (ncipRequest.isValid()) {
+            String xmlMessage = NcipUtils.ncipMessageAsXml(ncipRequest);
+            String ncipServerUrl = ncipRequest.ncipServerUrl;
             log.info(NCIP_XML_SEND_TO + ncipServerUrl + System.lineSeparator() +
                     NcipUtils.retractUserIdentifier(xmlMessage));
             System.out.println(NcipUtils.retractUserIdentifier(xmlMessage));
@@ -83,8 +82,8 @@ public class NcipHandler extends ApiGatewayHandler<NcipRequest, NcipResponse> {
                 throw new BadRequestException(ncipResponse.message + DASH + ncipResponse.problemdetail);
             }
         } else {
-            log.error(NCIP_MESSAGE_IS_NOT_VALID + transferMessage);
-            throw new BadRequestException(NCIP_MESSAGE_IS_NOT_VALID + transferMessage);
+            log.error(NCIP_MESSAGE_IS_NOT_VALID + ncipRequest);
+            throw new BadRequestException(NCIP_MESSAGE_IS_NOT_VALID + ncipRequest);
         }
     }
 

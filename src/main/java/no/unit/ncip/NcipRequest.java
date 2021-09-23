@@ -2,60 +2,105 @@ package no.unit.ncip;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Objects;
 import nva.commons.core.JacocoGenerated;
+import org.apache.commons.lang3.StringUtils;
 
 public class NcipRequest {
 
-    private final transient NcipTransferMessage ncipTransferMessage;
+    public transient String toAgencyId;
+    public transient String fromAgencyId;
+    public transient String isbnValue;
+    public transient String userIdentifierValue;
+    public transient String author;
+    public transient String title;
+    public transient String publisher;
+    public transient String publicationDate;
+    public transient String placeOfPublication;
+    public transient String bibliographicRecordIdentifier;
+    public transient String bibliographicRecordIdentifierCode;
+    public transient String type;
+    public transient String requestType;
+    public transient String comment;
+    public transient String ncipServerUrl;
 
     @JsonCreator
-    public NcipRequest(@JsonProperty("transferMessage") NcipTransferMessage transferMessage) {
-        this.ncipTransferMessage = transferMessage;
-    }
-
-    protected NcipRequest(Builder builder) {
-        this.ncipTransferMessage = builder.transferMessage;
-    }
-
-    public NcipTransferMessage getTransferMessage() {
-        return ncipTransferMessage;
-    }
-
     @JacocoGenerated
-    @Override
-    public boolean equals(Object o) {
+    @SuppressWarnings("PMD.ExcessiveParameterList")
+    public NcipRequest(@JsonProperty("toAgencyId") String toAgencyId,
+                       @JsonProperty("fromAgencyId") String fromAgencyId,
+                       @JsonProperty("isbnValue") String isbnValue,
+                       @JsonProperty("userIdentifierValue") String userIdentifierValue,
+                       @JsonProperty("author") String author,
+                       @JsonProperty("title") String title,
+                       @JsonProperty("publisher") String publisher,
+                       @JsonProperty("publicationDate") String publicationDate,
+                       @JsonProperty("placeOfPublication") String placeOfPublication,
+                       @JsonProperty("bibliographicRecordIdentifier") String bibliographicRecordIdentifier,
+                       @JsonProperty("bibliographicRecordIdentifierCode") String bibliographicRecordIdentifierCode,
+                       @JsonProperty("type") String type,
+                       @JsonProperty("requestType") String requestType,
+                       @JsonProperty("comment") String comment,
+                       @JsonProperty("ncipServerUrl") String ncipServerUrl) {
+        this.toAgencyId = toAgencyId;
+        this.fromAgencyId = fromAgencyId;
+        this.isbnValue = isbnValue;
+        this.userIdentifierValue = userIdentifierValue;
+        this.author = author;
+        this.title = title;
+        this.publisher = publisher;
+        this.publicationDate = publicationDate;
+        this.placeOfPublication = placeOfPublication;
+        this.bibliographicRecordIdentifier = bibliographicRecordIdentifier;
+        this.bibliographicRecordIdentifierCode = bibliographicRecordIdentifierCode;
+        this.type = type;
+        this.requestType = requestType;
+        this.comment = comment;
+        this.ncipServerUrl = ncipServerUrl;
+    }
 
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof NcipRequest)) {
+
+    @Override
+    public String toString() {
+        return "NcipRequest{" +
+                "toAgencyId='" + toAgencyId + '\'' +
+                ", fromAgencyId='" + fromAgencyId + '\'' +
+                ", isbnValue='" + isbnValue + '\'' +
+                ", userIdentifierValue='" + "Retracted" + '\'' +
+                ", author='" + author + '\'' +
+                ", title='" + title + '\'' +
+                ", publisher='" + publisher + '\'' +
+                ", publicationDate='" + publicationDate + '\'' +
+                ", placeOfPublication='" + placeOfPublication + '\'' +
+                ", bibliographicRecordIdentifier='" + bibliographicRecordIdentifier + '\'' +
+                ", bibliographicRecordIdentifierCode='" + bibliographicRecordIdentifierCode + '\'' +
+                ", type='" + type + '\'' +
+                ", requestType='" + requestType + '\'' +
+                ", comment='" + comment + '\'' +
+                ", ncipServerUrl='" + ncipServerUrl + '\'' +
+                '}';
+    }
+
+    /**
+     * Checks if sufficient data is send over.
+     * @return [TRUE] if valid
+     */
+    public boolean isValid() {
+        if (StringUtils.isBlank(bibliographicRecordIdentifier)) {
             return false;
         }
-        NcipRequest that = (NcipRequest) o;
-        return Objects.equals(ncipTransferMessage, that.ncipTransferMessage);
-    }
-
-    @JacocoGenerated
-    @Override
-    public int hashCode() {
-        return Objects.hash(ncipTransferMessage);
-    }
-
-    @JacocoGenerated
-    public static final class Builder {
-
-        private transient NcipTransferMessage transferMessage;
-
-        public NcipRequest.Builder withContents(NcipTransferMessage ncipTransferMessage) {
-            this.transferMessage = ncipTransferMessage;
-            return this;
+        if (StringUtils.isBlank(bibliographicRecordIdentifierCode)) {
+            return false;
         }
-
-        public NcipRequest build() {
-            return new NcipRequest(this);
+        if (StringUtils.isBlank(fromAgencyId)) {
+            return false;
         }
-
+        if (StringUtils.isBlank(toAgencyId)) {
+            return false;
+        }
+        if (StringUtils.isBlank(userIdentifierValue)) {
+            return false;
+        }
+        return !StringUtils.isBlank(ncipServerUrl);
     }
 
 }
