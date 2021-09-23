@@ -8,6 +8,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.stream.Collectors;
+
+import no.unit.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +21,7 @@ public class PnxServices {
     public static final String WRONG_URL_FOR_PRIMO_API = "Wrong Url for primo api {}";
     public static final String ERROR_WHILE_GETTING_AT_PRIMO_API_FOR = "error while getting at primo api for {} ";
     public static final String MY_EXTRACTED_PNX = "That's my extracted PNX: ";
+    public static final int TYPICAL_API_KEY_MIN_LENGTH = 32;
 
     //full PNX json key names:
     private static final String PNX_KEY = "pnx";
@@ -86,15 +89,19 @@ public class PnxServices {
 
     protected JsonObject getFullPNX(String documentId) {
         String docID = removePrimoRecordPrefix(documentId);
+        String apiKey = Config.getInstance().getPrimoRestApiKey();
+        String maskedApiKey = getMaskedPrimoRestApiKey(apiKey);
         try (InputStreamReader streamReader = connection.connect(docID)) {
             String json = new BufferedReader(streamReader)
                     .lines()
                     .collect(Collectors.joining(System.lineSeparator()));
             return JsonParser.parseString(json).getAsJsonObject();
         } catch (URISyntaxException e) {
-            log.error(WRONG_URL_FOR_PRIMO_API, documentId, e);
+            URISyntaxException uriSyntaxException = new URISyntaxException(e.getInput().replaceAll(apiKey, maskedApiKey), e.getReason().replaceAll(apiKey, maskedApiKey), e.getIndex());
+            log.error(WRONG_URL_FOR_PRIMO_API, documentId, uriSyntaxException);
         } catch (IOException e) {
-            log.error(ERROR_WHILE_GETTING_AT_PRIMO_API_FOR,  documentId, e);
+            IOException ioException = new IOException(e.getMessage().replaceAll(apiKey, maskedApiKey));
+            log.error(ERROR_WHILE_GETTING_AT_PRIMO_API_FOR,  documentId, ioException);
         }
         return new JsonObject();
     }
@@ -136,6 +143,14 @@ public class PnxServices {
         }
 
         return extractedData;
+    }
+
+    protected String getMaskedPrimoRestApiKey(String apiKey){
+        if (apiKey.length() > TYPICAL_API_KEY_MIN_LENGTH) {
+            return "XXXXXX" + apiKey.substring(apiKey.length() - 4);
+        }else {
+            return "<API_KEY>";
+        }
     }
 
 }
