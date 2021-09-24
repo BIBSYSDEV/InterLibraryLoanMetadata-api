@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 public class NcipUtils {
 
+    public static final String ISIL_PREFIX = "NO-";
     public static final String RETRACTED = "Retracted";
     public static final String REGEX_PATTERN_REPLACE_TAG_CONTENT =
             "<ns1:UserIdentifierValue>(.*?)</ns1:UserIdentifierValue>";
@@ -27,10 +28,10 @@ public class NcipUtils {
             + "        <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->\n"
             + "        <ns1:InitiationHeader>\n"
             + "            <ns1:FromAgencyId>\n"
-            + "                <ns1:AgencyId>" + ncipRequest.fromAgencyId + "</ns1:AgencyId>\n"
+            + "                <ns1:AgencyId>" + ISIL_PREFIX + ncipRequest.fromAgencyId + "</ns1:AgencyId>\n"
             + "            </ns1:FromAgencyId>\n"
             + "            <ns1:ToAgencyId>\n"
-            + "                <ns1:AgencyId>" + ncipRequest.toAgencyId + "</ns1:AgencyId>\n"
+            + "                <ns1:AgencyId>" + ISIL_PREFIX + ncipRequest.toAgencyId + "</ns1:AgencyId>\n"
             + "            </ns1:ToAgencyId>\n"
             + "        </ns1:InitiationHeader>\n"
             + "        <!-- The UserId must be unique in the scope of Home Library -->\n"
