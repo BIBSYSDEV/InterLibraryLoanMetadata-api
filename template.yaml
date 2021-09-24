@@ -24,7 +24,7 @@ Parameters:
   PrimoServiceApiKey:
     Type: String
     Description: Api key for contacting the Primo API
-    Default: "{{resolve:secretsmanager:apiKeyPrimo:SecretString:apiKeyPrimo}}"
+    Default: "{{resolve:secretsmanager:testKey:SecretString:testKey}}"
     NoEcho: true
   BaseBibliotekServiceEndpoint:
     Type: AWS::SSM::Parameter::Value<String>
