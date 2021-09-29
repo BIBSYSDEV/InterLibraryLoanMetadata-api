@@ -84,6 +84,16 @@ Resources:
         info:
           title: Inter Library Loan Metadata API
           version: '1.0'
+        x-amazon-apigateway-request-validators:
+          all:
+            validateRequestBody: true
+            validateRequestParameters: true
+          params-only:
+            validateRequestBody: false
+            validateRequestParameters: true
+          body-only:
+            validateRequestBody: true
+            validateRequestParameters: false
         paths:
           /metadata:
             get:
@@ -99,6 +109,7 @@ Resources:
                   required: true
                   type: string
                   description: document_id
+              x-amazon-apigateway-request-validator : params-only
               x-amazon-apigateway-integration:
                 uri:
                   Fn::Sub: arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetInterLibraryLoanMetadataRecordFunction.Arn}/invocations
