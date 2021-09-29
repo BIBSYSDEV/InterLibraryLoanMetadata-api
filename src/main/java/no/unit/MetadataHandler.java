@@ -131,10 +131,10 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         if (baseBibliotekBean != null) {
             library.display_name = baseBibliotekBean.getInst();
             library.available_for_loan = baseBibliotekBean.isOpenAtDate(LocalDate.now(NORWAY_ZONE_ID));
-            if("prod".equalsIgnoreCase(Config.getInstance().getStage())) {
-                library.ncip_server_url = baseBibliotekBean.getNncippServer();
-            } else {
+            if("dev".equalsIgnoreCase(Config.getInstance().getStage())) {
                 library.ncip_server_url = NCIP_TEST_SERVER_URL;
+            } else {
+                library.ncip_server_url = baseBibliotekBean.getNncippServer();
             }
         }
     }
