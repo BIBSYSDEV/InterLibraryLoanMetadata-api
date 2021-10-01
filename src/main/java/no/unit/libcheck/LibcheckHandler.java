@@ -12,12 +12,14 @@ import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
 import java.net.HttpURLConnection;
+import nva.commons.core.StringUtils;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 
 public class LibcheckHandler extends ApiGatewayHandler<Void, LibcheckResponse> {
 
+    public static final String HEALTHCHECK_KEY = "healthcheck";
     public static final String LIBUSER_KEY = "libuser";
     public static final String ALMA_KATSYST = "Alma";
     public static final String LIBRARY_NOT_FOUND = "Library not found: ";
@@ -53,11 +55,15 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, LibcheckResponse> {
     protected LibcheckResponse processInput(Void input, RequestInfo requestInfo, Context context)
             throws ApiGatewayException {
 
+        LibcheckResponse libcheckResponse = new LibcheckResponse();
+        String healthcheck = requestInfo.getQueryParameter(HEALTHCHECK_KEY);
+        if(StringUtils.isNotEmpty(healthcheck)) {
+            return libcheckResponse;
+        }
         String libuser = requestInfo.getQueryParameter(LIBUSER_KEY);
 
         BaseBibliotekBean libraryData = getLibraryData(libuser);
 
-        LibcheckResponse libcheckResponse = new LibcheckResponse();
         libcheckResponse.setAlmaLibrary(ALMA_KATSYST.equalsIgnoreCase(libraryData.getKatsyst()));
         libcheckResponse.setNcipLibrary(!isEmpty(libraryData.getNncippServer()));
 
