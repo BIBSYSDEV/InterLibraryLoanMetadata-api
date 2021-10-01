@@ -56,9 +56,14 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, LibcheckResponse> {
             throws ApiGatewayException {
 
         LibcheckResponse libcheckResponse = new LibcheckResponse();
-        String healthcheck = requestInfo.getQueryParameter(HEALTHCHECK_KEY);
-        if(StringUtils.isNotEmpty(healthcheck)) {
-            return libcheckResponse;
+        try {
+            String healthcheck = requestInfo.getQueryParameter(HEALTHCHECK_KEY);
+            if (StringUtils.isNotEmpty(healthcheck)) {
+                return libcheckResponse;
+            }
+        } catch (BadRequestException e) {
+            System.out.println("All is good! I am healthy and warm.");
+            // ignore
         }
         String libuser = requestInfo.getQueryParameter(LIBUSER_KEY);
 
