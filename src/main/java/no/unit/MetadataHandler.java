@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import no.unit.MetadataResponse.Library;
 import no.unit.services.BaseBibliotekBean;
@@ -123,32 +124,28 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
             }
         }
 
-        List<Library> libraries = new ArrayList<>();
 
-        CompletableFuture<Void> combinedFutures = CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
+        CompletableFuture<Void> combinedFutures = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
 
+        CompletableFuture<List<Library>> allCompletableFuture = combinedFutures.thenApply(future -> {
+            return futures.stream().map(completableFuture -> completableFuture.join())
+                    .collect(Collectors.toList());
+
+        });
+
+
+        CompletableFuture<List<Library>> completableFuture = allCompletableFuture.toCompletableFuture();
+
+        List<Library> finalList = new ArrayList<>();
         try {
-            combinedFutures.get();
+            finalList = completableFuture.get();
         } catch (InterruptedException | ExecutionException e) {
             log.error(e.getMessage(), e);
         }
 
-
-        for (CompletableFuture<Library> future : futures) {
-
-            try {
-                Library library = future.get();
-                libraries.add(library);
-                if ("".equalsIgnoreCase(library.display_name)) {
-                    log.error(SKIP_LIBRARY_BECAUSE_OF_FAULTY_RESPONSE, library.library_code);
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-
         log.info("End iterating PNX libraries: " + new Date());
-        return libraries;
+        return finalList;
+
     }
 
     private Library generateLibrary(String mmsId, String libraryCode,
