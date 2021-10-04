@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import no.unit.MetadataResponse.Library;
 import no.unit.services.BaseBibliotekBean;
@@ -98,13 +97,13 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         response.display_title = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_DISPLAY_TITLE_KEY);
         response.publisher = getArrayAsString(pnxServiceObject, PnxServices.PUBLISHER);
         log.info("Parsing PNX done: " + new Date());
-        response.libraries.addAll(getLibraries(pnxServiceObject, response));
+        response.libraries.addAll(getLibraries(pnxServiceObject));
         log.info("Parsing libraries to response done: " + new Date());
         log.debug(RESPONSE_OBJECT + gson.toJson(response));
         return response;
     }
 
-    private Collection<Library> getLibraries(JsonObject pnxServiceObject, MetadataResponse response) {
+    private Collection<Library> getLibraries(JsonObject pnxServiceObject) {
 
         List<CompletableFuture<Library>> futures = new ArrayList<>();
 
@@ -117,7 +116,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
                 String libraryCode = input.substring(input.length() - LENGTH_OF_LIBRARYCODE);
                 String institutionCode = input.replace(libraryCode, EMPTY_STRING);
                 String mmsId = mmsidMap.get(institutionCode);
-                CompletableFuture<Library> future = CompletableFuture.supplyAsync(() -> generateLibrary(response, mmsId, libraryCode, institutionCode));
+                CompletableFuture<Library> future = CompletableFuture.supplyAsync(() -> generateLibrary(mmsId, libraryCode, institutionCode));
                 futures.add(future);
             } else {
                 log.error(COULD_NOT_READ_LIBRARY_CODE, input);
@@ -126,7 +125,17 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
         List<Library> libraries = new ArrayList<>();
 
-        for (Future<Library> future : futures) {
+        CompletableFuture<Void> combinedFutures = CompletableFuture.allOf(futures.toArray(CompletableFuture[]::new));
+
+        try {
+            combinedFutures.get();
+        } catch (InterruptedException | ExecutionException e) {
+            log.error(e.getMessage(), e);
+        }
+
+
+        for (CompletableFuture<Library> future : futures) {
+
             try {
                 Library library = future.get();
                 libraries.add(library);
@@ -142,9 +151,9 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         return libraries;
     }
 
-    private Library generateLibrary(MetadataResponse response, String mmsId, String libraryCode,
+    private Library generateLibrary(String mmsId, String libraryCode,
                                     String institutionCode) {
-        Library library = response.new Library();
+        final Library library = new Library();
         library.library_code = libraryCode;
         library.institution_code = institutionCode;
         library.mms_id = mmsId;
