@@ -54,6 +54,7 @@ public class BaseBibliotekService {
      * @return BaseBibliotekBean
      */
     public BaseBibliotekBean libraryLookupByBibnr(String identifier) {
+        log.info("libraryLookupByBibnr: " + identifier);
         BaseBibliotekBean baseBibliotekBean = null;
         try (InputStream document = connection.connect(identifier)) {
             BaseBibliotek baseBibliotek = (BaseBibliotek) jaxbUnmarshaller.unmarshal(document);

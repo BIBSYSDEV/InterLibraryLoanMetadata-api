@@ -162,6 +162,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
 
     private Library createLibrary(String libraryCode) {
+        log.info("CreateLibrary: " + libraryCode);
         final BaseBibliotekBean baseBibliotekBean = baseBibliotekService.libraryLookupByBibnr(libraryCode);
         final Library library = new Library();
         if (baseBibliotekBean != null) {
