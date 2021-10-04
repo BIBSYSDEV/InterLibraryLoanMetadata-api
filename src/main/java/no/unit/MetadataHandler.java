@@ -133,10 +133,8 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
                 if ("".equalsIgnoreCase(library.display_name)) {
                     log.error(SKIP_LIBRARY_BECAUSE_OF_FAULTY_RESPONSE, library.library_code);
                 }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
+            } catch (InterruptedException | ExecutionException e) {
+                log.error(e.getMessage(), e);
             }
         }
 
