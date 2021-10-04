@@ -18,7 +18,10 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import no.unit.MetadataResponse.Library;
 import no.unit.services.BaseBibliotekBean;
@@ -102,7 +105,9 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     }
 
     private Collection<Library> getLibraries(JsonObject pnxServiceObject, MetadataResponse response) {
-        List<Library> libraries = new ArrayList<>();
+
+        List<CompletableFuture<Library>> futures = new ArrayList<>();
+
         Map<String, String> mmsidMap = getMmsidMap(pnxServiceObject);
         final JsonArray libArray = pnxServiceObject.getAsJsonArray(PnxServices.EXTRACTED_LIBRARIES_KEY);
         log.info("Start iterating PNX libraries: " + new Date());
@@ -112,15 +117,29 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
                 String libraryCode = input.substring(input.length() - LENGTH_OF_LIBRARYCODE);
                 String institutionCode = input.replace(libraryCode, EMPTY_STRING);
                 String mmsId = mmsidMap.get(institutionCode);
-                final Library library = generateLibrary(response, mmsId, libraryCode, institutionCode);
-                libraries.add(library);
-                if ("".equalsIgnoreCase(library.display_name)) {
-                    log.error(SKIP_LIBRARY_BECAUSE_OF_FAULTY_RESPONSE, libraryCode);
-                }
+                CompletableFuture<Library> future = CompletableFuture.supplyAsync(() -> generateLibrary(response, mmsId, libraryCode, institutionCode));
+                futures.add(future);
             } else {
                 log.error(COULD_NOT_READ_LIBRARY_CODE, input);
             }
         }
+
+        List<Library> libraries = new ArrayList<>();
+
+        for (Future<Library> future : futures) {
+            try {
+                Library library = future.get();
+                libraries.add(library);
+                if ("".equalsIgnoreCase(library.display_name)) {
+                    log.error(SKIP_LIBRARY_BECAUSE_OF_FAULTY_RESPONSE, library.library_code);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+
         log.info("End iterating PNX libraries: " + new Date());
         return libraries;
     }
