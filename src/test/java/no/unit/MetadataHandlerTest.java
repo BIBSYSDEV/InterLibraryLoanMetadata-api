@@ -103,6 +103,7 @@ public class MetadataHandlerTest {
 
         BaseBibliotekBean basebibliotekBean = new BaseBibliotekBean();
         basebibliotekBean.setNncippServer(NCIP_TEST_SERVER_URL);
+        basebibliotekBean.setBibNr("1023001");
         when(baseBibliotekService.libraryLookupByBibnr(anyString())).thenReturn(basebibliotekBean);
 
         JsonObject jsonObject = createJson(CONDENSED_PNX_EXAMPLE_4);

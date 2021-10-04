@@ -80,6 +80,7 @@ public class BaseBibliotekService {
             return null;
         } else {
             baseBibliotekBean = new BaseBibliotekBean();
+            baseBibliotekBean.setBibNr(record.getBibnr());
             baseBibliotekBean.setStengt(record.getStengt());
             baseBibliotekBean.setInst(record.getInst());
             baseBibliotekBean.setKatsyst(record.getKatsyst());

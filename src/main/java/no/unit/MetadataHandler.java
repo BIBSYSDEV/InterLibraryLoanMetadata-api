@@ -106,8 +106,9 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
     private Collection<Library> getLibraries(JsonObject pnxServiceObject) {
 
-        List<CompletableFuture<Library>> futures = new ArrayList<>();
+        List<CompletableFuture<BaseBibliotekBean>> completableFutures = new ArrayList<>();
 
+        List<Library> libraries = new ArrayList<>();
         Map<String, String> mmsidMap = getMmsidMap(pnxServiceObject);
         final JsonArray libArray = pnxServiceObject.getAsJsonArray(PnxServices.EXTRACTED_LIBRARIES_KEY);
         log.info("Start iterating PNX libraries: " + new Date());
@@ -117,64 +118,68 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
                 String libraryCode = input.substring(input.length() - LENGTH_OF_LIBRARYCODE);
                 String institutionCode = input.replace(libraryCode, EMPTY_STRING);
                 String mmsId = mmsidMap.get(institutionCode);
-                CompletableFuture<Library> future = CompletableFuture.supplyAsync(() -> generateLibrary(mmsId, libraryCode, institutionCode));
-                futures.add(future);
+                final Library library = createLibrary();
+                library.library_code = libraryCode;
+                library.institution_code = institutionCode;
+                library.mms_id = mmsId;
+                libraries.add(library);
+
+                CompletableFuture<BaseBibliotekBean> completableFuture = CompletableFuture.supplyAsync(() -> getBaseBibliotekBean(libraryCode));
+                completableFutures.add(completableFuture);
             } else {
                 log.error(COULD_NOT_READ_LIBRARY_CODE, input);
             }
         }
 
+        CompletableFuture<Void> combinedCompletableFutures = CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0]));
 
-        CompletableFuture<Void> combinedFutures = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
-
-        CompletableFuture<List<Library>> allCompletableFuture = combinedFutures.thenApply(future -> {
-            return futures.stream().map(completableFuture -> completableFuture.join())
+        CompletableFuture<List<BaseBibliotekBean>> allCombinedCompletableFutures = combinedCompletableFutures.thenApply(future -> {
+            return completableFutures.stream().map(completableFuture -> completableFuture.join())
                     .collect(Collectors.toList());
 
         });
 
 
-        CompletableFuture<List<Library>> completableFuture = allCompletableFuture.toCompletableFuture();
-
-        List<Library> finalList = new ArrayList<>();
+        List<BaseBibliotekBean> basebibliotekList = new ArrayList<>();
         try {
-            finalList = completableFuture.get();
+            basebibliotekList = allCombinedCompletableFutures.get();
         } catch (InterruptedException | ExecutionException e) {
             log.error(e.getMessage(), e);
         }
 
-        log.info("End iterating PNX libraries: " + new Date());
-        return finalList;
+        log.info("Basebiblioteklist size: " + basebibliotekList.size());
 
-    }
-
-    private Library generateLibrary(String mmsId, String libraryCode,
-                                    String institutionCode) {
-        log.info("Start getting from BaseBibliotek: " + new Date());
-        Library library = createLibrary(libraryCode);
-        log.info("End getting from BaseBibliotek: " + new Date());
-        library.library_code = libraryCode;
-        library.institution_code = institutionCode;
-        library.mms_id = mmsId;
-
-        return library;
-    }
-
-
-    private Library createLibrary(String libraryCode) {
-        log.info("CreateLibrary: " + libraryCode);
-        final BaseBibliotekBean baseBibliotekBean = baseBibliotekService.libraryLookupByBibnr(libraryCode);
-        final Library library = new Library();
-        if (baseBibliotekBean != null) {
-            library.display_name = baseBibliotekBean.getInst();
-            library.available_for_loan = baseBibliotekBean.isOpenAtDate(LocalDate.now(NORWAY_ZONE_ID));
-            if("dev".equalsIgnoreCase(Config.getInstance().getStage())) {
-                library.ncip_server_url = NCIP_TEST_SERVER_URL;
-            } else {
-                library.ncip_server_url = baseBibliotekBean.getNncippServer();
+        for (Library library : libraries) {
+            for (BaseBibliotekBean baseBibliotekBean : basebibliotekList) {
+                if(baseBibliotekBean.getBibNr().equalsIgnoreCase(library.library_code)) {
+                    library.display_name = baseBibliotekBean.getInst();
+                    library.available_for_loan = baseBibliotekBean.isOpenAtDate(LocalDate.now(NORWAY_ZONE_ID));
+                    if("dev".equalsIgnoreCase(Config.getInstance().getStage())) {
+                        library.ncip_server_url = NCIP_TEST_SERVER_URL;
+                    } else {
+                        library.ncip_server_url = baseBibliotekBean.getNncippServer();
+                    }
+                }
             }
         }
-        return library;
+
+        log.info("End iterating PNX libraries: " + new Date());
+
+        return libraries;
+    }
+
+    private Library createLibrary() {
+        return new Library();
+    }
+
+    private BaseBibliotekBean getBaseBibliotekBean(String libraryCode) {
+        log.info("Start getting from BaseBibliotek: " + new Date());
+
+        final BaseBibliotekBean baseBibliotekBean = baseBibliotekService.libraryLookupByBibnr(libraryCode);
+
+        log.info("End getting from BaseBibliotek: " + new Date());
+
+        return baseBibliotekBean;
     }
 
     protected Map<String, String> getMmsidMap(JsonObject pnxServiceObject) {
