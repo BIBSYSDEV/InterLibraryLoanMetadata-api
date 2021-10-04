@@ -153,20 +153,20 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
     private Library generateLibrary(String mmsId, String libraryCode,
                                     String institutionCode) {
-        final Library library = new Library();
+        log.info("Start getting from BaseBibliotek: " + new Date());
+        Library library = createLibrary(libraryCode);
+        log.info("End getting from BaseBibliotek: " + new Date());
         library.library_code = libraryCode;
         library.institution_code = institutionCode;
         library.mms_id = mmsId;
 
-        log.info("Start getting from BaseBibliotek: " + new Date());
-        setDisplayNameAndNcipServerUrl(library);
-        log.info("End getting from BaseBibliotek: " + new Date());
         return library;
     }
 
 
-    private void setDisplayNameAndNcipServerUrl(Library library) {
-        final BaseBibliotekBean baseBibliotekBean = baseBibliotekService.libraryLookupByBibnr(library.library_code);
+    private Library createLibrary(String libraryCode) {
+        final BaseBibliotekBean baseBibliotekBean = baseBibliotekService.libraryLookupByBibnr(libraryCode);
+        final Library library = new Library();
         if (baseBibliotekBean != null) {
             library.display_name = baseBibliotekBean.getInst();
             library.available_for_loan = baseBibliotekBean.isOpenAtDate(LocalDate.now(NORWAY_ZONE_ID));
@@ -176,6 +176,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
                 library.ncip_server_url = baseBibliotekBean.getNncippServer();
             }
         }
+        return library;
     }
 
     protected Map<String, String> getMmsidMap(JsonObject pnxServiceObject) {
