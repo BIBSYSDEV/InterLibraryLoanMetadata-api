@@ -15,6 +15,7 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -70,9 +71,14 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         if (isNull(requestInfo)) {
             throw new BadRequestException(NO_PARAMETERS_GIVEN_TO_HANDLER);
         }
+        Date start = new Date();
+        log.info("Start: "+ start );
         final String documentId = requestInfo.getQueryParameter(DOCUMENT_ID_KEY);
         JsonObject pnxServiceObject = getPnxServiceData(documentId);
-        return generateMetadatResponse(pnxServiceObject);
+        log.info("Reading Pnx done: " + new Date());
+        final MetadataResponse response = generateMetadatResponse(pnxServiceObject);
+        log.info("Response down: " + new Date());
+        return response;
     }
 
     private MetadataResponse generateMetadatResponse(JsonObject pnxServiceObject) {
@@ -88,7 +94,9 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         response.creator = getArrayAsString(pnxServiceObject, PnxServices.CREATOR);
         response.display_title = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_DISPLAY_TITLE_KEY);
         response.publisher = getArrayAsString(pnxServiceObject, PnxServices.PUBLISHER);
+        log.info("Parsing PNX done: " + new Date());
         response.libraries.addAll(getLibraries(pnxServiceObject, response));
+        log.info("Parsing libraries to response done: " + new Date());
         log.debug(RESPONSE_OBJECT + gson.toJson(response));
         return response;
     }
@@ -97,6 +105,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         List<Library> libraries = new ArrayList<>();
         Map<String, String> mmsidMap = getMmsidMap(pnxServiceObject);
         final JsonArray libArray = pnxServiceObject.getAsJsonArray(PnxServices.EXTRACTED_LIBRARIES_KEY);
+        log.info("Start iterating PNX libraries: " + new Date());
         for (JsonElement jsonElement : libArray) {
             final String input = jsonElement.getAsString();
             if (input.length() > LENGTH_OF_LIBRARYCODE) {
@@ -112,6 +121,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
                 log.error(COULD_NOT_READ_LIBRARY_CODE, input);
             }
         }
+        log.info("End iterating PNX libraries: " + new Date());
         return libraries;
     }
 
@@ -121,7 +131,10 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         library.library_code = libraryCode;
         library.institution_code = institutionCode;
         library.mms_id = mmsId;
+
+        log.info("Start getting from BaseBibliotek: " + new Date());
         setDisplayNameAndNcipServerUrl(library);
+        log.info("End getting from BaseBibliotek: " + new Date());
         return library;
     }
 
