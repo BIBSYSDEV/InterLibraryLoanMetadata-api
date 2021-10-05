@@ -3,7 +3,6 @@ package no.unit.libcheck;
 import com.amazonaws.services.lambda.runtime.Context;
 import jakarta.xml.bind.JAXBException;
 import java.util.Map;
-import no.unit.MetadataResponse;
 import no.unit.services.BaseBibliotekBean;
 import no.unit.services.BaseBibliotekService;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -14,7 +13,6 @@ import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
 
 import java.net.HttpURLConnection;
-import nva.commons.core.StringUtils;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
