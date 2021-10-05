@@ -38,10 +38,11 @@ import org.slf4j.LoggerFactory;
 
 public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
-    public static final ZoneId NORWAY_ZONE_ID = ZoneId.of(ZoneOffset.of("+01:00").getId());
     @JacocoGenerated
     private static final transient Logger log = LoggerFactory.getLogger(MetadataHandler.class);
+    public static final ZoneId NORWAY_ZONE_ID = ZoneId.of(ZoneOffset.of("+01:00").getId());
     public static final String NO_PARAMETERS_GIVEN_TO_HANDLER = "No parameters given to Handler";
+    public static final String HEALTHCHECK_KEY = "healthcheck";
     public static final String DOCUMENT_ID_KEY = "document_id";
     public static final int LENGTH_OF_LIBRARYCODE = 7;
     public static final String EMPTY_STRING = "";
@@ -55,13 +56,13 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     private final transient BaseBibliotekService baseBibliotekService;
     private final transient Gson gson = new Gson();
 
-
     @JacocoGenerated
     public MetadataHandler() throws JAXBException {
         this(new Environment(), new PnxServices(), new BaseBibliotekService());
     }
 
-    public MetadataHandler(Environment environment, PnxServices pnxServices, BaseBibliotekService baseBibliotekService) {
+    public MetadataHandler(Environment environment, PnxServices pnxServices,
+                           BaseBibliotekService baseBibliotekService) {
         super(Void.class, environment);
         this.pnxServices = pnxServices;
         this.baseBibliotekService = baseBibliotekService;
@@ -69,9 +70,13 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
     @Override
     protected MetadataResponse processInput(Void input, RequestInfo requestInfo, Context context)
-            throws ApiGatewayException {
+        throws ApiGatewayException {
         if (isNull(requestInfo)) {
             throw new BadRequestException(NO_PARAMETERS_GIVEN_TO_HANDLER);
+        }
+        Map<String, String> parameters = requestInfo.getQueryParameters();
+        if (parameters.containsKey(HEALTHCHECK_KEY)) {
+            return new MetadataResponse();
         }
         Date start = new Date();
         log.debug("Start: " + start);
@@ -122,20 +127,22 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
                 library.institution_code = institutionCode;
                 library.mms_id = mmsId;
                 libraries.add(library);
-                CompletableFuture<BaseBibliotekBean> completableFuture = CompletableFuture.supplyAsync(() -> getBaseBibliotekBean(libraryCode));
+                CompletableFuture<BaseBibliotekBean> completableFuture = CompletableFuture.supplyAsync(
+                    () -> getBaseBibliotekBean(libraryCode));
                 completableFutures.add(completableFuture);
             } else {
                 log.error(COULD_NOT_READ_LIBRARY_CODE, input);
             }
         }
 
-        CompletableFuture<Void> combinedCompletableFutures = CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0]));
+        CompletableFuture<Void> combinedCompletableFutures = CompletableFuture.allOf(
+            completableFutures.toArray(new CompletableFuture[0]));
 
         CompletableFuture<List<BaseBibliotekBean>> allCombinedCompletableFutures =
-                combinedCompletableFutures
-                        .thenApply(future -> completableFutures.stream()
-                                .map(CompletableFuture::join)
-                                .collect(Collectors.toList()));
+            combinedCompletableFutures
+                .thenApply(future -> completableFutures.stream()
+                    .map(CompletableFuture::join)
+                    .collect(Collectors.toList()));
 
         List<BaseBibliotekBean> basebibliotekList = new ArrayList<>();
         try {
