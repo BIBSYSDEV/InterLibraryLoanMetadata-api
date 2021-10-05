@@ -15,9 +15,13 @@ import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 import no.unit.MetadataResponse.Library;
 import no.unit.services.BaseBibliotekBean;
@@ -34,17 +38,17 @@ import org.slf4j.LoggerFactory;
 
 public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
-    public static final ZoneId NORWAY_ZONE_ID = ZoneId.of(ZoneOffset.of("+01:00").getId());
     @JacocoGenerated
     private static final transient Logger log = LoggerFactory.getLogger(MetadataHandler.class);
+    public static final ZoneId NORWAY_ZONE_ID = ZoneId.of(ZoneOffset.of("+01:00").getId());
     public static final String NO_PARAMETERS_GIVEN_TO_HANDLER = "No parameters given to Handler";
+    public static final String HEALTHCHECK_KEY = "healthcheck";
     public static final String DOCUMENT_ID_KEY = "document_id";
     public static final int LENGTH_OF_LIBRARYCODE = 7;
     public static final String EMPTY_STRING = "";
     public static final String UNDERSCORE = "_";
     public static final String PREFIX_47BIBSYS = "47BIBSYS";
     public static final String COULD_NOT_READ_LIBRARY_CODE = "Could not read libraryCode from: {}";
-    public static final String SKIP_LIBRARY_BECAUSE_OF_FAULTY_RESPONSE = "Skip library {} because of faulty response.";
     public static final String RESPONSE_OBJECT = "ResponseObject: ";
     public static final String COMMA_DELIMITER = ", ";
     public static final String NCIP_TEST_SERVER_URL = "https://ncip.server.url";
@@ -52,13 +56,13 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     private final transient BaseBibliotekService baseBibliotekService;
     private final transient Gson gson = new Gson();
 
-
     @JacocoGenerated
     public MetadataHandler() throws JAXBException {
         this(new Environment(), new PnxServices(), new BaseBibliotekService());
     }
 
-    public MetadataHandler(Environment environment, PnxServices pnxServices, BaseBibliotekService baseBibliotekService) {
+    public MetadataHandler(Environment environment, PnxServices pnxServices,
+                           BaseBibliotekService baseBibliotekService) {
         super(Void.class, environment);
         this.pnxServices = pnxServices;
         this.baseBibliotekService = baseBibliotekService;
@@ -66,13 +70,22 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
     @Override
     protected MetadataResponse processInput(Void input, RequestInfo requestInfo, Context context)
-            throws ApiGatewayException {
+        throws ApiGatewayException {
         if (isNull(requestInfo)) {
             throw new BadRequestException(NO_PARAMETERS_GIVEN_TO_HANDLER);
         }
+        Map<String, String> parameters = requestInfo.getQueryParameters();
+        if (parameters.containsKey(HEALTHCHECK_KEY)) {
+            return new MetadataResponse();
+        }
+        Date start = new Date();
+        log.debug("Start: " + start);
         final String documentId = requestInfo.getQueryParameter(DOCUMENT_ID_KEY);
         JsonObject pnxServiceObject = getPnxServiceData(documentId);
-        return generateMetadatResponse(pnxServiceObject);
+        log.debug("Reading Pnx done: " + new Date());
+        final MetadataResponse response = generateMetadatResponse(pnxServiceObject);
+        log.debug("Response done: " + new Date());
+        return response;
     }
 
     private MetadataResponse generateMetadatResponse(JsonObject pnxServiceObject) {
@@ -88,55 +101,86 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         response.creator = getArrayAsString(pnxServiceObject, PnxServices.CREATOR);
         response.display_title = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_DISPLAY_TITLE_KEY);
         response.publisher = getArrayAsString(pnxServiceObject, PnxServices.PUBLISHER);
-        response.libraries.addAll(getLibraries(pnxServiceObject, response));
+        log.info("Parsing PNX done: " + new Date());
+        response.libraries.addAll(getLibraries(pnxServiceObject));
+        log.info("Parsing libraries to response done: " + new Date());
         log.debug(RESPONSE_OBJECT + gson.toJson(response));
         return response;
     }
 
-    private Collection<Library> getLibraries(JsonObject pnxServiceObject, MetadataResponse response) {
+    private Collection<Library> getLibraries(JsonObject pnxServiceObject) {
+
+        List<CompletableFuture<BaseBibliotekBean>> completableFutures = new ArrayList<>();
+
         List<Library> libraries = new ArrayList<>();
         Map<String, String> mmsidMap = getMmsidMap(pnxServiceObject);
         final JsonArray libArray = pnxServiceObject.getAsJsonArray(PnxServices.EXTRACTED_LIBRARIES_KEY);
+        log.info("Start iterating PNX libraries: " + new Date());
         for (JsonElement jsonElement : libArray) {
             final String input = jsonElement.getAsString();
             if (input.length() > LENGTH_OF_LIBRARYCODE) {
                 String libraryCode = input.substring(input.length() - LENGTH_OF_LIBRARYCODE);
                 String institutionCode = input.replace(libraryCode, EMPTY_STRING);
                 String mmsId = mmsidMap.get(institutionCode);
-                final Library library = generateLibrary(response, mmsId, libraryCode, institutionCode);
+                final Library library = createLibrary();
+                library.library_code = libraryCode;
+                library.institution_code = institutionCode;
+                library.mms_id = mmsId;
                 libraries.add(library);
-                if ("".equalsIgnoreCase(library.display_name)) {
-                    log.error(SKIP_LIBRARY_BECAUSE_OF_FAULTY_RESPONSE, libraryCode);
-                }
+                CompletableFuture<BaseBibliotekBean> completableFuture = CompletableFuture.supplyAsync(
+                    () -> getBaseBibliotekBean(libraryCode));
+                completableFutures.add(completableFuture);
             } else {
                 log.error(COULD_NOT_READ_LIBRARY_CODE, input);
             }
         }
+
+        CompletableFuture<Void> combinedCompletableFutures = CompletableFuture.allOf(
+            completableFutures.toArray(new CompletableFuture[0]));
+
+        CompletableFuture<List<BaseBibliotekBean>> allCombinedCompletableFutures =
+            combinedCompletableFutures
+                .thenApply(future -> completableFutures.stream()
+                    .map(CompletableFuture::join)
+                    .collect(Collectors.toList()));
+
+        List<BaseBibliotekBean> basebibliotekList = new ArrayList<>();
+        try {
+            basebibliotekList = allCombinedCompletableFutures.get();
+        } catch (InterruptedException | ExecutionException e) {
+            log.error(e.getMessage(), e);
+        }
+
+        log.debug("Basebiblioteklist size: " + basebibliotekList.size());
+
+        for (Library library : libraries) {
+            for (BaseBibliotekBean baseBibliotekBean : basebibliotekList) {
+                if (baseBibliotekBean.getBibNr().equalsIgnoreCase(library.library_code)) {
+                    library.display_name = baseBibliotekBean.getInst();
+                    library.available_for_loan = baseBibliotekBean.isOpenAtDate(LocalDate.now(NORWAY_ZONE_ID));
+                    if ("dev".equalsIgnoreCase(Config.getInstance().getStage())) {
+                        library.ncip_server_url = NCIP_TEST_SERVER_URL;
+                    } else {
+                        library.ncip_server_url = baseBibliotekBean.getNncippServer();
+                    }
+                }
+            }
+        }
+
+        log.info("End iterating PNX libraries: " + new Date());
+
         return libraries;
     }
 
-    private Library generateLibrary(MetadataResponse response, String mmsId, String libraryCode,
-                                    String institutionCode) {
-        Library library = response.new Library();
-        library.library_code = libraryCode;
-        library.institution_code = institutionCode;
-        library.mms_id = mmsId;
-        setDisplayNameAndNcipServerUrl(library);
-        return library;
+    private Library createLibrary() {
+        return new Library();
     }
 
-
-    private void setDisplayNameAndNcipServerUrl(Library library) {
-        final BaseBibliotekBean baseBibliotekBean = baseBibliotekService.libraryLookupByBibnr(library.library_code);
-        if (baseBibliotekBean != null) {
-            library.display_name = baseBibliotekBean.getInst();
-            library.available_for_loan = baseBibliotekBean.isOpenAtDate(LocalDate.now(NORWAY_ZONE_ID));
-            if("dev".equalsIgnoreCase(Config.getInstance().getStage())) {
-                library.ncip_server_url = NCIP_TEST_SERVER_URL;
-            } else {
-                library.ncip_server_url = baseBibliotekBean.getNncippServer();
-            }
-        }
+    private BaseBibliotekBean getBaseBibliotekBean(String libraryCode) {
+        log.debug("Start getting from BaseBibliotek: " + new Date());
+        final BaseBibliotekBean baseBibliotekBean = baseBibliotekService.libraryLookupByBibnr(libraryCode);
+        log.debug("End getting from BaseBibliotek: " + new Date());
+        return baseBibliotekBean;
     }
 
     protected Map<String, String> getMmsidMap(JsonObject pnxServiceObject) {

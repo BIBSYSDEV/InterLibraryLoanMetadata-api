@@ -3,7 +3,7 @@ package no.unit.services;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.JAXBException;
-import jakarta.xml.bind.Unmarshaller;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -12,6 +12,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Locale;
 import javax.xml.datatype.XMLGregorianCalendar;
+
 import no.nb.basebibliotek.generated.BaseBibliotek;
 import no.nb.basebibliotek.generated.Eressurser;
 import no.nb.basebibliotek.generated.Record;
@@ -26,7 +27,7 @@ public class BaseBibliotekService {
     private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
     public static final String NNCIP_URI = "nncip_uri";
 
-    private final transient Unmarshaller jaxbUnmarshaller;
+    private final transient JAXBContext jaxbContext = JAXBContext.newInstance(BaseBibliotek.class);
     private final transient BaseBibliotekServiceConnection connection;
 
     public static final String WRONG_URL_FOR_GET_IN_BASEBIBLIOTEK_SERVICE_FOR = "Wrong Url for get in "
@@ -39,12 +40,10 @@ public class BaseBibliotekService {
 
     public BaseBibliotekService() throws JAXBException {
         this.connection = new BaseBibliotekServiceConnection();
-        this.jaxbUnmarshaller = JAXBContext.newInstance(BaseBibliotek.class).createUnmarshaller();
     }
 
     public BaseBibliotekService(BaseBibliotekServiceConnection connection) throws JAXBException {
         this.connection = connection;
-        this.jaxbUnmarshaller = JAXBContext.newInstance(BaseBibliotek.class).createUnmarshaller();
     }
 
     /**
@@ -54,9 +53,10 @@ public class BaseBibliotekService {
      * @return BaseBibliotekBean
      */
     public BaseBibliotekBean libraryLookupByBibnr(String identifier) {
+        log.debug("libraryLookupByBibnr: " + identifier);
         BaseBibliotekBean baseBibliotekBean = null;
         try (InputStream document = connection.connect(identifier)) {
-            BaseBibliotek baseBibliotek = (BaseBibliotek) jaxbUnmarshaller.unmarshal(document);
+            BaseBibliotek baseBibliotek = (BaseBibliotek) jaxbContext.createUnmarshaller().unmarshal(document);
             baseBibliotekBean = createBaseBibliotekBean(baseBibliotek);
         } catch (URISyntaxException e) {
             log.error(WRONG_URL_FOR_GET_IN_BASEBIBLIOTEK_SERVICE_FOR, identifier, e);
@@ -79,6 +79,7 @@ public class BaseBibliotekService {
             return null;
         } else {
             baseBibliotekBean = new BaseBibliotekBean();
+            baseBibliotekBean.setBibNr(record.getBibnr());
             baseBibliotekBean.setStengt(record.getStengt());
             baseBibliotekBean.setInst(record.getInst());
             baseBibliotekBean.setKatsyst(record.getKatsyst());

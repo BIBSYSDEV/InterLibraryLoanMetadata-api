@@ -2,6 +2,7 @@ package no.unit.libcheck;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import jakarta.xml.bind.JAXBException;
+import java.util.Map;
 import no.unit.services.BaseBibliotekBean;
 import no.unit.services.BaseBibliotekService;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -18,6 +19,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 public class LibcheckHandler extends ApiGatewayHandler<Void, LibcheckResponse> {
 
+    public static final String HEALTHCHECK_KEY = "healthcheck";
     public static final String LIBUSER_KEY = "libuser";
     public static final String ALMA_KATSYST = "Alma";
     public static final String LIBRARY_NOT_FOUND = "Library not found: ";
@@ -53,11 +55,16 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, LibcheckResponse> {
     protected LibcheckResponse processInput(Void input, RequestInfo requestInfo, Context context)
             throws ApiGatewayException {
 
+        LibcheckResponse libcheckResponse = new LibcheckResponse();
+
+        Map<String, String> parameters = requestInfo.getQueryParameters();
+        if (parameters.containsKey(HEALTHCHECK_KEY)) {
+            return libcheckResponse;
+        }
         String libuser = requestInfo.getQueryParameter(LIBUSER_KEY);
 
         BaseBibliotekBean libraryData = getLibraryData(libuser);
 
-        LibcheckResponse libcheckResponse = new LibcheckResponse();
         libcheckResponse.setAlmaLibrary(ALMA_KATSYST.equalsIgnoreCase(libraryData.getKatsyst()));
         libcheckResponse.setNcipLibrary(!isEmpty(libraryData.getNncippServer()));
 

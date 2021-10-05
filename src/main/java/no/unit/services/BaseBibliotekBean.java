@@ -11,12 +11,21 @@ public class BaseBibliotekBean {
     public static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter
             .ofPattern("yyyy-MM-dd");
 
+    private String bibNr = "";
     private String inst = "";
     private String katsyst = "";
     private String nncippServer = "";
     private String stengt = "";
     private Optional<LocalDate> stengtFra = Optional.empty();
     private Optional<LocalDate> stengtTil = Optional.empty();
+
+    public String getBibNr() {
+        return bibNr;
+    }
+
+    public void setBibNr(String bibNr) {
+        this.bibNr = bibNr;
+    }
 
     public String getInst() {
         return inst;
