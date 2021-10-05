@@ -2,6 +2,8 @@ package no.unit.libcheck;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import jakarta.xml.bind.JAXBException;
+import java.util.Map;
+import no.unit.MetadataResponse;
 import no.unit.services.BaseBibliotekBean;
 import no.unit.services.BaseBibliotekService;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -56,14 +58,10 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, LibcheckResponse> {
             throws ApiGatewayException {
 
         LibcheckResponse libcheckResponse = new LibcheckResponse();
-        try {
-            String healthcheck = requestInfo.getQueryParameter(HEALTHCHECK_KEY);
-            if (StringUtils.isNotEmpty(healthcheck)) {
-                return libcheckResponse;
-            }
-        } catch (BadRequestException e) {
-            System.out.println("All is good! I am healthy and warm.");
-            // ignore
+
+        Map<String, String> parameters = requestInfo.getQueryParameters();
+        if (parameters.containsKey(HEALTHCHECK_KEY)) {
+            return libcheckResponse;
         }
         String libuser = requestInfo.getQueryParameter(LIBUSER_KEY);
 
