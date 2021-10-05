@@ -48,7 +48,6 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     public static final String UNDERSCORE = "_";
     public static final String PREFIX_47BIBSYS = "47BIBSYS";
     public static final String COULD_NOT_READ_LIBRARY_CODE = "Could not read libraryCode from: {}";
-    public static final String SKIP_LIBRARY_BECAUSE_OF_FAULTY_RESPONSE = "Skip library {} because of faulty response.";
     public static final String RESPONSE_OBJECT = "ResponseObject: ";
     public static final String COMMA_DELIMITER = ", ";
     public static final String NCIP_TEST_SERVER_URL = "https://ncip.server.url";
@@ -75,12 +74,12 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
             throw new BadRequestException(NO_PARAMETERS_GIVEN_TO_HANDLER);
         }
         Date start = new Date();
-        log.info("Start: "+ start );
+        log.debug("Start: " + start);
         final String documentId = requestInfo.getQueryParameter(DOCUMENT_ID_KEY);
         JsonObject pnxServiceObject = getPnxServiceData(documentId);
-        log.info("Reading Pnx done: " + new Date());
+        log.debug("Reading Pnx done: " + new Date());
         final MetadataResponse response = generateMetadatResponse(pnxServiceObject);
-        log.info("Response down: " + new Date());
+        log.debug("Response done: " + new Date());
         return response;
     }
 
@@ -123,7 +122,6 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
                 library.institution_code = institutionCode;
                 library.mms_id = mmsId;
                 libraries.add(library);
-
                 CompletableFuture<BaseBibliotekBean> completableFuture = CompletableFuture.supplyAsync(() -> getBaseBibliotekBean(libraryCode));
                 completableFutures.add(completableFuture);
             } else {
@@ -133,12 +131,11 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
         CompletableFuture<Void> combinedCompletableFutures = CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[0]));
 
-        CompletableFuture<List<BaseBibliotekBean>> allCombinedCompletableFutures = combinedCompletableFutures.thenApply(future -> {
-            return completableFutures.stream().map(completableFuture -> completableFuture.join())
-                    .collect(Collectors.toList());
-
-        });
-
+        CompletableFuture<List<BaseBibliotekBean>> allCombinedCompletableFutures =
+                combinedCompletableFutures
+                        .thenApply(future -> completableFutures.stream()
+                                .map(CompletableFuture::join)
+                                .collect(Collectors.toList()));
 
         List<BaseBibliotekBean> basebibliotekList = new ArrayList<>();
         try {
@@ -147,14 +144,14 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
             log.error(e.getMessage(), e);
         }
 
-        log.info("Basebiblioteklist size: " + basebibliotekList.size());
+        log.debug("Basebiblioteklist size: " + basebibliotekList.size());
 
         for (Library library : libraries) {
             for (BaseBibliotekBean baseBibliotekBean : basebibliotekList) {
-                if(baseBibliotekBean.getBibNr().equalsIgnoreCase(library.library_code)) {
+                if (baseBibliotekBean.getBibNr().equalsIgnoreCase(library.library_code)) {
                     library.display_name = baseBibliotekBean.getInst();
                     library.available_for_loan = baseBibliotekBean.isOpenAtDate(LocalDate.now(NORWAY_ZONE_ID));
-                    if("dev".equalsIgnoreCase(Config.getInstance().getStage())) {
+                    if ("dev".equalsIgnoreCase(Config.getInstance().getStage())) {
                         library.ncip_server_url = NCIP_TEST_SERVER_URL;
                     } else {
                         library.ncip_server_url = baseBibliotekBean.getNncippServer();
@@ -173,12 +170,9 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     }
 
     private BaseBibliotekBean getBaseBibliotekBean(String libraryCode) {
-        log.info("Start getting from BaseBibliotek: " + new Date());
-
+        log.debug("Start getting from BaseBibliotek: " + new Date());
         final BaseBibliotekBean baseBibliotekBean = baseBibliotekService.libraryLookupByBibnr(libraryCode);
-
-        log.info("End getting from BaseBibliotek: " + new Date());
-
+        log.debug("End getting from BaseBibliotek: " + new Date());
         return baseBibliotekBean;
     }
 
