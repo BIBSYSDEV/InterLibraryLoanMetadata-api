@@ -70,7 +70,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
     @Override
     protected MetadataResponse processInput(Void input, RequestInfo requestInfo, Context context)
-        throws ApiGatewayException {
+            throws ApiGatewayException {
         if (isNull(requestInfo)) {
             throw new BadRequestException(NO_PARAMETERS_GIVEN_TO_HANDLER);
         }
@@ -128,7 +128,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
                 library.mms_id = mmsId;
                 libraries.add(library);
                 CompletableFuture<BaseBibliotekBean> completableFuture = CompletableFuture.supplyAsync(
-                    () -> getBaseBibliotekBean(libraryCode));
+                        () -> getBaseBibliotekBean(libraryCode));
                 completableFutures.add(completableFuture);
             } else {
                 log.error(COULD_NOT_READ_LIBRARY_CODE, input);
@@ -136,13 +136,13 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         }
 
         CompletableFuture<Void> combinedCompletableFutures = CompletableFuture.allOf(
-            completableFutures.toArray(new CompletableFuture[0]));
+                completableFutures.toArray(new CompletableFuture[0]));
 
         CompletableFuture<List<BaseBibliotekBean>> allCombinedCompletableFutures =
-            combinedCompletableFutures
-                .thenApply(future -> completableFutures.stream()
-                    .map(CompletableFuture::join)
-                    .collect(Collectors.toList()));
+                combinedCompletableFutures
+                        .thenApply(future -> completableFutures.stream()
+                                .map(CompletableFuture::join)
+                                .collect(Collectors.toList()));
 
         List<BaseBibliotekBean> basebibliotekList = new ArrayList<>();
         try {
@@ -155,7 +155,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
         for (Library library : libraries) {
             for (BaseBibliotekBean baseBibliotekBean : basebibliotekList) {
-                if (baseBibliotekBean.getBibNr().equalsIgnoreCase(library.library_code)) {
+                if (baseBibliotekBean != null && baseBibliotekBean.getBibNr().equalsIgnoreCase(library.library_code)) {
                     library.display_name = baseBibliotekBean.getInst();
                     library.available_for_loan = baseBibliotekBean.isOpenAtDate(LocalDate.now(NORWAY_ZONE_ID));
                     if ("dev".equalsIgnoreCase(Config.getInstance().getStage())) {
