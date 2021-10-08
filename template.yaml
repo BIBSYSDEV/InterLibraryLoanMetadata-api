@@ -426,7 +426,9 @@ Resources:
 #          Arn: !GetAtt GetInterLibraryLoanMetadataRecordFunction.Arn
           Arn:
             Fn::Join:
-              - ["", [!GetAtt GetInterLibraryLoanMetadataRecordFunction.Arn, ':live']
+              - ""
+              - - !GetAtt GetInterLibraryLoanMetadataRecordFunction.Arn
+                - ":live"
           Id: "GetInterLibraryLoanMetadataRecordFunction"
           Input: '{"healthcheck":"healthcheck"}'
         -
