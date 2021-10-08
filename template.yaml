@@ -424,7 +424,7 @@ Resources:
       Targets:
         -
           Arn: !GetAtt GetInterLibraryLoanMetadataRecordFunction.Arn
-          Id: !Ref GetInterLibraryLoanMetadataRecordFunction:live
+          Id: !Ref GetInterLibraryLoanMetadataRecordFunction
         -
           Arn: !GetAtt GetInterLibraryLoanLibcheckFunction.Arn
           Id: !Ref GetInterLibraryLoanLibcheckFunction
