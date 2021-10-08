@@ -424,10 +424,10 @@ Resources:
       Targets:
         -
           Arn: !GetAtt GetInterLibraryLoanMetadataRecordFunction.Arn
-          Id: !Ref GetInterLibraryLoanMetadataRecordFunction
+          Id: "GetInterLibraryLoanMetadataRecordFunction"
         -
           Arn: !GetAtt GetInterLibraryLoanLibcheckFunction.Arn
-          Id: !Ref GetInterLibraryLoanLibcheckFunction
+          Id: "GetInterLibraryLoanLibcheckFunction"
 
   InterLibraryLoanMetadataBasePathMapping:
     Type: AWS::ApiGateway::BasePathMapping
