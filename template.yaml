@@ -416,8 +416,8 @@ Resources:
   CWEventRule:
     Type: "AWS::Events::Rule"
     Properties:
-      Description: "Keep our lambdas warm"
-      Name: "IllLambdaWarmer"
+      Description: "Description"
+      Name: "CWEventRule"
       ScheduleExpression: "cron(0/5 6-16 ? * MON-SAT *)"
       State: "ENABLED"
       RoleArn: !GetAtt [ CloudWatchEventRole, Arn ]
