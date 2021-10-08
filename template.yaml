@@ -425,9 +425,11 @@ Resources:
         -
           Arn: !GetAtt GetInterLibraryLoanMetadataRecordFunction.Arn
           Id: "GetInterLibraryLoanMetadataRecordFunction"
+          Input: '{"healthcheck":"healthcheck"}'
         -
           Arn: !GetAtt GetInterLibraryLoanLibcheckFunction.Arn
           Id: "GetInterLibraryLoanLibcheckFunction"
+          Input: '{"healthcheck":"healthcheck"}'
 
   InterLibraryLoanMetadataBasePathMapping:
     Type: AWS::ApiGateway::BasePathMapping
