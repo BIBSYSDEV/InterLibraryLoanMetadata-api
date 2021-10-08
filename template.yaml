@@ -423,7 +423,9 @@ Resources:
       RoleArn: !GetAtt [ CloudWatchEventRole, Arn ]
       Targets:
         -
-          Arn: !GetAtt GetInterLibraryLoanMetadataRecordFunction.Arn
+#          Arn: !GetAtt GetInterLibraryLoanMetadataRecordFunction.Arn
+          Arn:
+            'Fn::Join': ["", [!GetAtt GetInterLibraryLoanMetadataRecordFunction.Arn, ':live']
           Id: "GetInterLibraryLoanMetadataRecordFunction"
           Input: '{"healthcheck":"healthcheck"}'
         -
