@@ -423,17 +423,11 @@ Resources:
       RoleArn: !GetAtt [ CloudWatchEventRole, Arn ]
       Targets:
         -
-          Arn:
-            Fn::GetAtt:
-              -   "GetInterLibraryLoanMetadataRecordFunction"
-              -   "Arn"
-          Id: "GetInterLibraryLoanMetadataRecordFunction"
+          Arn: !GetAtt GetInterLibraryLoanMetadataRecordFunction.Arn
+          Id: !Sub function:${GetInterLibraryLoanMetadataRecordFunction}:live
         -
-          Arn:
-            Fn::GetAtt:
-              -   "GetInterLibraryLoanLibcheckFunction"
-              -   "Arn"
-          Id: "GetInterLibraryLoanLibcheckFunction"
+          Arn: !GetAtt GetInterLibraryLoanLibcheckFunction.Arn
+          Id: !Ref GetInterLibraryLoanLibcheckFunction
 
   InterLibraryLoanMetadataBasePathMapping:
     Type: AWS::ApiGateway::BasePathMapping
