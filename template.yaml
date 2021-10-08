@@ -416,15 +416,15 @@ Resources:
   CWEventRule:
     Type: "AWS::Events::Rule"
     Properties:
-      Description: "Description"
-      Name: "CWEventRule"
+      Description: "Keep our lambdas warm"
+      Name: "IllLambdaWarmer"
       ScheduleExpression: "cron(0/5 6-16 ? * MON-SAT *)"
       State: "ENABLED"
       RoleArn: !GetAtt [ CloudWatchEventRole, Arn ]
       Targets:
         -
           Arn: !GetAtt GetInterLibraryLoanMetadataRecordFunction.Arn
-          Id: !Sub function:${GetInterLibraryLoanMetadataRecordFunction}:live
+          Id: !Ref GetInterLibraryLoanMetadataRecordFunction:live
         -
           Arn: !GetAtt GetInterLibraryLoanLibcheckFunction.Arn
           Id: !Ref GetInterLibraryLoanLibcheckFunction
