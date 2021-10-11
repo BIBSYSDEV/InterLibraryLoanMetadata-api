@@ -3,7 +3,7 @@ plugins {
     id 'checkstyle'
     id 'pmd'
     id 'jacoco'
-    id 'com.github.johnrengelman.shadow' version '7.1.0'
+    id 'com.github.johnrengelman.shadow' version '6.1.0'
     id "org.owasp.dependencycheck" version "6.3.2"
 }
 
@@ -51,11 +51,6 @@ dependencies {
         archiveClassifier.set('')
         zip64 true
     }
-}
-
-wrapper {
-    gradleVersion = "7.2"
-    distributionType = Wrapper.DistributionType.ALL
 }
 
 task xsd2java() {

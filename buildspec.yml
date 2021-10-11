@@ -23,8 +23,6 @@ phases:
       - env
       - node -v
       - gradle --version
-      - gradle wrapper --gradle-version 7.2
-      - gradle --version
       - aws --version
       - cfn-lint -v
       - cfn_nag -v
