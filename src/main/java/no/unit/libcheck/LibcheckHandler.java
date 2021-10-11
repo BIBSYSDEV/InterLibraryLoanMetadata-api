@@ -2,6 +2,7 @@ package no.unit.libcheck;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import jakarta.xml.bind.JAXBException;
+import java.net.HttpURLConnection;
 import java.util.Map;
 import no.unit.Config;
 import no.unit.services.BaseBibliotekBean;
@@ -12,10 +13,6 @@ import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
-
-import java.net.HttpURLConnection;
-
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 public class LibcheckHandler extends ApiGatewayHandler<Void, LibcheckResponse> {
 
@@ -67,7 +64,6 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, LibcheckResponse> {
         BaseBibliotekBean libraryData = getLibraryData(libuser);
 
         libcheckResponse.setAlmaLibrary(ALMA_KATSYST.equalsIgnoreCase(libraryData.getKatsyst()));
-        libcheckResponse.setNcipLibrary(!isEmpty(libraryData.getNncippServer()));
         if ("dev".equalsIgnoreCase(Config.getInstance().getStage())) {
             libcheckResponse.setNcipServerUrl(NCIP_TEST_SERVER_URL);
         } else {
