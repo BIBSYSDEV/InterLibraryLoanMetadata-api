@@ -55,7 +55,7 @@ dependencies {
 
 wrapper {
     gradleVersion = "7.2"
-    distributionType = Wrapper.DistributionType.BIN
+    distributionType = Wrapper.DistributionType.ALL
 }
 
 task xsd2java() {
