@@ -53,6 +53,11 @@ dependencies {
     }
 }
 
+wrapper {
+    gradleVersion = "7.2"
+    distributionType = Wrapper.DistributionType.BIN
+}
+
 task xsd2java() {
     doLast {
         jaxbTargetDir.mkdirs()
