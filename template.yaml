@@ -390,6 +390,77 @@ Resources:
         PredefinedMetricSpecification:
           PredefinedMetricType: LambdaProvisionedConcurrencyUtilization
 
+  CloudWatchEventRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          -   Effect: "Allow"
+              Principal:
+                Service:
+                  -   !Sub lambda.amazonaws.com
+                  -   !Sub events.amazonaws.com
+              Action: "sts:AssumeRole"
+      Path: "/"
+      Policies:
+        -   PolicyName: CloudWatchEventPolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                -   Effect: Allow
+                    Action:
+                      -   "lambda:InvokeFunction"
+                    Resource: "*"
+
+  CWEventRule:
+    Type: "AWS::Events::Rule"
+    Properties:
+      Description: "Description"
+      Name: "CWEventRule"
+      ScheduleExpression: "cron(0/5 6-16 ? * MON-SAT *)"
+      State: "ENABLED"
+      RoleArn: !GetAtt [ CloudWatchEventRole, Arn ]
+      Targets:
+        -
+          Arn:
+            Fn::Join:
+              - ""
+              - - !GetAtt GetInterLibraryLoanMetadataRecordFunction.Arn
+                - ":live"
+          Id: "GetInterLibraryLoanMetadataRecordFunction"
+          Input: '{"healthcheck":"healthcheck"}'
+        -
+          Arn: !GetAtt GetInterLibraryLoanLibcheckFunction.Arn
+          Id: "GetInterLibraryLoanLibcheckFunction"
+          Input: '{"healthcheck":"healthcheck"}'
+
+  PermissionForEventsToInvokeMetadataFunction:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Fn::Join:
+          - ""
+          - - !GetAtt GetInterLibraryLoanMetadataRecordFunction.Arn
+            - ":live"
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn:
+        Fn::GetAtt:
+          - "CWEventRule"
+          - "Arn"
+
+  PermissionForEventsToInvokeLibcheckFunction:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !GetAtt GetInterLibraryLoanLibcheckFunction.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn:
+        Fn::GetAtt:
+          - "CWEventRule"
+          - "Arn"
+
   InterLibraryLoanMetadataBasePathMapping:
     Type: AWS::ApiGateway::BasePathMapping
     Condition: HasDomainName
