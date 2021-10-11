@@ -8,8 +8,8 @@ public class LibcheckResponse implements JsonSerializable {
     @JsonProperty("isAlmaLibrary")
     private boolean almaLibrary;
 
-    @JsonProperty("isNcipLibrary")
-    private boolean ncipLibrary;
+    @JsonProperty("ncip_server_url")
+    private String ncipServerUrl;
 
     public boolean isAlmaLibrary() {
         return almaLibrary;
@@ -19,12 +19,11 @@ public class LibcheckResponse implements JsonSerializable {
         this.almaLibrary = almaLibrary;
     }
 
-    public boolean isNcipLibrary() {
-        return ncipLibrary;
+    public String getNcipServerUrl() {
+        return ncipServerUrl;
     }
 
-    public void setNcipLibrary(boolean ncipLibrary) {
-        this.ncipLibrary = ncipLibrary;
+    public void setNcipServerUrl(String ncipServerUrl) {
+        this.ncipServerUrl = ncipServerUrl;
     }
-
 }

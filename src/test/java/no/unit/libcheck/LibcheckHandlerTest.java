@@ -1,19 +1,5 @@
 package no.unit.libcheck;
 
-import com.amazonaws.services.lambda.runtime.Context;
-import jakarta.xml.bind.JAXBException;
-import no.unit.services.BaseBibliotekBean;
-import no.unit.services.BaseBibliotekService;
-import nva.commons.apigateway.RequestInfo;
-import nva.commons.apigateway.exceptions.ApiGatewayException;
-import nva.commons.apigateway.exceptions.BadRequestException;
-import nva.commons.core.Environment;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import java.net.HttpURLConnection;
-import java.util.HashMap;
-import java.util.Map;
-
 import static no.unit.libcheck.LibcheckHandler.ALMA_KATSYST;
 import static no.unit.libcheck.LibcheckHandler.LIBRARY_NOT_FOUND;
 import static no.unit.libcheck.LibcheckHandler.LIBUSER_KEY;
@@ -25,6 +11,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import com.amazonaws.services.lambda.runtime.Context;
+import jakarta.xml.bind.JAXBException;
+import java.net.HttpURLConnection;
+import java.util.HashMap;
+import java.util.Map;
+import no.unit.services.BaseBibliotekBean;
+import no.unit.services.BaseBibliotekService;
+import nva.commons.apigateway.RequestInfo;
+import nva.commons.apigateway.exceptions.ApiGatewayException;
+import nva.commons.apigateway.exceptions.BadRequestException;
+import nva.commons.core.Environment;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class LibcheckHandlerTest {
 
@@ -52,7 +52,7 @@ public class LibcheckHandlerTest {
     void getSuccessStatusCodeReturnsOk() {
         LibcheckResponse libcheckResponse = new LibcheckResponse();
         libcheckResponse.setAlmaLibrary(true);
-        libcheckResponse.setNcipLibrary(true);
+        libcheckResponse.setNcipServerUrl(MOCK_NCIP_SERVER_URL);
         Integer statusCode = handler.getSuccessStatusCode(null, libcheckResponse);
         assertEquals(HttpURLConnection.HTTP_OK, statusCode);
     }
@@ -70,7 +70,7 @@ public class LibcheckHandlerTest {
         requestInfo.setQueryParameters(queryParameters);
         var actual = handler.processInput(null, requestInfo, context);
         assertEquals(true, actual.isAlmaLibrary());
-        assertEquals(true, actual.isNcipLibrary());
+        assertEquals(MOCK_NCIP_SERVER_URL, actual.getNcipServerUrl());
     }
 
     @Test
