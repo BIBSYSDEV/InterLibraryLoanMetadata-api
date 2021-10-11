@@ -423,7 +423,6 @@ Resources:
       RoleArn: !GetAtt [ CloudWatchEventRole, Arn ]
       Targets:
         -
-#          Arn: !GetAtt GetInterLibraryLoanMetadataRecordFunction.Arn
           Arn:
             Fn::Join:
               - ""
@@ -435,6 +434,36 @@ Resources:
           Arn: !GetAtt GetInterLibraryLoanLibcheckFunction.Arn
           Id: "GetInterLibraryLoanLibcheckFunction"
           Input: '{"healthcheck":"healthcheck"}'
+
+  PermissionForEventsToInvokeMetadataFunction:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Fn::Join:
+          - ""
+          - - !GetAtt GetInterLibraryLoanMetadataRecordFunction.Arn
+            - ":live"
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn:
+        Fn::GetAtt:
+          - "CWEventRule"
+          - "Arn"
+
+  PermissionForEventsToInvokeLibcheckFunction:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName:
+        Fn::Join:
+          - ""
+          - - !GetAtt GetInterLibraryLoanLibcheckFunction.Arn
+            - ":live"
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn:
+        Fn::GetAtt:
+          - "CWEventRule"
+          - "Arn"
 
   InterLibraryLoanMetadataBasePathMapping:
     Type: AWS::ApiGateway::BasePathMapping
