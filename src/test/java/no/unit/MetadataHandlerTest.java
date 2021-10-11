@@ -1,7 +1,6 @@
 package no.unit;
 
 import static no.unit.MetadataHandler.DOCUMENT_ID_KEY;
-import static no.unit.MetadataHandler.NCIP_TEST_SERVER_URL;
 import static no.unit.MetadataHandler.NO_PARAMETERS_GIVEN_TO_HANDLER;
 import static nva.commons.apigateway.ApiGatewayHandler.ALLOWED_ORIGIN_ENV;
 import static nva.commons.apigateway.RequestInfo.MISSING_FROM_QUERY_PARAMETERS;
@@ -34,6 +33,7 @@ public class MetadataHandlerTest {
 
     public static final String CONDENSED_PNX_EXAMPLE_4 = "condensed_pnx_example_4.json";
     private static final String MOCK_DOCUMENT_ID = "BIBSYS_ILS71560264980002201";
+    private static final String MOCK_INSTITUTION_CODE = "AHUS";
     private Environment environment;
     private PnxServices pnxServices;
     private BaseBibliotekService baseBibliotekService;
@@ -102,7 +102,6 @@ public class MetadataHandlerTest {
     public void handlerSuccess() throws ApiGatewayException {
 
         BaseBibliotekBean basebibliotekBean = new BaseBibliotekBean();
-        basebibliotekBean.setNncippServer(NCIP_TEST_SERVER_URL);
         basebibliotekBean.setBibNr("1023001");
         when(baseBibliotekService.libraryLookupByBibnr(anyString())).thenReturn(basebibliotekBean);
 
@@ -115,7 +114,7 @@ public class MetadataHandlerTest {
         requestInfo.setQueryParameters(queryParameters);
 
         var actual = handler.processInput(null, requestInfo, awsContext);
-        assertEquals(NCIP_TEST_SERVER_URL, actual.libraries.get(0).ncip_server_url);
+        assertEquals(MOCK_INSTITUTION_CODE, actual.libraries.get(0).institution_code);
         assertEquals(MOCK_DOCUMENT_ID, actual.record_id);
     }
 

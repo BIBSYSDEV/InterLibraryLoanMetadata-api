@@ -3,6 +3,7 @@ package no.unit.libcheck;
 import com.amazonaws.services.lambda.runtime.Context;
 import jakarta.xml.bind.JAXBException;
 import java.util.Map;
+import no.unit.Config;
 import no.unit.services.BaseBibliotekBean;
 import no.unit.services.BaseBibliotekService;
 import nva.commons.apigateway.ApiGatewayHandler;
@@ -16,13 +17,13 @@ import java.net.HttpURLConnection;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-
 public class LibcheckHandler extends ApiGatewayHandler<Void, LibcheckResponse> {
 
     public static final String HEALTHCHECK_KEY = "healthcheck";
     public static final String LIBUSER_KEY = "libuser";
     public static final String ALMA_KATSYST = "Alma";
     public static final String LIBRARY_NOT_FOUND = "Library not found: ";
+    public static final String NCIP_TEST_SERVER_URL = "https://ncip.server.url";
 
     private final transient BaseBibliotekService basebibliotekService;
 
@@ -53,7 +54,7 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, LibcheckResponse> {
 
     @Override
     protected LibcheckResponse processInput(Void input, RequestInfo requestInfo, Context context)
-            throws ApiGatewayException {
+        throws ApiGatewayException {
 
         LibcheckResponse libcheckResponse = new LibcheckResponse();
 
@@ -67,6 +68,11 @@ public class LibcheckHandler extends ApiGatewayHandler<Void, LibcheckResponse> {
 
         libcheckResponse.setAlmaLibrary(ALMA_KATSYST.equalsIgnoreCase(libraryData.getKatsyst()));
         libcheckResponse.setNcipLibrary(!isEmpty(libraryData.getNncippServer()));
+        if ("dev".equalsIgnoreCase(Config.getInstance().getStage())) {
+            libcheckResponse.setNcipServerUrl(NCIP_TEST_SERVER_URL);
+        } else {
+            libcheckResponse.setNcipServerUrl(libraryData.getNncippServer());
+        }
 
         return libcheckResponse;
     }

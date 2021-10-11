@@ -11,6 +11,9 @@ public class LibcheckResponse implements JsonSerializable {
     @JsonProperty("isNcipLibrary")
     private boolean ncipLibrary;
 
+    @JsonProperty("ncip_server_url")
+    private String ncipServerUrl;
+
     public boolean isAlmaLibrary() {
         return almaLibrary;
     }
@@ -27,4 +30,11 @@ public class LibcheckResponse implements JsonSerializable {
         this.ncipLibrary = ncipLibrary;
     }
 
+    public String getNcipServerUrl() {
+        return ncipServerUrl;
+    }
+
+    public void setNcipServerUrl(String ncipServerUrl) {
+        this.ncipServerUrl = ncipServerUrl;
+    }
 }
