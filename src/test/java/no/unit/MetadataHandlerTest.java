@@ -116,6 +116,7 @@ public class MetadataHandlerTest {
         var actual = handler.processInput(null, requestInfo, awsContext);
         assertEquals(MOCK_INSTITUTION_CODE, actual.libraries.get(0).institution_code);
         assertEquals(MOCK_DOCUMENT_ID, actual.record_id);
+        assertFalse(actual.creator.contains(MetadataHandler.DOLLAR_Q_PREFIX));
     }
 
     @Test
