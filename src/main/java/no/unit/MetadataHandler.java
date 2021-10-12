@@ -31,6 +31,7 @@ import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,7 +155,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         for (Library library : libraries) {
             for (BaseBibliotekBean baseBibliotekBean : basebibliotekList) {
                 if (baseBibliotekBean != null && baseBibliotekBean.getBibNr().equalsIgnoreCase(library.library_code)) {
-                    library.display_name = baseBibliotekBean.getInst();
+                    library.display_name = StringUtils.normalizeSpace(baseBibliotekBean.getInst());
                     library.available_for_loan = baseBibliotekBean.isOpenAtDate(LocalDate.now(NORWAY_ZONE_ID));
                 }
             }
