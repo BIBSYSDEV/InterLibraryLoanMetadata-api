@@ -8,6 +8,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jakarta.xml.bind.JAXBException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -31,6 +35,8 @@ import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+import nva.commons.core.ioutils.IoUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,6 +69,13 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         super(Void.class, environment);
         this.pnxServices = pnxServices;
         this.baseBibliotekService = baseBibliotekService;
+    }
+
+    @Override
+    public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
+        String string = IoUtils.streamToString(inputStream);
+        log.info(string);
+        super.handleRequest(IoUtils.stringToStream(string), outputStream, context);
     }
 
     @Override
@@ -153,7 +166,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         for (Library library : libraries) {
             for (BaseBibliotekBean baseBibliotekBean : basebibliotekList) {
                 if (baseBibliotekBean != null && baseBibliotekBean.getBibNr().equalsIgnoreCase(library.library_code)) {
-                    library.display_name = baseBibliotekBean.getInst();
+                    library.display_name = StringUtils.normalizeSpace(baseBibliotekBean.getInst());
                     library.available_for_loan = baseBibliotekBean.isOpenAtDate(LocalDate.now(NORWAY_ZONE_ID));
                 }
             }
