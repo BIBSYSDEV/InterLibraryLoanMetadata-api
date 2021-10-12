@@ -210,13 +210,16 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         return isNull(jsonObjList) ? EMPTY_STRING : String.join(COMMA_DELIMITER, jsonObjList);
     }
 
+    @SuppressWarnings("rawtypes")
     private String getCreatorArrayAsString(JsonObject pnxServiceObject) {
         final JsonElement jsonElement = pnxServiceObject.get(PnxServices.CREATOR);
-        List jsonObjList = gson.fromJson(jsonElement, List.class);
         List<String> creatorList = new ArrayList<>();
-        for (Object obj : jsonObjList) {
-            String creator = obj.toString();
-            creatorList.add(creator.substring(0, creator.indexOf(DOLLAR_Q_PREFIX)));
+        if(jsonElement != null) {
+            List jsonObjList = gson.fromJson(jsonElement, List.class);
+            for (Object obj : jsonObjList) {
+                String creator = obj.toString();
+                creatorList.add(creator.substring(0, creator.indexOf(DOLLAR_Q_PREFIX)));
+            }
         }
         return creatorList.isEmpty() ? EMPTY_STRING : String.join(COMMA_DELIMITER, creatorList);
     }
