@@ -429,11 +429,11 @@ Resources:
               - - !GetAtt GetInterLibraryLoanMetadataRecordFunction.Arn
                 - ":live"
           Id: "GetInterLibraryLoanMetadataRecordFunction"
-          Input: '{"healthcheck":"healthcheck"}'
+          Input: '{"queryStringParameters": {"healthcheck":"healthcheck"}}'
         -
           Arn: !GetAtt GetInterLibraryLoanLibcheckFunction.Arn
           Id: "GetInterLibraryLoanLibcheckFunction"
-          Input: '{"healthcheck":"healthcheck"}'
+          Input: '{"queryStringParameters": {"healthcheck":"healthcheck"}}'
 
   PermissionForEventsToInvokeMetadataFunction:
     Type: AWS::Lambda::Permission
