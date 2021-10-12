@@ -192,17 +192,15 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private String getArrayAsString(JsonObject pnxServiceObject, String key) {
-        final JsonElement jsonArray = pnxServiceObject.get(key);
-        List jsonObjList = gson.fromJson(jsonArray, List.class);
+        final JsonElement jsonElement = pnxServiceObject.get(key);
+        List jsonObjList = gson.fromJson(jsonElement, List.class);
         return isNull(jsonObjList) ? EMPTY_STRING : String.join(COMMA_DELIMITER, jsonObjList);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     private String getCreatorArrayAsString(JsonObject pnxServiceObject) {
-        final JsonElement jsonArray = pnxServiceObject.get(PnxServices.CREATOR);
-        List jsonObjList = gson.fromJson(jsonArray, List.class);
+        final JsonElement jsonElement = pnxServiceObject.get(PnxServices.CREATOR);
         List<String> creatorList = new ArrayList<>();
-        for (Object obj : jsonObjList) {
+        for (Object obj : jsonElement.getAsJsonArray()) {
             String creator = obj.toString();
             creatorList.add(creator.substring(0, creator.indexOf(DOLLAR_Q_PREFIX)));
         }
