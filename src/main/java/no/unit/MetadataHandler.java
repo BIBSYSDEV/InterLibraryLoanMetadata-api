@@ -9,9 +9,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jakarta.xml.bind.JAXBException;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -35,7 +32,6 @@ import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
-import nva.commons.core.ioutils.IoUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,13 +66,6 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         super(Void.class, environment);
         this.pnxServices = pnxServices;
         this.baseBibliotekService = baseBibliotekService;
-    }
-
-    @Override
-    public void handleRequest(InputStream inputStream, OutputStream outputStream, Context context) throws IOException {
-        String string = IoUtils.streamToString(inputStream);
-        log.info(string);
-        super.handleRequest(IoUtils.stringToStream(string), outputStream, context);
     }
 
     @Override
@@ -216,9 +205,11 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         List<String> creatorList = new ArrayList<>();
         if(jsonElement != null) {
             List jsonObjList = gson.fromJson(jsonElement, List.class);
-            for (Object obj : jsonObjList) {
-                String creator = obj.toString();
-                creatorList.add(creator.substring(0, creator.indexOf(DOLLAR_Q_PREFIX)));
+            if(jsonObjList != null) {
+                for (Object obj : jsonObjList) {
+                    String creator = obj.toString();
+                    creatorList.add(creator.substring(0, creator.indexOf(DOLLAR_Q_PREFIX)));
+                }
             }
         }
         return creatorList.isEmpty() ? EMPTY_STRING : String.join(COMMA_DELIMITER, creatorList);

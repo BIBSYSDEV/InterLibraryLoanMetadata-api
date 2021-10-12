@@ -14,14 +14,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import jakarta.xml.bind.JAXBException;
 
-//import com.fasterxml.jackson.core.JsonProcessingException;
-//import java.io.ByteArrayOutputStream;
-//import java.io.OutputStream;
-//import no.unit.nva.testutils.HandlerRequestBuilder;
-//import no.unit.nva.testutils.IoUtils;
-//import nva.commons.core.JsonUtils;
-//import nva.commons.apigateway.GatewayResponse;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -43,7 +35,6 @@ public class MetadataHandlerTest {
     public static final String CONDENSED_PNX_EXAMPLE_4 = "condensed_pnx_example_4.json";
     private static final String MOCK_DOCUMENT_ID = "BIBSYS_ILS71560264980002201";
     private static final String MOCK_INSTITUTION_CODE = "AHUS";
-    public static final String SOME_DOC_ID = "BIBSYS_ILS71469955110002201";
     private Environment environment;
     private PnxServices pnxServices;
     private BaseBibliotekService baseBibliotekService;
@@ -92,20 +83,6 @@ public class MetadataHandlerTest {
         });
         assertTrue(exception.getMessage().contains(NO_PARAMETERS_GIVEN_TO_HANDLER));
     }
-
-//    @Test
-//    public void handlerReadsQueryParameterWhenQueryParameterDocumentIdIsPresent() throws IOException {
-//         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-//        InputStream inputStream = new HandlerRequestBuilder<Void>(JsonUtils.dtoObjectMapper)
-//                .withBody(null)
-//                .withQueryParameters(Map.of(DOCUMENT_ID_KEY, SOME_DOC_ID))
-//                .build();
-//        IoUtils.inputStreamFromResources()
-//        handler.handleRequest(inputStream, outputStream, awsContext);
-//        GatewayResponse<MetadataResponse> response = GatewayResponse.fromOutputStream(outputStream);
-//        assertEquals(HttpURLConnection.HTTP_OK,response.getStatusCode());
-//    }
-
 
     @Test
     public void handlerThrowsExceptionWithMissingQueryParam() {
