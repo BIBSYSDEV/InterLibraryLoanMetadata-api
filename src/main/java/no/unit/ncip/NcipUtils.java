@@ -23,7 +23,6 @@ public class NcipUtils {
             + "                 xsi:schemaLocation=\"http://www.niso.org/2008/ncip http://www.niso"
             + ".org/schemas/ncip/v2_02/ncip_v2_02.xsd\">\n"
             + "    <ns1:ItemRequested>\n"
-            + "        <!-- The InitiationHeader, stating from- and to-agency, is mandatory. -->\n"
             + "        <ns1:InitiationHeader>\n"
             + "            <ns1:FromAgencyId>\n"
             + "                <ns1:AgencyId>" + ISIL_PREFIX + ncipRequest.fromAgencyId + "</ns1:AgencyId>\n"
