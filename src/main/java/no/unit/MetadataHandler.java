@@ -212,8 +212,9 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
     private String getCreatorArrayAsString(JsonObject pnxServiceObject) {
         final JsonElement jsonElement = pnxServiceObject.get(PnxServices.CREATOR);
+        List jsonObjList = gson.fromJson(jsonElement, List.class);
         List<String> creatorList = new ArrayList<>();
-        for (Object obj : jsonElement.getAsJsonArray()) {
+        for (Object obj : jsonObjList) {
             String creator = obj.toString();
             creatorList.add(creator.substring(0, creator.indexOf(DOLLAR_Q_PREFIX)));
         }
