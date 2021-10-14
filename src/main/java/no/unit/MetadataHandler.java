@@ -8,6 +8,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jakarta.xml.bind.JAXBException;
+
 import java.net.HttpURLConnection;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -31,6 +32,7 @@ import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
 import nva.commons.core.JacocoGenerated;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +51,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     public static final String COULD_NOT_READ_LIBRARY_CODE = "Could not read libraryCode from: {}";
     public static final String RESPONSE_OBJECT = "ResponseObject: ";
     public static final String COMMA_DELIMITER = ", ";
+    public static final String DOLLAR_Q_PREFIX = "$$Q";
     private final transient PnxServices pnxServices;
     private final transient BaseBibliotekService baseBibliotekService;
     private final transient Gson gson = new Gson();
@@ -95,7 +98,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         response.volume = getArrayAsString(pnxServiceObject, PnxServices.VOLUME);
         response.pages = getArrayAsString(pnxServiceObject, PnxServices.PAGES);
         response.creation_year = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_CREATION_YEAR_KEY);
-        response.creator = getArrayAsString(pnxServiceObject, PnxServices.CREATOR);
+        response.creator = getCreatorArrayAsString(pnxServiceObject);
         response.display_title = getArrayAsString(pnxServiceObject, PnxServices.EXTRACTED_DISPLAY_TITLE_KEY);
         response.publisher = getArrayAsString(pnxServiceObject, PnxServices.PUBLISHER);
         log.info("Parsing PNX done: " + new Date());
@@ -125,7 +128,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
                 library.mms_id = mmsId;
                 libraries.add(library);
                 CompletableFuture<BaseBibliotekBean> completableFuture = CompletableFuture.supplyAsync(
-                        () -> getBaseBibliotekBean(libraryCode));
+                    () -> getBaseBibliotekBean(libraryCode));
                 completableFutures.add(completableFuture);
             } else {
                 log.error(COULD_NOT_READ_LIBRARY_CODE, input);
@@ -133,13 +136,13 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         }
 
         CompletableFuture<Void> combinedCompletableFutures = CompletableFuture.allOf(
-                completableFutures.toArray(new CompletableFuture[0]));
+            completableFutures.toArray(new CompletableFuture[0]));
 
         CompletableFuture<List<BaseBibliotekBean>> allCombinedCompletableFutures =
-                combinedCompletableFutures
-                        .thenApply(future -> completableFutures.stream()
-                                .map(CompletableFuture::join)
-                                .collect(Collectors.toList()));
+            combinedCompletableFutures
+                .thenApply(future -> completableFutures.stream()
+                    .map(CompletableFuture::join)
+                    .collect(Collectors.toList()));
 
         List<BaseBibliotekBean> basebibliotekList = new ArrayList<>();
         try {
@@ -153,7 +156,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         for (Library library : libraries) {
             for (BaseBibliotekBean baseBibliotekBean : basebibliotekList) {
                 if (baseBibliotekBean != null && baseBibliotekBean.getBibNr().equalsIgnoreCase(library.library_code)) {
-                    library.display_name = baseBibliotekBean.getInst();
+                    library.display_name = StringUtils.normalizeSpace(baseBibliotekBean.getInst());
                     library.available_for_loan = baseBibliotekBean.isOpenAtDate(LocalDate.now(NORWAY_ZONE_ID));
                 }
             }
@@ -191,9 +194,25 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private String getArrayAsString(JsonObject pnxServiceObject, String key) {
-        final JsonElement jsonArray = pnxServiceObject.get(key);
-        List jsonObjList = gson.fromJson(jsonArray, List.class);
+        final JsonElement jsonElement = pnxServiceObject.get(key);
+        List jsonObjList = gson.fromJson(jsonElement, List.class);
         return isNull(jsonObjList) ? EMPTY_STRING : String.join(COMMA_DELIMITER, jsonObjList);
+    }
+
+    @SuppressWarnings("rawtypes")
+    private String getCreatorArrayAsString(JsonObject pnxServiceObject) {
+        final JsonElement jsonElement = pnxServiceObject.get(PnxServices.CREATOR);
+        List<String> creatorList = new ArrayList<>();
+        if(jsonElement != null) {
+            List jsonObjList = gson.fromJson(jsonElement, List.class);
+            if(jsonObjList != null) {
+                for (Object obj : jsonObjList) {
+                    String creator = obj.toString();
+                    creatorList.add(creator.substring(0, creator.indexOf(DOLLAR_Q_PREFIX)));
+                }
+            }
+        }
+        return creatorList.isEmpty() ? EMPTY_STRING : String.join(COMMA_DELIMITER, creatorList);
     }
 
     protected JsonObject getPnxServiceData(String documentId) {

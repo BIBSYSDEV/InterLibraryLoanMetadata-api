@@ -13,6 +13,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import jakarta.xml.bind.JAXBException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -83,7 +84,6 @@ public class MetadataHandlerTest {
         assertTrue(exception.getMessage().contains(NO_PARAMETERS_GIVEN_TO_HANDLER));
     }
 
-
     @Test
     public void handlerThrowsExceptionWithMissingQueryParam() {
         Exception exception = assertThrows(BadRequestException.class, () -> {
@@ -116,6 +116,7 @@ public class MetadataHandlerTest {
         var actual = handler.processInput(null, requestInfo, awsContext);
         assertEquals(MOCK_INSTITUTION_CODE, actual.libraries.get(0).institution_code);
         assertEquals(MOCK_DOCUMENT_ID, actual.record_id);
+        assertFalse(actual.creator.contains(MetadataHandler.DOLLAR_Q_PREFIX));
     }
 
     @Test
