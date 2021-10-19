@@ -1,5 +1,9 @@
 package no.unit.ncip;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_XML;
+import static org.apache.http.HttpHeaders.ACCEPT;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -47,6 +51,8 @@ public class NcipService {
     protected NcipResponse send(String payload, String ncipServerUrl) {
         HttpPost httppost = new HttpPost(ncipServerUrl);
         try {
+            httppost.setHeader(CONTENT_TYPE, APPLICATION_XML);
+            httppost.setHeader(ACCEPT, APPLICATION_XML);
             httppost.setEntity(new StringEntity(payload));
         } catch (UnsupportedEncodingException e) {
             log.error(FAILED_TO_SET_PAYLOAD_TO_HTTP_POST, e);
