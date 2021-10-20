@@ -88,7 +88,7 @@ public class NcipService {
             } else {
                 response.message = ORDER_SUCCEEDED;
                 response.status = HttpURLConnection.HTTP_OK;
-                log.debug(NCIP_REQUEST_OK + response.message);
+                log.info(NCIP_REQUEST_OK + response.message);
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
             log.error(SOMETHING_WENT_WRONG_DURING_PARSING_OF_XML_STRUCTURE + e.getMessage());
