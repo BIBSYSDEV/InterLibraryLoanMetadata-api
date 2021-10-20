@@ -62,7 +62,6 @@ public class NcipService {
         try (CloseableHttpResponse response = httpclient.execute(httppost)) {
             try (InputStream inputStream = response.getEntity().getContent()) {
                 ncipResponse = this.extractNcipResponse(inputStream);
-                ncipResponse.status = response.getStatusLine().getStatusCode();
             }
         } catch (IOException e) {
             ncipResponse.status = HttpURLConnection.HTTP_INTERNAL_ERROR;
