@@ -1,5 +1,9 @@
 package no.unit.ncip;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_XML;
+import static org.apache.http.HttpHeaders.ACCEPT;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -47,6 +51,8 @@ public class NcipService {
     protected NcipResponse send(String payload, String ncipServerUrl) {
         HttpPost httppost = new HttpPost(ncipServerUrl);
         try {
+            httppost.setHeader(CONTENT_TYPE, APPLICATION_XML);
+            httppost.setHeader(ACCEPT, APPLICATION_XML);
             httppost.setEntity(new StringEntity(payload));
         } catch (UnsupportedEncodingException e) {
             log.error(FAILED_TO_SET_PAYLOAD_TO_HTTP_POST, e);
@@ -56,7 +62,6 @@ public class NcipService {
         try (CloseableHttpResponse response = httpclient.execute(httppost)) {
             try (InputStream inputStream = response.getEntity().getContent()) {
                 ncipResponse = this.extractNcipResponse(inputStream);
-                ncipResponse.status = response.getStatusLine().getStatusCode();
             }
         } catch (IOException e) {
             ncipResponse.status = HttpURLConnection.HTTP_INTERNAL_ERROR;
@@ -83,7 +88,7 @@ public class NcipService {
             } else {
                 response.message = ORDER_SUCCEEDED;
                 response.status = HttpURLConnection.HTTP_OK;
-                log.debug(NCIP_REQUEST_OK + response.message);
+                log.info(NCIP_REQUEST_OK + response.message);
             }
         } catch (ParserConfigurationException | SAXException | IOException e) {
             log.error(SOMETHING_WENT_WRONG_DURING_PARSING_OF_XML_STRUCTURE + e.getMessage());
