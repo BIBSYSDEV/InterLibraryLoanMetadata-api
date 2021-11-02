@@ -2,6 +2,7 @@ package no.unit.ncip;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
@@ -71,6 +72,13 @@ class NcipRequestTest {
             BIBLIOGRAPHIC_RECORD_IDENTIFIER, BIBLIOGRAPHIC_RECORD_IDENTIFIER_CODE, TYPE, REQUEST_TYPE, COMMENT,
             NCIP_SERVER_URL);
         assertTrue(msg.isValid());
+
+        msg = new NcipRequest(TO_AGENCY_ID, FROM_AGENCY_ID, EMPTY_STRING,
+            USER_IDENTIFIER_VALUE, AUTHOR, TITLE, PUBLISHER, PUBLICATION_DATE, PLACE_OF_PUBLICATION,
+            BIBLIOGRAPHIC_RECORD_IDENTIFIER, BIBLIOGRAPHIC_RECORD_IDENTIFIER_CODE, TYPE, REQUEST_TYPE, EMPTY_STRING,
+            NCIP_SERVER_URL);
+        assertTrue(msg.isValid());
+        assertEquals(NcipRequest.BESTILT_FRA_ORIA, msg.comment);
     }
 
 }
