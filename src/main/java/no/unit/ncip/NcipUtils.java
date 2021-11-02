@@ -24,6 +24,7 @@ public class NcipUtils {
             + ".org/schemas/ncip/v2_02/ncip_v2_02.xsd\">\n"
             + "    <ns1:ItemRequested>\n"
             + "        <ns1:InitiationHeader>\n"
+            + "            <ns1:FromSystemId>ORIA_NCIP_ILL</ns1:FromSystemId>"
             + "            <ns1:FromAgencyId>\n"
             + "                <ns1:AgencyId>" + ISIL_PREFIX + ncipRequest.fromAgencyId + "</ns1:AgencyId>\n"
             + "            </ns1:FromAgencyId>\n"

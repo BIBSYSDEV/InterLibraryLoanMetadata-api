@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class NcipRequest {
 
+    public static final String BESTILT_FRA_ORIA = "Bestilt fra Oria";
     public transient String toAgencyId;
     public transient String fromAgencyId;
     public transient String isbnValue;
@@ -20,7 +21,7 @@ public class NcipRequest {
     public transient String bibliographicRecordIdentifierCode;
     public transient String type;
     public transient String requestType;
-    public transient String comment;
+    public transient String comment = BESTILT_FRA_ORIA;
     public transient String ncipServerUrl;
 
     @JsonCreator
@@ -54,7 +55,9 @@ public class NcipRequest {
         this.bibliographicRecordIdentifierCode = bibliographicRecordIdentifierCode;
         this.type = type;
         this.requestType = requestType;
-        this.comment = comment;
+        if (StringUtils.isNotEmpty(comment)) {
+            this.comment = comment;
+        }
         this.ncipServerUrl = ncipServerUrl;
     }
 
