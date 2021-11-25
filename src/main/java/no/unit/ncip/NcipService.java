@@ -6,7 +6,6 @@ import static org.apache.http.HttpHeaders.CONTENT_TYPE;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import javax.xml.parsers.DocumentBuilder;
