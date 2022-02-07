@@ -3,7 +3,6 @@ package no.unit.ncip;
 import static no.unit.ncip.NcipHandler.DASH;
 import static no.unit.ncip.NcipHandler.NCIP_MESSAGE_IS_NOT_VALID;
 import static nva.commons.apigateway.ApiGatewayHandler.ALLOWED_ORIGIN_ENV;
-import static nva.commons.core.JsonUtils.dtoObjectMapper;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -15,6 +14,8 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.net.HttpURLConnection;
 import java.nio.file.Path;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
@@ -29,6 +30,7 @@ public class NcipHandlerTest {
     private NcipHandler handler;
     private NcipService ncipService;
     private Context context;
+    private ObjectMapper objectMapper = new ObjectMapper();
     public static final String NCIP_TRANSFER_MESSAGE = "ncipTransferMessage.json";
     public static final String INCOMPLETE_NCIP_TRANSFER_MESSAGE = "incompleteNcipTransferMessage.json";
     public static final String MESSAGE = "message";
@@ -67,7 +69,7 @@ public class NcipHandlerTest {
     @Test
     void handleNcipMessageWithSuccess() throws ApiGatewayException, JsonProcessingException {
         String msg = IoUtils.stringFromResources(Path.of(NCIP_TRANSFER_MESSAGE));
-        final NcipRequest request = dtoObjectMapper.readValue(msg, NcipRequest.class);
+        final NcipRequest request = objectMapper.readValue(msg, NcipRequest.class);
         NcipResponse ncipResponse = new NcipResponse();
         ncipResponse.status = HttpURLConnection.HTTP_OK;
         ncipResponse.message = SUCCESS;
@@ -81,7 +83,7 @@ public class NcipHandlerTest {
     @Test
     void testMissingMandatoryParamsInNcipTransferMessage() throws JsonProcessingException {
         String msg = IoUtils.stringFromResources(Path.of(INCOMPLETE_NCIP_TRANSFER_MESSAGE));
-        NcipRequest request = dtoObjectMapper.readValue(msg, NcipRequest.class);
+        NcipRequest request = objectMapper.readValue(msg, NcipRequest.class);
         var handler = new NcipHandler(environment, ncipService);
 
         Exception exception = assertThrows(BadRequestException.class, () -> {
@@ -98,7 +100,7 @@ public class NcipHandlerTest {
         ncipResponse.problemdetail = FAILURE;
         when(ncipService.send(anyString(), anyString())).thenReturn(ncipResponse);
         String msg = IoUtils.stringFromResources(Path.of(NCIP_TRANSFER_MESSAGE));
-        NcipRequest request = dtoObjectMapper.readValue(msg, NcipRequest.class);
+        NcipRequest request = objectMapper.readValue(msg, NcipRequest.class);
         var handler = new NcipHandler(environment, ncipService);
 
         Exception exception = assertThrows(BadRequestException.class, () -> {

@@ -2,9 +2,8 @@ package no.unit;
 
 import java.util.ArrayList;
 import java.util.List;
-import nva.commons.core.JsonSerializable;
 
-public class MetadataResponse implements JsonSerializable {
+public class MetadataResponse {
 
     public String isbn;
     public String source;
@@ -19,7 +18,7 @@ public class MetadataResponse implements JsonSerializable {
     public String display_title;
     public List<Library> libraries = new ArrayList<>();
 
-    protected static class Library implements JsonSerializable{
+    protected static class Library {
 
         public String institution_code;
         public String display_name;
