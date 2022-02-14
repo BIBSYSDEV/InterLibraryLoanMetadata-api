@@ -1,9 +1,8 @@
 package no.unit.libcheck;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import nva.commons.core.JsonSerializable;
 
-public class LibcheckResponse implements JsonSerializable {
+public class LibcheckResponse {
 
     @JsonProperty("isAlmaLibrary")
     private boolean almaLibrary;

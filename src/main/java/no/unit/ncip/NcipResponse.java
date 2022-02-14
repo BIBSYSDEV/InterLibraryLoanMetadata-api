@@ -1,9 +1,8 @@
 package no.unit.ncip;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import nva.commons.core.JsonSerializable;
 
-public class NcipResponse implements JsonSerializable {
+public class NcipResponse {
 
     @JsonProperty("message")
     public transient String message;
