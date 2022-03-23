@@ -12,6 +12,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
 
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 public class BaseBibliotekServiceConnection {
 
     private static final String HTTPS = "https";
@@ -50,6 +53,7 @@ public class BaseBibliotekServiceConnection {
             baos.write(buffer, 0, len);
         }
         baos.flush();
-        return new ByteArrayInputStream(baos.toByteArray());
+        byte[] bytes = baos.toString(UTF_8).getBytes(ISO_8859_1);
+        return new ByteArrayInputStream(bytes);
     }
 }
