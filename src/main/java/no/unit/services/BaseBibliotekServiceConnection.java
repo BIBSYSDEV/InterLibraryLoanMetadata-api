@@ -11,6 +11,9 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
+
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
 
 public class BaseBibliotekServiceConnection {
 
@@ -50,6 +53,7 @@ public class BaseBibliotekServiceConnection {
             baos.write(buffer, 0, len);
         }
         baos.flush();
-        return new ByteArrayInputStream(baos.toByteArray());
+        byte[] bytes = baos.toString(StandardCharsets.UTF_8).getBytes(ISO_8859_1);
+        return new ByteArrayInputStream(bytes);
     }
 }
