@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 
 import static no.unit.services.BaseBibliotekServiceConnection.BASEBIBLIOTEK_BIBNR_MAPPING_PATH;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,7 +28,7 @@ class BaseBibliotekServiceConnectionTest {
     public void testConvertToByteArrayInputStream() throws IOException {
         final BaseBibliotekServiceConnection connection = new BaseBibliotekServiceConnection();
         try (InputStream inputstream = getClass().getResourceAsStream("/sampleLibraryFromBaseBibliotek.xml")) {
-            connection.convertToByteArrayInputStream(inputstream);
+            connection.convertToByteArrayInputStream(inputstream, Charset.defaultCharset());
         }
 
     }

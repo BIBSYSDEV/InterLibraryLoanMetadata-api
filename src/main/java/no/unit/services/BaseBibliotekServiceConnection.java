@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
 
 import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -32,7 +33,24 @@ public class BaseBibliotekServiceConnection {
         final URI uri = getUri(identifier);
         URLConnection connection = uri.toURL().openConnection();
         connection.setConnectTimeout(10_000);
-        return convertToByteArrayInputStream(connection.getInputStream());
+        Charset charsetFromResponse = this.getCharsetFromResponse(connection);
+        return convertToByteArrayInputStream(connection.getInputStream(), charsetFromResponse);
+    }
+
+    private Charset getCharsetFromResponse(URLConnection connection) {
+        String contentType = connection.getContentType();
+        String[] values = contentType.split(";"); // values.length should be 2
+        String charset = "";
+        for (String value : values) {
+            value = value.trim();
+            if (value.toLowerCase().startsWith("charset=")) {
+                charset = value.substring("charset=".length());
+            }
+        }
+        if ("".equals(charset)) {
+            charset = UTF_8.name(); //Assumption
+        }
+        return Charset.forName(charset);
     }
 
     protected URI getUri(String identifier) throws URISyntaxException {
@@ -45,7 +63,7 @@ public class BaseBibliotekServiceConnection {
     }
 
     @SuppressWarnings("PMD.AssignmentInOperand")
-    protected InputStream convertToByteArrayInputStream(InputStream input) throws IOException {
+    protected InputStream convertToByteArrayInputStream(InputStream input, Charset charset) throws IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int len;
@@ -53,7 +71,7 @@ public class BaseBibliotekServiceConnection {
             baos.write(buffer, 0, len);
         }
         baos.flush();
-        byte[] bytes = baos.toString(UTF_8).getBytes(ISO_8859_1);
+        byte[] bytes = baos.toString(UTF_8).getBytes(charset);
         return new ByteArrayInputStream(bytes);
     }
 }
