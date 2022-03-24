@@ -12,14 +12,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.nio.charset.Charset;
+import java.util.Locale;
 
-import static java.nio.charset.StandardCharsets.ISO_8859_1;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class BaseBibliotekServiceConnection {
 
     private static final String HTTPS = "https";
     public static final String BASEBIBLIOTEK_BIBNR_MAPPING_PATH = "/basebibliotek/rest/bibnr/";
+    public static final String EMPTY_STRING = "";
 
     /**
      * Builds an URL and connects to BaseBibliotekService.
@@ -40,26 +41,25 @@ public class BaseBibliotekServiceConnection {
     private Charset getCharsetFromResponse(URLConnection connection) {
         String contentType = connection.getContentType();
         String[] values = contentType.split(";"); // values.length should be 2
-        String charset = "";
+        String charset = EMPTY_STRING;
         for (String value : values) {
-            value = value.trim();
-            if (value.toLowerCase().startsWith("charset=")) {
-                charset = value.substring("charset=".length());
+             String v = value.trim();
+            if (v.toLowerCase(Locale.getDefault()).startsWith("charset=")) {
+                charset = v.substring("charset=".length());
             }
         }
-        if ("".equals(charset)) {
+        if (EMPTY_STRING.equals(charset)) {
             charset = UTF_8.name(); //Assumption
         }
         return Charset.forName(charset);
     }
 
     protected URI getUri(String identifier) throws URISyntaxException {
-        final URI uri = new URIBuilder()
+        return new URIBuilder()
                 .setScheme(HTTPS)
                 .setHost(Config.getInstance().getBasebibliotekServiceHost())
                 .setPath(BASEBIBLIOTEK_BIBNR_MAPPING_PATH + identifier)
                 .build();
-        return uri;
     }
 
     @SuppressWarnings("PMD.AssignmentInOperand")
