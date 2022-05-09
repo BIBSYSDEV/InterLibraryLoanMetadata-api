@@ -3,7 +3,6 @@ package no.unit;
 import static no.unit.MetadataHandler.DOCUMENT_ID_KEY;
 import static no.unit.MetadataHandler.NO_PARAMETERS_GIVEN_TO_HANDLER;
 import static nva.commons.apigateway.ApiGatewayHandler.ALLOWED_ORIGIN_ENV;
-import static nva.commons.apigateway.RequestInfo.MISSING_FROM_QUERY_PARAMETERS;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -32,6 +31,7 @@ import org.junit.jupiter.api.Test;
 
 public class MetadataHandlerTest {
 
+    public static final String MISSING_FROM_QUERY_PARAMETERS = "Missing from query parameters: ";
     public static final String CONDENSED_PNX_EXAMPLE_4 = "condensed_pnx_example_4.json";
     private static final String MOCK_DOCUMENT_ID = "BIBSYS_ILS71560264980002201";
     private static final String MOCK_INSTITUTION_CODE = "AHUS";
