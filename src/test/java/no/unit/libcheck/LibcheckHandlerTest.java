@@ -4,7 +4,6 @@ import static no.unit.libcheck.LibcheckHandler.ALMA_KATSYST;
 import static no.unit.libcheck.LibcheckHandler.LIBRARY_NOT_FOUND;
 import static no.unit.libcheck.LibcheckHandler.LIBUSER_KEY;
 import static nva.commons.apigateway.ApiGatewayHandler.ALLOWED_ORIGIN_ENV;
-import static nva.commons.apigateway.RequestInfo.MISSING_FROM_QUERY_PARAMETERS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -28,6 +27,7 @@ import org.junit.jupiter.api.Test;
 
 public class LibcheckHandlerTest {
 
+    public static final String MISSING_FROM_QUERY_PARAMETERS = "Missing from query parameters: ";
     public static final String MOCK_NCIP_SERVER_URL = "https://ncip.server.url";
     public static final String MOCK_LIBUSER = "1234";
 
