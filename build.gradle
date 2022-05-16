@@ -39,7 +39,7 @@ dependencies {
     implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '3.0.2'
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.36'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.1'
-    implementation group: 'com.github.bibsysdev', name: 'core', version: '1.24.7'
+    implementation group: 'com.github.bibsysdev', name: 'core', version: '1.24.8'
     implementation group: 'com.github.bibsysdev', name: 'apigateway', version: '1.24.8'
     testImplementation group: 'com.github.bibsysdev', name: 'nvatestutils', version: '1.24.8'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.1.0'
