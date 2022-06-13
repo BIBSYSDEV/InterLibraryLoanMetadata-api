@@ -36,16 +36,16 @@ dependencies {
     implementation group: 'javax.ws.rs', name: 'javax.ws.rs-api', version: '2.1.1'
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.0'
     implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.12.0'
-    implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '3.0.2'
+    implementation group: 'org.glassfish.jaxb', name: 'jaxb-runtime', version: '4.0.0'
     implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.36'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
-    implementation group: 'com.github.bibsysdev', name: 'core', version: '1.24.12'
-    implementation group: 'com.github.bibsysdev', name: 'apigateway', version: '1.24.12'
-    testImplementation group: 'com.github.bibsysdev', name: 'nvatestutils', version: '1.24.12'
+    implementation group: 'com.github.bibsysdev', name: 'core', version: '1.24.18'
+    implementation group: 'com.github.bibsysdev', name: 'apigateway', version: '1.24.18'
+    testImplementation group: 'com.github.bibsysdev', name: 'nvatestutils', version: '1.24.18'
     testImplementation group: 'org.mockito', name: 'mockito-core', version: '4.5.1'
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: '5.8.2'
-    xsd2java group: 'com.sun.xml.bind', name: 'jaxb-xjc', version: '3.0.2'
-    xsd2java group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '3.0.2'
+    xsd2java group: 'com.sun.xml.bind', name: 'jaxb-xjc', version: '4.0.0'
+    xsd2java group: 'com.sun.xml.bind', name: 'jaxb-impl', version: '4.0.0'
     xsd2java group: 'javax.xml.bind', name: 'jaxb-api', version: '2.4.0-b180830.0359'
     xsd2java group: 'javax.activation', name:'javax.activation-api', version: '1.2.0'
 
@@ -88,7 +88,6 @@ pmd {
 checkstyle {
     configFile = rootProject.resources.text.fromFile('config/checkstyle/checkstyle.xml').asFile()
     showViolations = true
-    toolVersion '8.41'
 }
 
 tasks.withType(Checkstyle) {
@@ -106,10 +105,6 @@ jacocoTestReport {
         csv.enabled false
         html.destination file("${buildDir}/reports/jacoco")
     }
-}
-
-jacoco {
-    toolVersion = "0.8.5"
 }
 
 check.dependsOn jacocoTestCoverageVerification
