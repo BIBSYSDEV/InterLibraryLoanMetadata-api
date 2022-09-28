@@ -42,6 +42,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
     private static final transient Logger log = LoggerFactory.getLogger(MetadataHandler.class);
     public static final ZoneId NORWAY_ZONE_ID = ZoneId.of(ZoneOffset.of("+01:00").getId());
     public static final String NO_PARAMETERS_GIVEN_TO_HANDLER = "No parameters given to Handler";
+    public static final String FINAL_LOGGER_DEBUG_MESSAGE = "Response done: ";
     public static final String HEALTHCHECK_KEY = "healthcheck";
     public static final String DOCUMENT_ID_KEY = "document_id";
     public static final int LENGTH_OF_LIBRARYCODE = 7;
@@ -84,7 +85,7 @@ public class MetadataHandler extends ApiGatewayHandler<Void, MetadataResponse> {
         JsonObject pnxServiceObject = getPnxServiceData(documentId);
         log.debug("Reading Pnx done: " + new Date());
         final MetadataResponse response = generateMetadatResponse(pnxServiceObject);
-        log.debug("Response done: " + new Date());
+        log.debug(FINAL_LOGGER_DEBUG_MESSAGE + new Date());
         return response;
     }
 
