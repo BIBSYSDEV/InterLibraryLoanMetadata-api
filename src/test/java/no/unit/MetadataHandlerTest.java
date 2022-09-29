@@ -1,6 +1,7 @@
 package no.unit;
 
 import static no.unit.MetadataHandler.DOCUMENT_ID_KEY;
+import static no.unit.MetadataHandler.FINAL_LOGGER_DEBUG_MESSAGE;
 import static no.unit.MetadataHandler.NO_PARAMETERS_GIVEN_TO_HANDLER;
 import static nva.commons.apigateway.ApiGatewayHandler.ALLOWED_ORIGIN_ENV;
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,6 +27,7 @@ import nva.commons.apigateway.RequestInfo;
 import nva.commons.apigateway.exceptions.ApiGatewayException;
 import nva.commons.apigateway.exceptions.BadRequestException;
 import nva.commons.core.Environment;
+import nva.commons.logutils.LogUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -100,6 +102,7 @@ public class MetadataHandlerTest {
 
     @Test
     public void handlerSuccess() throws ApiGatewayException {
+        var appender = LogUtils.getTestingAppenderForRootLogger();
 
         BaseBibliotekBean basebibliotekBean = new BaseBibliotekBean();
         basebibliotekBean.setBibNr("1023001");
@@ -117,6 +120,7 @@ public class MetadataHandlerTest {
         assertEquals(MOCK_INSTITUTION_CODE, actual.libraries.get(0).institution_code);
         assertEquals(MOCK_DOCUMENT_ID, actual.record_id);
         assertFalse(actual.creator.contains(MetadataHandler.DOLLAR_Q_PREFIX));
+        assertTrue(appender.getMessages().contains(FINAL_LOGGER_DEBUG_MESSAGE));
     }
 
     @Test
