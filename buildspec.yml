@@ -7,7 +7,7 @@ phases:
 
   install:
     runtime-versions:
-      java: corretto11
+      java: corretto17
     commands:
       - pip3 install --upgrade cfn-lint
       # Upgrade AWS CLI to the latest version
