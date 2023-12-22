@@ -294,7 +294,7 @@ Resources:
           PRIMO_SERVICE_ENDPOINT: !Ref PrimoServiceEndpoint
           PRIMO_SERVICE_API: !Ref PrimoServiceApiKey
       Handler: no.unit.MetadataHandler::handleRequest
-      Runtime: java11
+      Runtime: java17
       MemorySize: 2048
       AutoPublishAlias: live
       DeploymentPreference:
@@ -317,7 +317,7 @@ Resources:
         Variables:
           ALLOWED_ORIGIN:  '*'
       Handler: no.unit.ncip.NcipHandler::handleRequest
-      Runtime: java11
+      Runtime: java17
       MemorySize: 1024
       Events:
         PutEvent:
@@ -336,7 +336,7 @@ Resources:
           ALLOWED_ORIGIN: '*'
           BASEBIBLIOTEKSERVICE_ENDPOINT: !Ref BaseBibliotekServiceEndpoint
       Handler: no.unit.libcheck.LibcheckHandler::handleRequest
-      Runtime: java11
+      Runtime: java17
       MemorySize: 1024
       Events:
         GetInterLibraryLoanLibcheckEvent:
@@ -475,6 +475,9 @@ Resources:
       RestApiId: !Ref InterLibraryLoanMetadataApi
       Stage: !Ref InterLibraryLoanMetadataApi.Stage
 
+openapi:
+info:
+paths:
 Outputs:
   ApiEndpoint:
     Description: "Endpoint base URL for the API"
